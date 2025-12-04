@@ -16,9 +16,7 @@
 class Solution {
     boolean isSame(TreeNode root, TreeNode subRoot){
         if(root == null ^ subRoot == null)return false;
-        System.out.println("Hii");
         if(root == null) return true;
-        System.out.println(root.val +" "+subRoot.val);
         if(root.val != subRoot.val)return false;
         return (isSame(root.left, subRoot.left) && isSame(root.right , subRoot.right));
     }
