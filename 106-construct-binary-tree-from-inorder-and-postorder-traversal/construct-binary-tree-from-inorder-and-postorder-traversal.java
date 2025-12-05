@@ -18,12 +18,10 @@ class Solution {
     TreeNode make(HashMap<Integer, Integer> map, int[] inorder, Stack<Integer> st, int left, int right){
         
         if(st.isEmpty() || left > right || right> inorder.length || left < 0)return null;
-        System.out.println(st.peek()+" left = "+left+" right = "+right);
 
         int parentIndex =map.get(st.peek());
         TreeNode curr = new TreeNode(st.pop());
         if(st.isEmpty() || left==right)return curr;
-        System.out.println(" HII");
         
         int childIndex = map.get(st.peek());
 
