@@ -1,43 +1,43 @@
 class Trie {
     Trie[] arr;
-    boolean isWord; 
+    Boolean isWord; 
 
     public Trie() {
-        arr = new Trie[26];
-        isWord = false;
+        arr= new Trie[26];
+        isWord =false;
     }
     
     public void insert(String word) {
-        Trie temp = this;
-        for(char ch: word.toCharArray()){
-            if(temp.arr[ch-'a']==null){
-                temp.arr[ch-'a']=new Trie();
+        Trie temp =this;
+        for(char c : word.toCharArray()){
+            if(temp.arr[c-'a']==null){
+                temp.arr[c-'a'] = new Trie();
             }
-            temp = temp.arr[ch-'a'];
+            temp = temp.arr[c-'a'];
         }
-        temp.isWord=true;
+        temp.isWord =true;
     }
     
     public boolean search(String word) {
-        Trie temp = this;
-        for(char ch:word.toCharArray()){
-            if(temp.arr[ch-'a']==null){
+        Trie temp =this;
+        for(char c : word.toCharArray()){
+            if(temp.arr[c-'a']==null){
                 return false;
             }
-            temp = temp.arr[ch-'a'];
+            temp = temp.arr[c-'a'];
         }
         return temp.isWord;
     }
     
     public boolean startsWith(String prefix) {
-        Trie temp = this;
-        for(char ch:prefix.toCharArray()){
-            if(temp.arr[ch-'a']==null){
+        Trie temp =this;
+        for(char c : prefix.toCharArray()){
+            if(temp.arr[c-'a']==null){
                 return false;
             }
-            temp = temp.arr[ch-'a'];
+            temp = temp.arr[c-'a'];
         }
-        return true;        
+        return true;
     }
 }
 
