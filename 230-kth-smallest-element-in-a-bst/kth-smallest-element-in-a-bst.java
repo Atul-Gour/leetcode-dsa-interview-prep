@@ -14,22 +14,15 @@
  * }
  */
 class Solution {
-    int[] arr ;
     int index=0;
-    boolean updated = false;
     public int kthSmallest(TreeNode root, int k) {
         if(root==null)return -1;
-        if(!updated){
-            arr= new int[k];
-            updated =true;
-        }
         
         int value = kthSmallest(root.left,k);
         if(value!=-1)return value;
 
-        arr[index]= root.val;
         if(index++ == k-1){
-            return arr[k-1];
+            return root.val;
         }
 
         value = kthSmallest(root.right,k);
