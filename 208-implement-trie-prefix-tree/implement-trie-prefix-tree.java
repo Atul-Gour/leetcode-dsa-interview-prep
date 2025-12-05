@@ -1,23 +1,43 @@
 class Trie {
-    HashSet<String> set1 =new HashSet<>();
-    HashSet<String> set2 =new HashSet<>();
+    Trie[] arr;
+    boolean isWord; 
+
     public Trie() {
+        arr = new Trie[26];
+        isWord = false;
     }
     
     public void insert(String word) {
-        set1.add(word);
-        for(int i=0;i<word.length();i++){
-            set2.add(word.substring(0,i+1));
+        Trie temp = this;
+        for(char ch: word.toCharArray()){
+            if(temp.arr[ch-'a']==null){
+                temp.arr[ch-'a']=new Trie();
+            }
+            temp = temp.arr[ch-'a'];
         }
-        return;
+        temp.isWord=true;
     }
     
     public boolean search(String word) {
-        return set1.contains(word);
+        Trie temp = this;
+        for(char ch:word.toCharArray()){
+            if(temp.arr[ch-'a']==null){
+                return false;
+            }
+            temp = temp.arr[ch-'a'];
+        }
+        return temp.isWord;
     }
     
     public boolean startsWith(String prefix) {
-        return set2.contains(prefix);
+        Trie temp = this;
+        for(char ch:prefix.toCharArray()){
+            if(temp.arr[ch-'a']==null){
+                return false;
+            }
+            temp = temp.arr[ch-'a'];
+        }
+        return true;        
     }
 }
 
