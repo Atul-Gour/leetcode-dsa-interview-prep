@@ -29,7 +29,6 @@ class Solution {
 
         arr[index]= root.val;
         if(index++ == k-1){
-            Arrays.sort(arr);
             return arr[k-1];
         }
 
