@@ -1,68 +1,86 @@
 class Node {
     int val;
-    Node next, prev;
+    Node next;
+    Node prev;
 
-    Node(int v) { val = v; }
+    Node(int val) {
+        this.val = val;
+    }
 }
-
 class MedianFinder {
+    Node head;
+    int n=0;
+    Node middle;
 
-    Node head = null;
-    Node middle = null;
-    int n = 0;
+    public MedianFinder() {
+        head= null;
+        middle = head;
+    }
 
-    public MedianFinder() {}
+    void add(Node newNode){
+        Node temp = head;
+        Boolean isMiddle = false;
+        if(newNode.val >= middle.val){
+            temp=middle;
+            isMiddle = true;
+        }
 
-    // Insert into sorted DLL
-    private void insert(int num) {
+        while(temp.next != null && newNode.val>temp.next.val){
+            temp=temp.next;
+        }
+        newNode.next= temp.next;
+        newNode.prev= temp;
+        temp.next = newNode;
+        if(newNode.next!=null)newNode.next.prev = newNode;
+        if(isMiddle){
+            if(n%2==0)middle= middle.next;
+        }else{
+            if(n%2==0)return;
+            middle= middle.prev;
+        }
+
+    }
+    
+    public void addNum(int num) {
         Node newNode = new Node(num);
 
         if (head == null) {
-            head = middle = newNode;
-            n = 1;
+            newNode.next = head;
+            head = newNode;
+            middle=head;
+            n++;
             return;
-        }
-
-        // Insert at beginning
-        if (num < head.val) {
+        }else if(num< head.val){
             newNode.next = head;
             head.prev = newNode;
-            head = newNode;
-
-            if (n % 2 == 1) middle = middle.prev;  // size increases from odd → even
+            head= newNode;
+            if(n%2!=0)middle = middle.prev;
             n++;
             return;
         }
-
-        Node temp = head;
-
-        // Move to correct spot
-        while (temp.next != null && temp.next.val <= num) {
-            temp = temp.next;
+        else {
+            add(newNode);
+            n++;
         }
-
-        newNode.next = temp.next;
-        newNode.prev = temp;
-        if (temp.next != null) temp.next.prev = newNode;
-        temp.next = newNode;
-
-        // Fix middle pointer after insertion
-        if (num < middle.val) {
-            if (n % 2 == 1) middle = middle.prev;
-        } else {
-            if (n % 2 == 0) middle = middle.next;
-        }
-
-        n++;
     }
-
-    public void addNum(int num) {
-        insert(num);
-    }
-
+    
     public double findMedian() {
-        if (n % 2 == 1) return middle.val;
-
-        return (middle.val + middle.next.val) / 2.0;
+        double median =0;
+        if(n%2!=0){
+            median = middle.val;
+        }else{
+            
+            int a= middle.val;
+            int b= middle.next.val;
+            median = (b+a)/2.0;
+        }
+        return median;
     }
 }
+
+/**
+ * Your MedianFinder object will be instantiated and called as such:
+ * MedianFinder obj = new MedianFinder();
+ * obj.addNum(num);
+ * double param_2 = obj.findMedian();
+ */
