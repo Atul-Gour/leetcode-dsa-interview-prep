@@ -4,7 +4,7 @@ BEGIN
         RETURN QUERY SELECT NULL::INT;
         RETURN;
     END IF;
-    
+
   RETURN QUERY (
     SELECT s.salary
     FROM (
@@ -16,3 +16,5 @@ BEGIN
   );
 END;
 $$ LANGUAGE plpgsql;
+
+--G1_23BCS11181_Atul Kumar Gour_SESSION1
