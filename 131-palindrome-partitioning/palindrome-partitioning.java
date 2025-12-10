@@ -1,7 +1,11 @@
 class Solution {
     boolean isSubstring(String s, int left, int right) {
-        StringBuilder sb = new StringBuilder(s.substring(left, right + 1));
-        return (sb.toString()).equals(sb.reverse().toString());
+        while (left < right) {
+            if (s.charAt(left) != s.charAt(right)) return false;
+            left++;
+            right--;
+        }
+        return true;
     }
 
     void find( HashMap<Integer , ArrayList<Integer>> map , List<List<String>> ans , List<String> curr , int index , String s){
