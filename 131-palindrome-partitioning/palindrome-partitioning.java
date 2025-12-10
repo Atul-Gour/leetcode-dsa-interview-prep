@@ -38,7 +38,6 @@ class Solution {
                 }
             }
         }
-        System.out.print(map);
         find ( map , ans , new ArrayList<>() , 0 , s );
         return ans;
     }
