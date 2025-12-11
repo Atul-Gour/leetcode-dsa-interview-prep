@@ -1,43 +1,26 @@
 class Solution {
-    static int checked = 0;
-    static ArrayList<Integer> ans;
-
-    static void check(int n , int k , int index , boolean[] visited , ArrayList<Integer> list){
-        if(ans != null)return; 
-
-        if(index == n){
-            if(checked == k-1) ans = new ArrayList<>(list);
-            else checked++;
-
-            return;
-        }
-
-        for(int i = 1 ; i <= n ; i++){
-            if(visited[i])continue;
-
-            visited[i] = true;
-
-            list.add(i);
-            check(n , k , index + 1 , visited , list);
-            list.remove(list.size() - 1);
-            visited[i] = false;
-        }
-    }
-
     public String getPermutation(int n, int k) {
-        check(n , k , 0 , new boolean[n+1] , new ArrayList<>());
+        int[] fact = new int[n];
+        fact[0] = 1;
+        for (int i = 1; i < n; i++) {
+            fact[i] = fact[i-1] * i;
+        }
+
+        List<Integer> nums = new ArrayList<>();
+        for (int i = 1; i <= n; i++) nums.add(i);
+
+        k--;
 
         StringBuilder sb = new StringBuilder();
 
-        for (Object x : ans) {
-            sb.append(x);
+        for (int i = n - 1; i >= 0; i--) {
+            int index = k / fact[i];  
+            sb.append(nums.get(index));
+            nums.remove(index);
+
+            k = k % fact[i];         
         }
 
-        String result = sb.toString();
-
-        ans = null;
-        checked= 0;
-        
-        return result;
+        return sb.toString();
     }
 }
