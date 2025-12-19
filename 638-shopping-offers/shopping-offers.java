@@ -1,6 +1,7 @@
 class Solution {
     static int shopping(List<Integer> price, List<List<Integer>> special, List<Integer> needs , Map<List<Integer>, Integer> memo){
 
+        List<Integer> key = new ArrayList<>(needs);
         if (memo.containsKey(needs)) return memo.get(needs);
 
 
@@ -33,7 +34,7 @@ class Solution {
                 needs.set(i, needs.get(i) + curr.get(i));
             }
         }
-        memo.put(needs, ans);
+        memo.put(key, ans);
         return ans;
     }
     public int shoppingOffers(List<Integer> price, List<List<Integer>> special, List<Integer> needs) {
