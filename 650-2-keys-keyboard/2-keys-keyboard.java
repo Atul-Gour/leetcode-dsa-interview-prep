@@ -1,5 +1,5 @@
 class Solution {
-    static int GCD (int n ){
+    static int greatestProperDivisor (int n ){
         if(n <= 1)return 1;
 
         for(int i = 2 ; i*i <= n ;i++ ){
@@ -12,7 +12,7 @@ class Solution {
         dp[1] = 0;
 
         for(int i = 2 ;i <= n ;i++ ){
-            int used = GCD(i);
+            int used = greatestProperDivisor(i);
             dp[i] = dp[used] + i/used;
         }
         return dp[n];
