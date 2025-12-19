@@ -1,30 +1,28 @@
-import java.util.*;
-
 class Solution {
-    boolean calculate(int currSum, int targetSum, int index, int[] nums, Set<String> memo){
-        if(currSum == targetSum) return true;
-        if(currSum > targetSum || index >= nums.length) return false;
-
-        String key = currSum + "," + index;
-        if(memo.contains(key)) return false;  // already visited
-
-        // Option 1: take current element
-        if(calculate(currSum + nums[index], targetSum, index + 1, nums, memo)) return true;
-
-        // Option 2: skip current element
-        if(calculate(currSum, targetSum, index + 1, nums, memo)) return true;
-
-        memo.add(key);
-        return false;
-    }
-
-    public boolean canPartition(int[] nums){
+    public boolean canPartition(int[] arr) {
+        int n = arr.length;
         int sum = 0;
-        for(int num : nums) sum += num;
+        for(int i: arr) sum+=i;
+        if(sum % 2 != 0)return false;
 
-        if(sum % 2 != 0) return false;
+        sum /= 2;
+        if(arr[0]>sum)return false;
+        boolean dp[][] = new boolean[n][ sum + 1 ];
 
-        Set<String> memo = new HashSet<>();
-        return calculate(0, sum / 2, 0, nums, memo);
+        dp[0][0] = true;
+        dp[0][arr[0]] = true;
+
+        for(int i = 1 ; i < n ;i++){
+            for(int j = 0 ; j <= sum ; j++){
+                boolean notTake = dp[i-1][j];
+                boolean take = false;
+
+                if(arr[i]<=j){
+                    take = dp[i-1][j - arr[i]];
+                }
+                dp[i][j] = take || notTake;
+            }
+        }
+        return dp[n-1][sum];
     }
 }
