@@ -2,7 +2,7 @@ class Solution {
     static int shopping(List<Integer> price, List<List<Integer>> special, List<Integer> needs , Map<List<Integer>, Integer> memo){
 
         List<Integer> key = new ArrayList<>(needs);
-        if (memo.containsKey(needs)) return memo.get(needs);
+        if (memo.containsKey(key)) return memo.get(key);
 
 
         int n = needs.size();
@@ -38,20 +38,6 @@ class Solution {
         return ans;
     }
     public int shoppingOffers(List<Integer> price, List<List<Integer>> special, List<Integer> needs) {
-        int n = price.size();
-        for( int i = 0 ;i < n ; i++){
-            List<Integer> curr = new ArrayList<>();
-            for(int j = 0; j< n ; j++){
-                if(j==i){
-                    curr.add(1);
-                    continue;
-                }
-                curr.add(0);
-            }
-            curr.add(price.get(i));
-            special.add(curr);
-        }
-
         return shopping(price , special , needs , new HashMap<>());
     }
 }
