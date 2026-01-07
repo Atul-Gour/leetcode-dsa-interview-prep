@@ -1,70 +1,45 @@
 class Solution {
-
-    void solve ( int[][] grid , int i , int j , int parent){
-
-        
-        int n = grid.length;
-        int m = grid[0].length;
-        
-
-        if(i >= n || j >= m || i < 0 || j < 0 || grid[i][j] == -1 || grid[i][j] <= parent + 1) return;
-
-        
-
-        grid[i][j] = parent + 1;
-
-        solve ( grid , i - 1 , j , grid[i][j] );
-        solve ( grid , i + 1 , j , grid[i][j] );
-        solve ( grid , i , j + 1 , grid[i][j] );
-        solve ( grid , i , j - 1 , grid[i][j] );
-        
-    }
-
     public int orangesRotting(int[][] grid) {
-
-        int n = grid.length;
-        int m = grid[0].length;
+        int n = grid.length, m = grid[0].length;
+        Queue<int[]> q = new LinkedList<>();
         int fresh = 0;
-        ArrayList<List<Integer>> list = new ArrayList<>();
-       
-        
-        for(int i = 0 ; i < n ; i++){
-            for(int j = 0 ; j < m ; j++){
 
-                if(grid[i][j] == 1) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (grid[i][j] == 2) {
+                    q.offer(new int[]{i, j});
+                } else if (grid[i][j] == 1) {
                     fresh++;
-                    grid[i][j] = Integer.MAX_VALUE;
                 }
-                else if(grid[i][j] == 2 ){
-                    grid[i][j] = 0;
-                    list.add( Arrays.asList(i, j) );
-                }
-                else grid[i][j] = -1;
             }
         }
-        if(fresh == 0) return 0;
 
-        if( list.isEmpty() )return -1;
-        
+        if (fresh == 0) return 0;
 
-        for(List<Integer> li : list ){
+        int time = 0;
+        int[][] dir = {{1,0},{-1,0},{0,1},{0,-1}};
 
-            int x = li.get(0);
-            int y = li.get(1);
-            grid[x][y] = 1;
-            solve( grid , x , y , -1);
-        }
+        while (!q.isEmpty()) {
+            int size = q.size();
+            boolean rotted = false;
 
-        int ans = Integer.MIN_VALUE;
+            for (int k = 0; k < size; k++) {
+                int[] cur = q.poll();
+                for (int[] d : dir) {
+                    int ni = cur[0] + d[0];
+                    int nj = cur[1] + d[1];
 
-        for(int i = 0 ; i < n ; i++){
-            for(int j = 0 ; j < m ; j++){
-
-                if(grid[i][j] == Integer.MAX_VALUE)return -1;
-                
-                ans = Math.max( ans , grid[i][j]);
+                    if (ni >= 0 && nj >= 0 && ni < n && nj < m && grid[ni][nj] == 1) {
+                        grid[ni][nj] = 2;
+                        fresh--;
+                        q.offer(new int[]{ni, nj});
+                        rotted = true;
+                    }
+                }
             }
+            if (rotted) time++;
         }
-        return ans;
+
+        return fresh == 0 ? time : -1;
     }
 }
