@@ -9,7 +9,10 @@ class Solution {
     void solve(List<List<String>> ans, boolean col[], boolean[] diag1 ,boolean[] diag2 , int i , List<String> curr){
         int n = col.length;
 
-        if(i >= n)return;
+        if (i == n) {
+            ans.add(new ArrayList<>(curr));
+            return;
+        }
 
         for(int j = 0 ; j < n ; j++){
             if(!canPut(col , diag1 , diag2 , i , j)) continue;
@@ -28,9 +31,6 @@ class Solution {
 
             curr.add(sb.toString());
 
-            if(i == n-1){
-                ans.add(new ArrayList<>(curr));
-            }
             //end of putting
 
             solve(ans , col , diag1 , diag2 , i+1 , curr);
