@@ -13,7 +13,6 @@ class Solution {
         for(int i = n - 1 ; i > 0 ; i--){
             long curr = nums[i];
             
-            // Binary search to find curr (faster than linear search)
             int index = Collections.binarySearch(list, curr, Collections.reverseOrder());
             
             list.remove(index);
@@ -28,7 +27,6 @@ class Solution {
                 continue;
             }
             
-            // Binary search for first element <= toFind
             int left = 0, right = list.size() - 1;
             int pos = -1;
             while(left <= right){
