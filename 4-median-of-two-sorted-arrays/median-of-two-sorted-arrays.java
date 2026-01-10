@@ -1,42 +1,29 @@
 class Solution {
     public double findMedianSortedArrays(int[] nums1, int[] nums2) {
-        int m = nums1.length;
-        int n = nums2.length;
 
-        int size = n + m;
-        boolean isEven = false;
+        int m = nums1.length, n = nums2.length;
+        int total = m + n;
+        int mid = total / 2;
 
-        if(size % 2 == 0){
-            size = size/2 + 1;
-            isEven = true;
-        }else{
-            size = size/2 + 1;
-        }
+        int i = 0, j = 0;
+        int count = 0;
 
-        double[] arr = new double[size];
-        int idx1 = 0, idx2 = 0;
-        int x = 0;
+        int prev = 0, curr = 0;
 
-        while ((x < size) && (idx1 < m) && (idx2 < n)) {
-            if (nums1[idx1] < nums2[idx2]) {
-                arr[x++] = nums1[idx1++];
+        while (count <= mid) {
+            prev = curr;
+
+            if (i < m && (j >= n || nums1[i] <= nums2[j])) {
+                curr = nums1[i++];
             } else {
-                arr[x++] = nums2[idx2++];
+                curr = nums2[j++];
             }
+            count++;
         }
 
-        while ( (x < size) && (idx1 < m)) {
-            arr[x++] = nums1[idx1++];
+        if (total % 2 == 0) {
+            return (prev + curr) / 2.0;
         }
-
-        while ((x < size) && (idx2 < n)) {
-            arr[x++] = nums2[idx2++];
-        }
-
-        if (isEven) {
-            return (arr[size - 1] + arr[size - 2]) / 2;
-        } else {
-            return (arr[size - 1]);
-        }
+        return curr;
     }
 }
