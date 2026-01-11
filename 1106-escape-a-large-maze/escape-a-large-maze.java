@@ -1,41 +1,49 @@
 class Solution {
-    Set<String> blockedSet = new HashSet<>();
-    int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}};
-    final int LIMIT = 200;
+    static final int LIMIT = 1_000_000;
+    static final int[][] DIR = {{1,0},{-1,0},{0,1},{0,-1}};
+    Set<Long> blocked = new HashSet<>();
 
-    public boolean isEscapePossible(int[][] blocked, int[] source, int[] target) {
-        for (int[] b : blocked)
-            blockedSet.add(b[0] + "," + b[1]);
-
-        int maxArea = blocked.length * blocked.length;
-        return bfs(source, target, maxArea) && bfs(target, source, maxArea);
+    long encode(int x, int y) {
+        return ((long)x << 20) | y;
     }
 
-    private boolean bfs(int[] start, int[] end, int maxArea) {
-        Set<String> visited = new HashSet<>();
-        Queue<int[]> queue = new LinkedList<>();
-        queue.offer(start);
-        visited.add(start[0] + "," + start[1]);
+    public boolean isEscapePossible(int[][] blockedCells, int[] source, int[] target) {
+        for (int[] b : blockedCells) {
+            blocked.add(encode(b[0], b[1]));
+        }
+
+        int max = blockedCells.length * blockedCells.length;
+
+        return bfs(source, target, max) && bfs(target, source, max);
+    }
+
+    boolean bfs(int[] start, int[] end, int max) {
+        Set<Long> vis = new HashSet<>();
+        ArrayDeque<int[]> q = new ArrayDeque<>();
+
+        q.add(start);
+        vis.add(encode(start[0], start[1]));
 
         int count = 0;
 
-        while (!queue.isEmpty()) {
-            int[] curr = queue.poll();
-            if (curr[0] == end[0] && curr[1] == end[1]) return true;
-            if (++count > maxArea) return true;
+        while (!q.isEmpty()) {
+            int[] cur = q.poll();
+            if (cur[0] == end[0] && cur[1] == end[1]) return true;
+            if (++count > max) return true;
 
-            for (int[] dir : dirs) {
-                int nx = curr[0] + dir[0];
-                int ny = curr[1] + dir[1];
-                String pos = nx + "," + ny;
-                if (nx >= 0 && ny >= 0 && nx < 1e6 && ny < 1e6 && 
-                    !blockedSet.contains(pos) && !visited.contains(pos)) {
-                    queue.offer(new int[]{nx, ny});
-                    visited.add(pos);
-                }
+            for (int[] d : DIR) {
+                int nx = cur[0] + d[0];
+                int ny = cur[1] + d[1];
+
+                if (nx < 0 || ny < 0 || nx >= LIMIT || ny >= LIMIT) continue;
+
+                long key = encode(nx, ny);
+                if (blocked.contains(key) || vis.contains(key)) continue;
+
+                vis.add(key);
+                q.add(new int[]{nx, ny});
             }
         }
-
         return false;
     }
 }
