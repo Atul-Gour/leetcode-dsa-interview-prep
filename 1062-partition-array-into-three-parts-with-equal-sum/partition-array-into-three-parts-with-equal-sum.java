@@ -32,7 +32,7 @@ class Solution {
 
             for(int i : iList){
                 for(int j : jList){
-                    if(i >= j-1 || j < 2 || i >= n-2)continue;
+                    if(i >= j-1 || j < 2 || i >= n-2)break;
                     if(pre[j-1] - pre[i] == key)return true;
                 }
             }
