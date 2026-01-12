@@ -1,6 +1,6 @@
 class Pair {
     TreeNode node;
-    long index;   // use long to avoid overflow
+    long index;
 
     Pair(TreeNode node, long index) {
         this.node = node;
@@ -19,12 +19,13 @@ class Solution {
 
         while (!q.isEmpty()) {
             int size = q.size();
+            long min = q.peek().index;
 
             long first = 0, last = 0;
 
             for (int i = 0; i < size; i++) {
                 Pair p = q.poll();
-                long idx = p.index;
+                long idx = p.index - min;
 
                 if (i == 0) first = idx;
                 if (i == size - 1) last = idx;
