@@ -1,42 +1,23 @@
 class Solution {
     public boolean canThreePartsEqualSum(int[] arr) {
-        int n = arr.length;
-        if(n < 3)return false;
+        int total = 0;
+        for (int x : arr) total += x;
 
-        int pre[] = new int[n];
+        if (total % 3 != 0) return false;
 
-        HashMap<Integer , ArrayList<Integer>> map1 = new HashMap<>(); 
-        HashMap<Integer , ArrayList<Integer>> map2 = new HashMap<>();
+        int target = total / 3;
+        int curr = 0;
+        int count = 0;
 
-        pre[0] = arr[0];
-        map1.computeIfAbsent(pre[0] , f -> new ArrayList<>()).add(0);
+        for (int i = 0; i < arr.length; i++) {
+            curr += arr[i];
 
-        for(int i = 1 ; i < n ; i++){
-            pre[i] = pre[i-1] + arr[i];
-            map1.computeIfAbsent(pre[i] , f -> new ArrayList<>()).add(i);
-        }
-
-        map2.computeIfAbsent(arr[n-1] , f -> new ArrayList<>()).add(n-1);
-
-        int sum = arr[n-1];
-
-        for(int i = n-2 ; i>=0 ; i--){
-            sum += arr[i];
-            map2.computeIfAbsent(sum , f -> new ArrayList<>()).add(i);
-        }
-
-        for(int key : map1.keySet()){
-            if(!map2.containsKey(key)) continue;
-            ArrayList<Integer> iList = map1.get(key);
-            ArrayList<Integer> jList = map2.get(key);
-
-            for(int i : iList){
-                for(int j : jList){
-                    if(i >= j-1 || j < 2 || i >= n-2)break;
-                    if(pre[j-1] - pre[i] == key)return true;
-                }
+            if (curr == target) {
+                count++;
+                curr = 0;
             }
         }
-        return false;
+
+        return count >= 3;
     }
 }
