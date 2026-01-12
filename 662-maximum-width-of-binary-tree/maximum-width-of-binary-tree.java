@@ -1,82 +1,44 @@
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
-class MyNode {
+class Pair {
     TreeNode node;
-    int index;
+    long index;   // use long to avoid overflow
 
-    MyNode(TreeNode node, int index) {
+    Pair(TreeNode node, long index) {
         this.node = node;
         this.index = index;
     }
 }
 
 class Solution {
-
-    int ans = 1;
-
     public int widthOfBinaryTree(TreeNode root) {
-        Queue<MyNode> q = new LinkedList<>();
-        if (root.left != null)
-            q.offer(new MyNode(root.left, -1));
-        if (root.right != null)
-            q.offer(new MyNode(root.right, 1));
+        if (root == null) return 0;
+
+        Queue<Pair> q = new LinkedList<>();
+        q.offer(new Pair(root, 0));
+
+        int ans = 0;
 
         while (!q.isEmpty()) {
-            int n = q.size();
+            int size = q.size();
 
-            int start = 0;
-            int end = 0;
+            long first = 0, last = 0;
 
-            for (int i = 0; i < n; i++) {
+            for (int i = 0; i < size; i++) {
+                Pair p = q.poll();
+                long idx = p.index;
 
-                MyNode myCurr = q.poll();
+                if (i == 0) first = idx;
+                if (i == size - 1) last = idx;
 
-                TreeNode curr = myCurr.node;
-                int ind = myCurr.index;
+                if (p.node.left != null)
+                    q.offer(new Pair(p.node.left, 2 * idx));
 
-                if (i == 0)
-                    start = ind;
-                if (i == n - 1)
-                    end = ind;
-
-                if (ind < 0) {
-                    if (curr.left != null)
-                        q.offer(new MyNode(curr.left, 2 * ind));
-                    if (curr.right != null)
-                        q.offer(new MyNode(curr.right, (2 * ind) + 1));
-                } else {
-                    if (curr.left != null)
-                        q.offer(new MyNode(curr.left, (2 * ind) - 1));
-                    if (curr.right != null)
-                        q.offer(new MyNode(curr.right, (2 * ind)));
-                }
+                if (p.node.right != null)
+                    q.offer(new Pair(p.node.right, 2 * idx + 1));
             }
 
-            int len;
-
-            if (end > 0 && start > 0)
-                len = end - start + 1;
-            else if (end < 0 && start < 0)
-                len = Math.abs(start - end) + 1;
-            else
-                len = end - start;
-
-            ans = Math.max(ans, len);
-
+            ans = Math.max(ans, (int)(last - first + 1));
         }
+
         return ans;
     }
 }
