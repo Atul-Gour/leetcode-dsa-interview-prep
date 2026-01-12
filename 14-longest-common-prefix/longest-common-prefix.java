@@ -1,53 +1,26 @@
-class TrieNode {
-    TrieNode[] child = new TrieNode[26];
-    boolean isEnd;
-}
-
 class Solution {
-
-    void insert(String word, TrieNode root) {
-        TrieNode cur = root;
-        for (char c : word.toCharArray()) {
-            int idx = c - 'a';
-            if (cur.child[idx] == null)
-                cur.child[idx] = new TrieNode();
-            cur = cur.child[idx];
-        }
-        cur.isEnd = true;
-    }
-
-    String getLCP(TrieNode root) {
-        StringBuilder sb = new StringBuilder();
-        TrieNode cur = root;
-
-        while (true) {
-            int count = 0;
-            int next = -1;
-
-            for (int i = 0; i < 26; i++) {
-                if (cur.child[i] != null) {
-                    count++;
-                    next = i;
-                }
-            }
-
-            if (count != 1 || cur.isEnd)
-                break;
-
-            sb.append((char) (next + 'a'));
-            cur = cur.child[next];
-        }
-
-        return sb.toString();
-    }
-
     public String longestCommonPrefix(String[] strs) {
-        TrieNode root = new TrieNode();
+         if (strs == null || strs.length == 0) return "";
 
-        for (String s : strs) {
-            insert(s, root);
+        String prefix = strs[0];
+
+        for (int i = 1; i < strs.length; i++) {
+            prefix = commonPrefix(prefix, strs[i]);
+
+            if (prefix.length() == 0) return "";
         }
 
-        return getLCP(root);
+        return prefix;
+    }
+
+    private String commonPrefix(String a, String b) {
+        int min = Math.min(a.length(), b.length());
+        int i = 0;
+
+        while (i < min && a.charAt(i) == b.charAt(i)) {
+            i++;
+        }
+
+        return a.substring(0, i);
     }
 }
