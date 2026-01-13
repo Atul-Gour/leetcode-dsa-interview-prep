@@ -1,7 +1,7 @@
 class TreeAncestor {
 
     int[][] parent;
-    int LOG = 20;
+    int LOG = 17;
 
     public TreeAncestor(int n, int[] p) {
         parent = new int[n][LOG];
