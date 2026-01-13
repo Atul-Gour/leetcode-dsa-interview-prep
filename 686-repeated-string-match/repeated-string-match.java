@@ -1,45 +1,55 @@
-import java.math.BigInteger;
-
 class Solution {
-    public boolean check(int index, String A, String B) {
-        for (int i = 0; i < B.length(); i++) {
-            if (A.charAt((i + index) % A.length()) != B.charAt(i)) {
-                return false;
-            }
-        }
-        return true;
-    }
-    public int repeatedStringMatch(String A, String B) {
-        int q = (B.length() - 1) / A.length() + 1;
-        int p = 113, MOD = 1_000_000_007;
-        int pInv = BigInteger.valueOf(p).modInverse(BigInteger.valueOf(MOD)).intValue();
 
-        long bHash = 0, power = 1;
-        for (int i = 0; i < B.length(); i++) {
-            bHash += power * B.codePointAt(i);
-            bHash %= MOD;
-            power = (power * p) % MOD;
-        }
+    static final long MOD = 1000000007;
+    static final long BASE = 31;
 
-        long aHash = 0; power = 1;
-        for (int i = 0; i < B.length(); i++) {
-            aHash += power * A.codePointAt(i % A.length());
-            aHash %= MOD;
-            power = (power * p) % MOD;
-        }
+    public int repeatedStringMatch(String a, String b) {
 
-        if (aHash == bHash && check(0, A, B)) return q;
-        power = (power * pInv) % MOD;
+        int n = a.length();
+        int m = b.length();
 
-        for (int i = B.length(); i < (q + 1) * A.length(); i++) {
-            aHash -= A.codePointAt((i - B.length()) % A.length());
-            aHash *= pInv;
-            aHash += power * A.codePointAt(i % A.length());
-            aHash %= MOD;
-            if (aHash == bHash && check(i - B.length() + 1, A, B)) {
-                return i < q * A.length() ? q : q + 1;
-            }
-        }
+        int k = (m + n - 1) / n;
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < k + 2; i++) sb.append(a);
+
+        String big = sb.toString();
+
+        if (rabinKarp(big.substring(0, k * n), b)) return k;
+        if (rabinKarp(big.substring(0, (k + 1) * n), b)) return k + 1;
+        if (rabinKarp(big.substring(0, (k + 2) * n), b)) return k + 2;
+
         return -1;
+    }
+
+    private boolean rabinKarp(String text, String pat) {
+        int n = text.length();
+        int m = pat.length();
+
+        if (m > n) return false;
+
+        long patHash = 0;
+        long windowHash = 0;
+        long power = 1;
+
+        for (int i = 0; i < m; i++) {
+            patHash = (patHash * BASE + pat.charAt(i)) % MOD;
+            windowHash = (windowHash * BASE + text.charAt(i)) % MOD;
+            if (i > 0) power = (power * BASE) % MOD;
+        }
+
+        if (patHash == windowHash && text.substring(0, m).equals(pat))
+            return true;
+
+        for (int i = m; i < n; i++) {
+            windowHash = (windowHash - (text.charAt(i - m) * power) % MOD + MOD) % MOD;
+            windowHash = (windowHash * BASE + text.charAt(i)) % MOD;
+
+            if (windowHash == patHash) {
+                if (text.substring(i - m + 1, i + 1).equals(pat))
+                    return true;
+            }
+        }
+        return false;
     }
 }
