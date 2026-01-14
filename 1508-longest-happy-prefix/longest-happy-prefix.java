@@ -28,7 +28,7 @@ class Solution {
             }
         }
 
-        return index == -1 ? "": s.substring(index , index + maxLength);
+        return index == -1 ? "": s.substring(0, maxLength);
 
     }
 }
