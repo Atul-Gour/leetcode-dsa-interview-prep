@@ -26,12 +26,11 @@ class Solution {
                 }
             }
         }
-        int min = Integer.MIN_VALUE;
-        for(int j = 0 ; j <= target ; j++){
+        for(int j = target ; j >= 0 ; j--){
             if(dp[n-1][j]){
-                min = Math.max( min , j);
+                return Math.abs(total - j - j);
             }
         }
-        return Math.abs(total - min - min);
+        return 0;
     }
 }
