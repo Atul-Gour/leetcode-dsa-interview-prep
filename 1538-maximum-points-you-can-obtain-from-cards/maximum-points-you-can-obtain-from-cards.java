@@ -2,23 +2,22 @@ class Solution {
     public int maxScore(int[] nums, int k) {
 
         int n = nums.length;
-        int ans = 0;
+        int lSum = 0;
+        int rSum = 0;
 
-        int[] dp1 = new int[k + 1];
-        int[] dp2 = new int[k + 1];
-
-        for(int i = 1 ; i <= k ; i++ ){
-            dp1[i] = nums[i - 1] + dp1[i-1];
+        for(int i = 0 ; i < k ; i++ ){
+            lSum += nums[i];
         }
-
+        
+        int ans = lSum;
         int index = n-1;
-        for(int i = 1; i <= k ; i++){
-            dp2[i] = nums[index] + dp2[i - 1];
-            index--;
-        }
+        for(int i = k-1; i >=0 ; i--){
+            
+            rSum += nums[index];
+            lSum -= nums[i];
 
-        for(int i = 0 ; i <= k ; i++ ){
-            ans = Math.max(ans , dp1[i] + dp2[k - i]);
+            ans = Math.max(ans , rSum + lSum);
+            index--;
         }
 
         return ans;        
