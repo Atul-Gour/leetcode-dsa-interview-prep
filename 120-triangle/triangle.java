@@ -1,10 +1,5 @@
 class Solution {
 
-    private boolean ifPossible(int i , int j){
-        if(j < 0 || j > i)return false;
-        else return true;
-    }
-
     public int minimumTotal(List<List<Integer>> list) {
         int ans = 0;
         int n = list.size();
@@ -27,11 +22,11 @@ class Solution {
             for(int j = 0 ; j <= i ; j++){
 
                 newJ = j-1;
-                if(ifPossible(newI , newJ))
+                if(newJ <= newI && newJ >= 0)
                     dp[newI][newJ] = Math.min( dp[newI][newJ] , list.get(newI).get(newJ) + dp[i][j]);
 
                 newJ = j;
-                if(ifPossible(newI , newJ))
+                if(newJ <= newI && newJ >= 0)
                     dp[newI][newJ] = Math.min( dp[newI][newJ] , list.get(newI).get(newJ) + dp[i][j]);
                 
             }
