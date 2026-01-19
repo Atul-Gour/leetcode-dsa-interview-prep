@@ -1,6 +1,7 @@
 class Solution {
     public int numberOfSubstrings(String s) {
         int n =  s.length();
+        if(n < 3)return 0;
         int arr[] = new int[3];
         int ans = 0;
         int j = 0;
@@ -8,6 +9,7 @@ class Solution {
         
         for(int i = 0 ; i < n ; i++ ){
             // System.out.println( "chechking " + i );
+            if( n > 2 && i == n-2 )return ans;
             
             while(unique != 3 && j < n){
                 int curr = s.charAt(j) - 'a';
