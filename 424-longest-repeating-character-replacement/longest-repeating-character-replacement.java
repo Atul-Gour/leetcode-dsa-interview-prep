@@ -12,7 +12,7 @@ class Solution {
             alphabet[c - 'A']++;
             maxFreq = Math.max(maxFreq, alphabet[c - 'A']);
 
-            while ((right - left + 1) - maxFreq > k) {
+            if ((right - left + 1) - maxFreq > k) {
                 alphabet[s.charAt(left) - 'A']--;
                 left++;
             }
