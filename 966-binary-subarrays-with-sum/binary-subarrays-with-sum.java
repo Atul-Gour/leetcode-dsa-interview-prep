@@ -1,49 +1,25 @@
 class Solution {
-    public int numSubarraysWithSum(int[] nums, int goal) {
-        int n = nums.length;
-        int currSum = 0;
-        int count = 0;
-        int l = 0;
-        int a = -1;
-        int r = 0;
 
-        if(goal == 0){
+    private int countAtMost(int[] nums, int k) {
+        if (k < 0) return 0;
 
-            while(r < n ){
-                while(l < n && nums[l] == 1 )l++;
+        int left = 0, sum = 0, count = 0;
 
-                r = l;
-                while(r < n && nums[r] == 0 )r++;
-                int total = r - l ;
-                count += ( (total + 1) * total ) / 2;
-                l = r;
+        for (int right = 0; right < nums.length; right++) {
+            sum += nums[right];
+
+            while (sum > k) {
+                sum -= nums[left];
+                left++;
             }
 
-            return count;
+            count += (right - left + 1);
         }
-        
 
-        for(r = 0 ; r < n ;r++){
-            currSum += nums[r];
-
-            if(currSum == goal && a == -1){
-                a = r;
-            }
-
-            if(r + 1 < n && currSum + nums[ r + 1 ] <= goal){
-                continue;
-            }
-            else{
-                if(a == -1 )a = r;
-                while( l < n && currSum == goal ){
-                    count += (r - a + 1);
-                    currSum -= nums[l];
-                    l++;
-                }
-                a = -1;
-            }
-        }
-        
         return count;
-    }   
+    }
+
+    public int numSubarraysWithSum(int[] nums, int goal) {
+        return countAtMost(nums, goal) - countAtMost(nums, goal - 1);
+    }
 }
