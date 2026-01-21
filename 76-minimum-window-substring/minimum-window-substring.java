@@ -1,30 +1,36 @@
 class Solution {
     public String minWindow(String s, String t) {
-        if (s.length() < t.length()) return "";
-
-        int[] need = new int[128];
-        for (char c : t.toCharArray()) need[c]++;
-
-        int required = t.length();
-        int left = 0, minStart = 0, minLen = Integer.MAX_VALUE;
-
-        for (int right = 0; right < s.length(); right++) {
-            if (need[s.charAt(right)] > 0) required--;
-            need[s.charAt(right)]--;
-
-            while (required == 0) {
-                if (right - left + 1 < minLen) {
-                    minLen = right - left + 1;
-                    minStart = left;
-                }
-
-                need[s.charAt(left)]++;
-                if (need[s.charAt(left)] > 0) required++;
-
-                left++;
-            }
+        int target[] = new int[128];
+        for( char c : t.toCharArray()){
+            target[c]++;
         }
 
-        return minLen == Integer.MAX_VALUE ? "" : s.substring(minStart, minStart + minLen);
+        int current[] = new int[128];
+        int length = 0;
+        int n = s.length();
+        int ansLength = Integer.MAX_VALUE;
+        int start = -1;
+        int l = 0;
+
+        for(int r = 0 ; r < n ; r++){
+            char ch = s.charAt(r);
+            current[ch]++;
+
+            if( target[ch] > 0 && target[ch] >= current[ch] )length++;
+
+            while( length == t.length() ){
+                if( r - l + 1 < ansLength ){
+                    ansLength = r - l + 1;
+                    start = l;
+                }
+                char leftCh = s.charAt(l);
+
+                if( target[leftCh] > 0 && current[leftCh] <= target[leftCh] ) length--;
+
+                current[leftCh]--;
+                l++;
+            }
+        }
+        return ansLength == Integer.MAX_VALUE ? "" : s.substring(start , start + ansLength );
     }
 }
