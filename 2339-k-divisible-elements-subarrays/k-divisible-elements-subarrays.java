@@ -6,7 +6,7 @@ class Solution {
         for (int i = 0; i < n; i++) {
             int cnt = 0;
             long hash = 0;
-            long base = 200001;  
+            long base = 201;
 
             for (int j = i; j < n; j++) {
                 if (nums[j] % p == 0) cnt++;
