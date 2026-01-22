@@ -1,18 +1,32 @@
+class Node {
+    int val;
+    int killed;
+
+    Node(int value, int kill) {
+        this.val = value;
+        this.killed = kill;
+    }
+}
+
 class StockSpanner {
-    Stack<int[]> stack ;
+
+    Stack<Node> st;
 
     public StockSpanner() {
-        stack = new Stack<>();
+        st = new Stack<>();
     }
-    
+
     public int next(int price) {
-        int curr = 1;
-        while(!stack.isEmpty() && stack.peek()[0] <= price ){
-            curr += stack.peek()[1];
-            stack.pop();
+        int kill = 1;
+
+        while( !st.isEmpty() && st.peek().val <= price ){
+            kill += st.pop().killed;
         }
-        stack.push(new int[]{price , curr});
-        return curr;
+
+        st.push( new Node( price , kill ) );
+
+        return kill;
+
     }
 }
 
