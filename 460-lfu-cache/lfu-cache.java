@@ -1,113 +1,117 @@
-
 class Node{
     int key , val;
-    Node prev;
-    Node next;
-    Node(int key , int val){
-        this.key = key ;
+    Node prev , next;
+
+    Node( int key , int val ){
+        this.key = key;
         this.val = val;
     }
 }
-class DLL {
-    Node head, tail;
 
-    DLL() {
-        head = new Node(0, 0);
-        tail = new Node(0, 0);
-        head.next = tail;
-        tail.prev = head;
+class DDL{
+    Node tail , head ;
+
+    DDL(){
+        this.tail = null;
+        this.head = null;
     }
 
-    void addFirst(Node node) {
-        node.next = head.next;
-        node.prev = head;
-        head.next.prev = node;
-        head.next = node;
+    void addAtLast(Node node){
+        if(tail == null){
+            tail = node;
+            head = node;
+        }else{
+            tail.next = node;
+            node.prev = tail;
+            tail = node;
+        }
     }
 
-    void remove(Node node) {
-        node.prev.next = node.next;
-        node.next.prev = node.prev;
+    void removeAtHead(){
+        if(head == tail){
+            head = null;
+            tail = null;
+        }else{
+            head = head.next;
+            if(head != null)head.prev = null;
+        }
     }
 
-    boolean isEmpty() {
-        return head.next == tail;
+    void remove(Node node){
+        if( head == node || head == null ){
+            removeAtHead();
+        }else if(tail == node) {
+            tail.prev.next = null;
+            tail = tail.prev;
+        }else{
+            node.next.prev = node.prev;
+            node.prev.next = node.next;
+        }
     }
-
-    Node removeLast() {
-        if (isEmpty()) return null;
-        Node node = tail.prev;
-        remove(node);
-        return node;
-    }
+    
 }
 
-
 class LFUCache {
-    
-    TreeMap<Integer , DLL> map1 = new TreeMap<>();
-    HashMap<Integer , Node> map2 = new HashMap<>();
-    HashMap<Integer , Integer> map3 = new HashMap<>();
-    int capacity;
+
+    HashMap<Integer , Node> keyNode;
+    HashMap<Integer , Integer> keyFreq;
+    TreeMap<Integer , DDL> map ;
+    int capacity ;
 
     public LFUCache(int capacity) {
         this.capacity = capacity;
+        this.keyNode = new HashMap<>();
+        this.keyFreq = new HashMap<>();
+        this.map = new TreeMap<>();
     }
     
     public int get(int key) {
-        if(!map2.containsKey(key))return -1;
+        if( keyNode.containsKey( key )){
 
-        int frequency = map3.get(key);
-        Node node = map2.get(key);
+            Node curr = keyNode.get( key );
+            put( key , curr.val );
+            return curr.val;
 
-        DLL currentDll = map1.get(frequency);
-        currentDll.remove(node);
-
-        if(currentDll.isEmpty()){
-            map1.remove(frequency);
         }
-
-        frequency++;
-        map1.computeIfAbsent(frequency, f -> new DLL()).addFirst(node);
-        map3.put(key , frequency);
-
-        return node.val;
+        else return -1;
     }
     
     public void put(int key, int value) {
-        if(map2.containsKey(key)){
-            Node node = map2.get(key);
-            node.val = value;
+        if( keyNode.containsKey( key )){
+            Node curr = keyNode.get( key );
+            curr.val = value;
+            int currFreq = keyFreq.get( key );
+            DDL currDdl = map.get( currFreq );
+            currDdl.remove( curr );
+            if(currDdl.head == null) map.remove(currFreq);
 
-            int frequency = map3.get(key);
-
-            DLL currentDll = map1.get(frequency);
-            currentDll.remove(node);
-
-            if(currentDll.isEmpty()){
-                map1.remove(frequency);
-            }
-
-            frequency++;
-            map1.computeIfAbsent(frequency, f -> new DLL()).addFirst(node);
-            map3.put(key , frequency);
+            keyFreq.put( key , currFreq + 1 );
+            map.computeIfAbsent( currFreq + 1 , f -> new DDL() ).addAtLast(curr);
         }else{
-            if(map2.size() == capacity){
-                int toDeleteFrequency = map1.firstKey();
-                DLL currentDll = map1.get(toDeleteFrequency);
+            Node newNode = new Node( key , value);
+            keyNode.put( key , newNode );
+            keyFreq.put( key , 1 );
 
-                int toDeleteKey = currentDll.tail.prev.key;
-                currentDll.removeLast();
+            if( keyNode.size() > capacity ){
 
-                if(currentDll.isEmpty())map1.remove(toDeleteFrequency);
-
-                map2.remove(toDeleteKey);
-                map3.remove(toDeleteKey);
+                DDL leastFreq = map.get(map.firstKey());
+                Node toDeleteNode = leastFreq.head;
+                int toDeleteKey = toDeleteNode.key;
+                keyNode.remove( toDeleteKey );
+                keyFreq.remove( toDeleteKey );
+                leastFreq.removeAtHead();
+                if(leastFreq.head == null) map.remove(map.firstKey());
             }
-            Node node = new Node(key , value);
-            map1.computeIfAbsent(1, f -> new DLL()).addFirst(node);
-            map2.put(key, node);
-            map3.put(key , 1);
+            
+            map.computeIfAbsent( 1 , f -> new DDL() ).addAtLast(newNode);
+            
         }
     }
 }
+
+/**
+ * Your LFUCache object will be instantiated and called as such:
+ * LFUCache obj = new LFUCache(capacity);
+ * int param_1 = obj.get(key);
+ * obj.put(key,value);
+ */
