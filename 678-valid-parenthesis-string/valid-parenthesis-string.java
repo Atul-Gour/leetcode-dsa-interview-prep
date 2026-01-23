@@ -15,7 +15,7 @@ class Solution {
                 maxOpen++;
             }
             
-            if (maxOpen < 0) return false;
+            if (maxOpen < 0) return false;  
             minOpen = Math.max(minOpen, 0);
         }
         
