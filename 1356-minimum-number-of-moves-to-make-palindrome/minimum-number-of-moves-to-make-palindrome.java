@@ -8,7 +8,6 @@ class Solution {
 
         while (l < r) {
 
-            // already matched
             if (a[l] == a[r]) {
                 l++;
                 r--;
