@@ -1,56 +1,71 @@
 import java.util.*;
 
 class AuctionSystem {
-    private Map<Integer, Map<Integer, Integer>> currBidder;
-    
-    private Map<Integer, PriorityQueue<int[]>> item2bid;
+
+    HashMap<Integer, TreeMap<Integer, TreeSet<Integer>>> map;
+    HashMap<Long, Integer> userBid;
 
     public AuctionSystem() {
-        this.currBidder = new HashMap<>();
-        this.item2bid = new HashMap<>();
+        map = new HashMap<>();
+        userBid = new HashMap<>();
     }
-    
+
+    private long key(int userId, int itemId) {
+        return (((long) userId) << 32) | itemId;
+    }
+
+    // ADD BID (no cleanup here)
     public void addBid(int userId, int itemId, int bidAmount) {
-        currBidder.putIfAbsent(itemId, new HashMap<>());
-        item2bid.putIfAbsent(itemId, new PriorityQueue<>((a, b) -> {
-            if (b[0] != a[0]) return Integer.compare(b[0], a[0]); 
-            return Integer.compare(b[1], a[1]); 
-        }));
-        
-        currBidder.get(itemId).put(userId, bidAmount);
-        item2bid.get(itemId).offer(new int[]{bidAmount, userId});
+        long k = key(userId, itemId);
+
+        map.computeIfAbsent(itemId,
+                x -> new TreeMap<>(Collections.reverseOrder()))
+           .computeIfAbsent(bidAmount,
+                x -> new TreeSet<>(Collections.reverseOrder()))
+           .add(userId);
+
+        userBid.put(k, bidAmount); // source of truth
     }
-    
+
+    // UPDATE = just add new (old becomes stale)
     public void updateBid(int userId, int itemId, int newAmount) {
         addBid(userId, itemId, newAmount);
     }
-    
+
+    // REMOVE = mark inactive ONLY
     public void removeBid(int userId, int itemId) {
-        if (currBidder.containsKey(itemId)) {
-            currBidder.get(itemId).remove(userId);
-        }
+        userBid.remove(key(userId, itemId));
     }
-    
+
+    // LAZY CLEANUP happens here
     public int getHighestBidder(int itemId) {
-        if (!item2bid.containsKey(itemId) || currBidder.get(itemId).isEmpty()) {
-            return -1;
-        }
+        if (!map.containsKey(itemId)) return -1;
 
-        PriorityQueue<int[]> pq = item2bid.get(itemId);
-        Map<Integer, Integer> activeBids = currBidder.get(itemId);
+        TreeMap<Integer, TreeSet<Integer>> bids = map.get(itemId);
 
-        while (!pq.isEmpty()) {
-            int[] top = pq.peek();
-            int amount = top[0];
-            int userId = top[1];
+        while (!bids.isEmpty()) {
+            Map.Entry<Integer, TreeSet<Integer>> entry = bids.firstEntry();
+            int amount = entry.getKey();
+            TreeSet<Integer> users = entry.getValue();
 
-            if (activeBids.containsKey(userId) && activeBids.get(userId) == amount) {
-                return userId;
-            } else {
-                pq.poll();
+            while (!users.isEmpty()) {
+                int userId = users.first();
+                long k = key(userId, itemId);
+
+                // VALID bid
+                if (userBid.containsKey(k) && userBid.get(k) == amount) {
+                    return userId;
+                }
+
+                // STALE → lazy delete
+                users.pollFirst();
             }
+
+            // no users left for this amount
+            bids.pollFirstEntry();
         }
 
+        map.remove(itemId);
         return -1;
     }
 }
