@@ -1,38 +1,52 @@
 class Solution {
-    int[] memo;
-    int findNext(int[][] jobs, int currentEnd, int start) {
-        int low = start, high = jobs.length - 1, next = jobs.length;
-        while (low <= high) {
-            int mid = low + (high - low) / 2;
-            if (jobs[mid][0] >= currentEnd) {
-                next = mid;
-                high = mid - 1;
-            } else {
+    public int jobScheduling(int[] startTime, int[] endTime, int[] profit) {
+        int numJobs = profit.length; // Number of jobs
+        Job[] jobs = new Job[numJobs];
+
+        for (int i = 0; i < numJobs; ++i) {
+            jobs[i] = new Job(endTime[i], startTime[i], profit[i]);
+        }
+
+        Arrays.sort(jobs, Comparator.comparingInt(job -> job.endTime));
+        int[] dp = new int[numJobs + 1];
+
+        for (int i = 0; i < numJobs; ++i) {
+            int endTimeValue = jobs[i].endTime;
+            int startTimeValue = jobs[i].startTime;
+            int profitValue = jobs[i].profit;
+
+            int latestNonConflictJobIndex = upperBound(jobs, i, startTimeValue);
+            dp[i + 1] = Math.max(dp[i], dp[latestNonConflictJobIndex] + profitValue);
+        }
+
+        return dp[numJobs];
+    }
+
+    private int upperBound(Job[] jobs, int endIndex, int targetTime) {
+        int low = 0;
+        int high = endIndex;
+
+        while (low < high) {
+            int mid = (low + high) / 2;
+            if (jobs[mid].endTime <= targetTime) {
                 low = mid + 1;
+            } else {
+                high = mid;
             }
         }
-        return next;
+
+        return low;
     }
-    int calculateMaxProfix(int[][] jobs,int time,int index){
-        if(index>=jobs.length )return 0;
-        if(jobs[index][0]<time)return calculateMaxProfix(jobs, time, index+1);
-        if(memo[index]!=-1)return memo[index];
-        int notIncludedProfit = calculateMaxProfix(jobs, time, index+1);
-        int nextIndex = findNext(jobs, jobs[index][1], index + 1);
-        int includedProfit = jobs[index][2] + calculateMaxProfix(jobs, jobs[index][1], nextIndex);
-        return memo[index]=Math.max(notIncludedProfit, includedProfit);
-    }
-    public int jobScheduling(int[] startTime, int[] endTime, int[] profit) {
-        int n = startTime.length;
-        memo= new int[n];
-        int[][] jobs = new int[n][3];
-        for (int i = 0; i < n; i++) {
-            jobs[i][0] = startTime[i];
-            jobs[i][1] = endTime[i];
-            jobs[i][2] = profit[i];
+
+    private static class Job {
+        int endTime;
+        int startTime;
+        int profit;
+
+        public Job(int endTime, int startTime, int profit) {
+            this.endTime = endTime;
+            this.startTime = startTime;
+            this.profit = profit;
         }
-        Arrays.fill(memo,-1);
-        Arrays.sort(jobs, (a, b) -> a[0] - b[0]);
-        return (int)calculateMaxProfix(jobs, 0, 0);
     }
 }
