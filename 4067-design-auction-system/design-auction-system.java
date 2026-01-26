@@ -2,8 +2,8 @@ import java.util.*;
 
 class AuctionSystem {
 
-    // itemId -> max heap of bids
-    private Map<Integer, PriorityQueue<Node>> itemBids;
+    // itemId -> max heap of [bidAmount, userId]
+    private Map<Integer, PriorityQueue<int[]>> itemBids;
 
     // (userId,itemId) -> current bid
     private Map<Long, Integer> userBid;
@@ -20,12 +20,12 @@ class AuctionSystem {
     public void addBid(int userId, int itemId, int bidAmount) {
         itemBids.putIfAbsent(itemId, new PriorityQueue<>(
             (a, b) -> {
-                if (b.bid != a.bid) return b.bid - a.bid;   // higher bid first
-                return b.userId - a.userId;                 // tie-breaker
+                if (b[0] != a[0]) return b[0] - a[0]; // max bid
+                return b[1] - a[1];                   // max userId
             }
         ));
 
-        itemBids.get(itemId).offer(new Node(bidAmount, userId));
+        itemBids.get(itemId).offer(new int[]{bidAmount, userId});
         userBid.put(key(userId, itemId), bidAmount);
     }
 
@@ -43,33 +43,25 @@ class AuctionSystem {
     public int getHighestBidder(int itemId) {
         if (!itemBids.containsKey(itemId)) return -1;
 
-        PriorityQueue<Node> pq = itemBids.get(itemId);
+        PriorityQueue<int[]> pq = itemBids.get(itemId);
 
         while (!pq.isEmpty()) {
-            Node top = pq.peek();
-            long k = key(top.userId, itemId);
+            int[] top = pq.peek();
+            int bid = top[0];
+            int userId = top[1];
+
+            long k = key(userId, itemId);
 
             // VALID bid
-            if (userBid.containsKey(k) && userBid.get(k) == top.bid) {
-                return top.userId;
+            if (userBid.containsKey(k) && userBid.get(k) == bid) {
+                return userId;
             }
 
             // STALE bid → lazy delete
             pq.poll();
         }
 
-        // no valid bids left
         itemBids.remove(itemId);
         return -1;
-    }
-}
-
-class Node {
-    int bid;
-    int userId;
-
-    Node(int bid, int userId) {
-        this.bid = bid;
-        this.userId = userId;
     }
 }
