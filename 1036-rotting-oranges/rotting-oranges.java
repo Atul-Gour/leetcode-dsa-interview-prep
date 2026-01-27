@@ -10,7 +10,7 @@ class Solution {
         q.offer(arr);
 
         int time = 0;
-        int[][] dirs = new int[][] { { -1, 0 }, { 1, 0 }, { 0, 1 }, { 0, -1 } };
+        int[][] dirs = { { -1, 0 }, { 1, 0 }, { 0, 1 }, { 0, -1 } };
 
         while (!q.isEmpty()) {
 
@@ -24,7 +24,7 @@ class Solution {
                 for (int[] d : dirs) {
                     int newI = curr[0] + d[0];
                     int newJ = curr[1] + d[1];
-                    if (newI >= 0 && newI < n && newJ >= 0 && newJ < m && !visited[newI][newJ] && grid[newI][newJ] == 1) {
+                    if (newI >= 0 && newI < n && newJ >= 0 && newJ < m && !visited[newI][newJ] && grid[newI][newJ] == 1 && minutes[newI][newJ] > time + 1 ) {
                         q.offer(new int[] { newI, newJ });
                     }
                 }
@@ -56,13 +56,6 @@ class Solution {
         for (int[] arr : rottenList) {
             bfs(arr, minutes , grid);
         }
-
-        // for (int i = 0; i < n; i++) {
-        //     for (int j = 0; j < m; j++) {
-        //         System.out.print( minutes[i][j] + " , ");
-        //     }
-        //     System.out.println();
-        // }
 
         int ans = 0;
 
