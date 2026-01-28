@@ -3,7 +3,7 @@ class Solution {
         int n = graph.length;
 
         Queue<Integer> q = new LinkedList<>();
-        q.add(node);
+        q.offer(node);
         color[node] = 0;
 
         while(!q.isEmpty()){
