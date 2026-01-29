@@ -1,45 +1,50 @@
 class Solution {
 
-    private int dfs( int node , int[][] graph , int[] visited , boolean pathVisited[] ){
+    private boolean dfsCheck(
+            int node,
+            int[][] graph,
+            int[] vis,
+            int[] pathVis,
+            int[] check
+    ) {
 
-        if(visited[node] != 0)return visited[node];
+        vis[node] = 1;
+        pathVis[node] = 1;
+        check[node] = 0;
 
-        if( graph[node].length == 0 ) return visited[node] = 2;
+        for (int neigh : graph[node]) {
 
-
-        for( int neigh : graph[node] ){
-            
-            if( pathVisited[neigh] ){
-                return visited[node] = 1;
+            if (vis[neigh] == 0) {
+                if (dfsCheck(neigh, graph, vis, pathVis, check)) {
+                    return true;
+                }
             }
-
-            pathVisited[neigh] = true;
-            if( dfs( neigh , graph , visited , pathVisited ) == 1 ){
-                pathVisited[neigh] = false;
-                return visited[node] = 1;
+            else if (pathVis[neigh] == 1) {
+                return true;
             }
-            pathVisited[neigh] = false;
         }
 
-        return visited[node] = 2;
+        check[node] = 1;
+        pathVis[node] = 0;
+        return false;
     }
 
     public List<Integer> eventualSafeNodes(int[][] graph) {
-        List<Integer> ans = new ArrayList<>();
-        int V = graph.length;
-        int[] visited = new int[V];
-        boolean pathVisited[] = new boolean[V];
 
-        for(int i = 0 ; i < V ; i++){
-            if( visited[i] == 0 ){
-                pathVisited[i] = true;
-                visited[i] = dfs( i , graph , visited , pathVisited );
-                pathVisited[i] = false;
+        int n = graph.length;
+        int[] vis = new int[n];
+        int[] pathVis = new int[n];
+        int[] check = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            if (vis[i] == 0) {
+                dfsCheck(i, graph, vis, pathVis, check);
             }
         }
 
-        for(int i = 0 ; i < V ; i++){
-            if( visited[i] == 2 )ans.add(i);
+        List<Integer> ans = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            if (check[i] == 1) ans.add(i);
         }
 
         return ans;
