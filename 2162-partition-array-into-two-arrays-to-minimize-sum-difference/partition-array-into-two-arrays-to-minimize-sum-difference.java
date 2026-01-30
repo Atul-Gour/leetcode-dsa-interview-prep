@@ -31,6 +31,7 @@ class Solution {
         }
         return next;
     }
+    
     private long justGreater(long[] arr , long target){
         int n = arr.length;
         int left = 0;
