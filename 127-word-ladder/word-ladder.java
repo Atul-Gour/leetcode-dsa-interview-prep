@@ -45,8 +45,6 @@ class Solution {
         HashMap<String, ArrayList<String>> map = buildOneDiffMap(wordList);
         if( !map.containsKey(endWord)) return 0;
 
-        HashSet<String> pathVisited = new HashSet<>();
-        pathVisited.add(beginWord);
         Queue<String> q = new LinkedList<>();
         HashSet<String> visited = new HashSet<>();
 
