@@ -40,33 +40,39 @@ class Solution {
     }
 
     public int ladderLength(String beginWord, String endWord, List<String> wordList) {
-        wordList.add(beginWord);
 
-        HashMap<String, ArrayList<String>> map = buildOneDiffMap(wordList);
-        if( !map.containsKey(endWord)) return 0;
+    if (!wordList.contains(endWord)) return 0;
 
-        Queue<String> q = new LinkedList<>();
-        HashSet<String> visited = new HashSet<>();
+    wordList.add(beginWord);
+    HashMap<String, ArrayList<String>> map = buildOneDiffMap(wordList);
 
-        int cost = 1;
-        q.offer( beginWord );
+    Queue<String> q = new LinkedList<>();
+    HashSet<String> visited = new HashSet<>();
 
-        while(!q.isEmpty()){
-            int size = q.size();
-            for( int i = 0 ; i < size ; i++){
-                String curr = q.poll();
-                for(String neigh : map.get(curr)){
-                    if( !visited.contains(neigh) ){
-                        if(neigh.equals(endWord))return cost + 1;
+    q.offer(beginWord);
+    visited.add(beginWord);
 
-                        q.offer(neigh);
-                    }
+    int cost = 1;
+
+    while (!q.isEmpty()) {
+        int size = q.size();
+
+        for (int i = 0; i < size; i++) {
+            String curr = q.poll();
+
+            if (curr.equals(endWord)) return cost;
+
+            for (String neigh : map.get(curr)) {
+                if (!visited.contains(neigh)) {
+                    visited.add(neigh);   
+                    q.offer(neigh);
                 }
-                visited.add(curr);
             }
-            cost++;
         }
-
-        return 0;
+        cost++;
     }
+
+    return 0;
+}
+
 }
