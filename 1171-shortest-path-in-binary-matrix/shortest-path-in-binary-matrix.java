@@ -7,7 +7,7 @@ class Solution {
         int[][] dist = new int[n][n];
         for (int[] row : dist) Arrays.fill(row, -1);
 
-        Queue<int[]> q = new LinkedList<>();
+        Queue<int[]> q = new ArrayDeque<>();
         q.offer(new int[]{0, 0});
         dist[0][0] = 1;
 
