@@ -1,51 +1,45 @@
 class Solution {
     public int findCheapestPrice(int n, int[][] flights, int src, int dst, int k) {
+
         ArrayList<int[]>[] adj = new ArrayList[n];
-        int[][] arr = new int[n][k + 1];
+        for (int i = 0; i < n; i++) adj[i] = new ArrayList<>();
 
-        for(int a[] : arr){
-            Arrays.fill(a , Integer.MAX_VALUE);
+        for (int[] f : flights) {
+            adj[f[0]].add(new int[]{f[1], f[2]});
         }
 
-        for (int i = 0; i < n; i++) {
-            adj[i] = new ArrayList<>();
-        }
+        // dist[city][stops] = min cost to reach city using stops stops
+        int[][] dist = new int[n][k + 2];
+        for (int i = 0; i < n; i++)
+            Arrays.fill(dist[i], Integer.MAX_VALUE);
 
-        for (int[] flight : flights) {
-            adj[flight[0]].add(new int[] { flight[1], flight[2] });
-        }
+        PriorityQueue<int[]> pq =
+                new PriorityQueue<>((a, b) -> a[2] - b[2]);
 
-        PriorityQueue<int[]> q = new PriorityQueue<>((a, b) -> Integer.compare(a[2], b[2]));
-        q.offer(new int[] { src, 0, 0 });
-        arr[src][0] = 0;
+        pq.offer(new int[]{src, 0, 0}); // city, stops, cost
+        dist[src][0] = 0;
 
-        int ans = Integer.MAX_VALUE;
+        while (!pq.isEmpty()) {
+            int[] cur = pq.poll();
+            int city = cur[0];
+            int stops = cur[1];
+            int cost = cur[2];
 
-        while (!q.isEmpty()) {
+            if (city == dst) return cost;
+            if (stops == k + 1) continue;
 
-            int curr[] = q.poll();
-            int currCity = curr[0];
-            int currentStops = curr[1];
-            int currCost = curr[2];
+            for (int[] nei : adj[city]) {
+                int next = nei[0];
+                int price = nei[1];
+                int newCost = cost + price;
 
-            if(currCost > ans)continue;
-
-            for (int neigh[] : adj[currCity]) {
-                int totalCost = currCost + neigh[1];
-
-                if( arr[neigh[0]][currentStops] <= totalCost )continue;
-                arr[neigh[0]][currentStops] = totalCost;
-
-                if(totalCost > ans)continue;
-                
-                if (neigh[0] == dst) {
-                    ans = Math.min(ans, totalCost);
-                } else {
-                    if(currentStops + 1 <= k) q.offer(new int[] { neigh[0], currentStops + 1, totalCost });
+                if (newCost < dist[next][stops + 1]) {
+                    dist[next][stops + 1] = newCost;
+                    pq.offer(new int[]{next, stops + 1, newCost});
                 }
             }
-
         }
-        return ans == Integer.MAX_VALUE ? -1 : ans;
+
+        return -1;
     }
 }
