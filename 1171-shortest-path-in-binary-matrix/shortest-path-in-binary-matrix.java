@@ -6,8 +6,8 @@ class Solution {
         if(grid[0][0] == 1 || grid[n-1][m-1] == 1)return -1;
 
         int[][] arr = new int[n][m];
-        PriorityQueue<int[]> pq = new PriorityQueue<int[]>((a , b) -> Integer.compare(a[2] , b[2]));
-        pq.offer(new int[]{ 0 , 0 , 1 });
+        Queue<int[]> pq = new LinkedList<int[]>();
+        pq.offer(new int[]{ 0 , 0 });
 
         for(int a[] : arr){
             Arrays.fill(a , -1);
@@ -17,7 +17,7 @@ class Solution {
         while( !pq.isEmpty() ){
             int currI = pq.peek()[0];
             int currJ = pq.peek()[1];
-            int currCost = pq.peek()[2];
+            int currCost = arr[currI][currJ];
             pq.poll();
 
             for( int i = -1 ; i <= 1 ; i++){
@@ -28,7 +28,7 @@ class Solution {
                     if( newI < n && newI >= 0 && newJ < m && newJ >= 0 && grid[newI][newJ] == 0 && arr[newI][newJ] == -1 ){
                         arr[newI][newJ] = currCost + 1;
                         if( newI == n-1 && newJ == m-1 )return arr[newI][newJ];
-                        pq.offer(new int[]{ newI , newJ , arr[newI][newJ] });
+                        pq.offer(new int[]{ newI , newJ});
                     }
                 }
             }
