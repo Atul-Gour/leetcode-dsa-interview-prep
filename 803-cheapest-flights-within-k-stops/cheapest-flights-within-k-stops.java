@@ -28,7 +28,7 @@ class Solution {
             int currentStops = curr[1];
             int currCost = curr[2];
 
-            // if(currCost > ans)continue;
+            if(currCost > ans)continue;
 
             for (int neigh[] : adj[currCity]) {
                 int totalCost = currCost + neigh[1];
@@ -36,7 +36,7 @@ class Solution {
                 if( arr[neigh[0]][currentStops] <= totalCost )continue;
                 arr[neigh[0]][currentStops] = totalCost;
 
-                // if(totalCost > ans)continue;
+                if(totalCost > ans)continue;
                 
                 if (neigh[0] == dst) {
                     ans = Math.min(ans, totalCost);
