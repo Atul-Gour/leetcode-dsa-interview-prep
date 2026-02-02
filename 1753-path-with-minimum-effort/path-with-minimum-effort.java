@@ -21,11 +21,12 @@ class Solution {
             int currCost = pq.peek()[2];
             pq.poll();
             if( currCost > arr[currI][currJ] )continue;
+            if (currI == n - 1 && currJ == m - 1) return currCost;
             for(int d[] : dirs){
                 int newI = currI + d[0];
                 int newJ = currJ + d[1];
                 if( newI < n && newI >= 0 && newJ < m && newJ >= 0 ){
-
+                    
                     int maxDif = Math.max(arr[currI][currJ] , Math.abs(heights[newI][newJ] - heights[currI][currJ]) );
                     if( maxDif < arr[newI][newJ] ){
                         arr[newI][newJ] = maxDif;
