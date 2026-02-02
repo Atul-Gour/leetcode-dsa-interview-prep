@@ -13,12 +13,14 @@ class Solution {
 
         arr[0][0] = 0;
 
-        pq.offer( new int[]{ 0 , 0 , heights[0][0] });
+        pq.offer( new int[]{ 0 , 0 , 0 });
 
         while( !pq.isEmpty() ){
             int currI = pq.peek()[0];
             int currJ = pq.peek()[1];
+            int currCost = pq.peek()[2];
             pq.poll();
+            if( currCost > arr[currI][currJ] )continue;
             for(int d[] : dirs){
                 int newI = currI + d[0];
                 int newJ = currJ + d[1];
