@@ -28,7 +28,6 @@ class Solution {
             int currSteps = curr[2];
             int currK = curr[3];
 
-            if(currI == n-1 && currJ == m-1)return currSteps;
             if( arr[currK][currI][currJ] < currSteps )continue;
 
             for( int d[] : dirs ){
