@@ -5,7 +5,7 @@ class Solution {
         for(int i = 0 ; i < n ; i++) adj[i] = new ArrayList<>();
 
         for( int[] edge : edges ){
-            // if( edge[2] > distanceThreshold )continue;
+            if( edge[2] > distanceThreshold )continue;
             adj[ edge[0] ].add( new int[]{ edge[1] , edge[2] } );
             adj[ edge[1] ].add( new int[]{ edge[0] , edge[2] } );
         }
