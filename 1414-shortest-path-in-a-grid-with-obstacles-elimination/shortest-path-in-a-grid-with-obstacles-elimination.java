@@ -1,55 +1,53 @@
 class Solution {
     public int shortestPath(int[][] grid, int k) {
-
         int n = grid.length;
         int m = grid[0].length;
-
-        int[][][] dist = new int[k+1][n][m];
-
-        for(int[][] ar : dist){
-            for(int[] row : ar){
-                Arrays.fill(row, Integer.MAX_VALUE);
-            }
-        }
+        if(n == 1 && m == 1)return 0;
+        if(grid[0][0] == 1)k--;
 
         Queue<int[]> q = new ArrayDeque<>();
-        q.offer(new int[]{0,0,k,0});
 
-        dist[k][0][0] = 0;
+        int arr[][][] = new int[k + 1][n][m];
 
-        int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}};
-
-        while(!q.isEmpty()){
-
-            int[] curr = q.poll();
-
-            int i = curr[0];
-            int j = curr[1];
-            int rem = curr[2];
-            int steps = curr[3];
-
-            if(i == n-1 && j == m-1) return steps;
-
-            if(dist[rem][i][j] < steps) continue;
-
-            for(int[] d : dirs){
-
-                int ni = i + d[0];
-                int nj = j + d[1];
-
-                if(ni < 0 || nj < 0 || ni >= n || nj >= m) continue;
-
-                int newK = rem - grid[ni][nj];
-                if(newK < 0) continue;
-
-                if(dist[newK][ni][nj] <= steps+1) continue;
-
-                dist[newK][ni][nj] = steps+1;
-
-                q.offer(new int[]{ni,nj,newK,steps+1});
+        for(int ar[][]: arr){
+            for(int a[] : ar){
+                Arrays.fill( a , Integer.MAX_VALUE );
             }
         }
 
+        int[][] dirs = { {1,0} , {-1,0} , {0,1} , {0,-1} };
+        
+
+        q.offer( new int[]{ 0 , 0 , 0 , k } );
+        arr[k][0][0] = 0;
+
+        while( !q.isEmpty() ){
+            int curr[] = q.poll();
+            int currI = curr[0];
+            int currJ = curr[1];
+            int currSteps = curr[2];
+            int currK = curr[3];
+
+            if(currI == n-1 && currJ == m-1)return currSteps;
+            if( arr[currK][currI][currJ] < currSteps )continue;
+
+            for( int d[] : dirs ){
+                int newI = currI + d[0];
+                int newJ = currJ + d[1];
+                int newK = currK;
+                if(newI < n && newI >= 0 && newJ < m && newJ >= 0){
+                    
+                    if( (grid[newI][newJ] == 1 && currK <= 0) )continue;
+                    if( grid[newI][newJ] == 1)newK--;
+                    if( arr[newK][newI][newJ] <= currSteps + 1 ) continue;
+                    if(newI == n-1 && newJ == m-1)return currSteps + 1;
+
+                    arr[newK][newI][newJ] = currSteps + 1;
+                    q.offer( new int[]{ newI , newJ , currSteps + 1 , newK } );
+
+                }
+            }
+        }
         return -1;
     }
 }
