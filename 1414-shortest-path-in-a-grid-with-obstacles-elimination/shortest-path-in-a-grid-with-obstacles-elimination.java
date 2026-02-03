@@ -4,51 +4,50 @@ class Solution {
         int n = grid.length;
         int m = grid[0].length;
 
-        if(n == 1 && m == 1) return 0;
+        int[][][] dist = new int[k+1][n][m];
 
-        // visited[i][j] = maximum k remaining seen so far
-        int[][] visited = new int[n][m];
-        for(int[] row : visited) Arrays.fill(row, -1);
+        for(int[][] ar : dist){
+            for(int[] row : ar){
+                Arrays.fill(row, Integer.MAX_VALUE);
+            }
+        }
 
         Queue<int[]> q = new ArrayDeque<>();
-        q.offer(new int[]{0,0,k});
+        q.offer(new int[]{0,0,k,0});
 
-        visited[0][0] = k;
+        dist[k][0][0] = 0;
 
-        int steps = 0;
         int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}};
 
         while(!q.isEmpty()){
 
-            int size = q.size();
+            int[] curr = q.poll();
 
-            while(size-- > 0){
+            int i = curr[0];
+            int j = curr[1];
+            int rem = curr[2];
+            int steps = curr[3];
 
-                int[] curr = q.poll();
-                int i = curr[0];
-                int j = curr[1];
-                int rem = curr[2];
+            if(i == n-1 && j == m-1) return steps;
 
-                if(i == n-1 && j == m-1) return steps;
+            if(dist[rem][i][j] < steps) continue;
 
-                for(int[] d : dirs){
+            for(int[] d : dirs){
 
-                    int ni = i + d[0];
-                    int nj = j + d[1];
+                int ni = i + d[0];
+                int nj = j + d[1];
 
-                    if(ni < 0 || nj < 0 || ni >= n || nj >= m) continue;
+                if(ni < 0 || nj < 0 || ni >= n || nj >= m) continue;
 
-                    int newK = rem - grid[ni][nj];
-                    if(newK < 0) continue;
+                int newK = rem - grid[ni][nj];
+                if(newK < 0) continue;
 
-                    if(visited[ni][nj] >= newK) continue;
+                if(dist[newK][ni][nj] <= steps+1) continue;
 
-                    visited[ni][nj] = newK;
-                    q.offer(new int[]{ni,nj,newK});
-                }
+                dist[newK][ni][nj] = steps+1;
+
+                q.offer(new int[]{ni,nj,newK,steps+1});
             }
-
-            steps++;
         }
 
         return -1;
