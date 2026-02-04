@@ -16,13 +16,17 @@ class Solution {
             j++;
         }
 
-        if( i == n ) cost += m - j;
-        if( j == m ) cost += n - i;
-
-        if( memo[i][j] <= cost ){
-            // System.out.println(" Pruned");
-            return ;
+        if(i == n){
+            ans = Math.min(ans, cost + (m - j));
+            return;
         }
+
+        if(j == m){
+            ans = Math.min(ans, cost + (n - i));
+            return;
+        }
+
+        if( memo[i][j] <= cost ) return ;
         memo[i][j] = cost;
 
         if( i == n || j == m ){
