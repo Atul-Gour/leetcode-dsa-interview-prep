@@ -1,27 +1,42 @@
 class Solution {
-    
     public int minDistance(String word1, String word2) {
-        int m = word2.length();
-        int n = word1.length();
-        int dp[][] = new int[n + 1][m + 1];
 
-        for(int i = 0 ; i <= m ; i++ ){
-            dp[n][i] = m - i;
+        int n = word1.length();
+        int m = word2.length();
+
+        int[] next = new int[m + 1];
+
+        // Base case dp[n][j]
+        for(int j = 0; j <= m; j++){
+            next[j] = m - j;
         }
-        for(int i = 0 ; i <= n ; i++ ){
-            dp[i][m] = n - i;
-        }
-        
-        for( int i = n - 1 ; i >= 0 ; i-- ){
-            for( int j = m - 1 ; j >= 0 ; j-- ){
+
+        for(int i = n - 1; i >= 0; i--){
+
+            int[] curr = new int[m + 1];
+
+            // Base case dp[i][m]
+            curr[m] = n - i;
+
+            for(int j = m - 1; j >= 0; j--){
+
                 if(word1.charAt(i) == word2.charAt(j)){
-                    dp[i][j] = dp[i + 1][j + 1];
+                    curr[j] = next[j + 1];
                 }
                 else{
-                    dp[i][j] = 1 + Math.min( dp[i+1][j+1] , Math.min( dp[i+1][j] , dp[i][j+1] ) );
+                    curr[j] = 1 + Math.min(
+                        curr[j + 1],      // insert
+                        Math.min(
+                            next[j],      // delete
+                            next[j + 1]   // replace
+                        )
+                    );
                 }
             }
+
+            next = curr; // move row up
         }
-        return dp[0][0];
+
+        return next[0];
     }
 }
