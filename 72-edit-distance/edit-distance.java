@@ -3,11 +3,10 @@ class Solution {
     int[][] memo ;
     int ans = Integer.MAX_VALUE;
 
-    private void find( StringBuilder sb1 ,StringBuilder sb2 , int i , int j , int cost){
+    private void find( String sb1 ,String sb2 , int i , int j , int cost){
         int n = sb1.length();
         int m = sb2.length();
 
-        // System.out.print(i + " " + j + " " + cost + " " + memo[j] + " " + memo[m]);
 
         if(cost >= ans)return;
 
@@ -38,17 +37,15 @@ class Solution {
     }
 
     public int minDistance(String word1, String word2) {
-        StringBuilder sb1 = new StringBuilder(word1);
-        StringBuilder sb2 = new StringBuilder(word2);
-        int m = sb2.length();
-        int n = sb1.length();
+        int m = word2.length();
+        int n = word1.length();
         memo = new int[n + 1][m + 1];
 
         for(int[] a : memo){
             Arrays.fill( a , Integer.MAX_VALUE );
         }
         
-        find( sb1 , sb2 , 0 , 0 , 0);
+        find( word1 , word2 , 0 , 0 , 0);
 
         return ans;
     }
