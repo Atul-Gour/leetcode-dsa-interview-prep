@@ -26,13 +26,8 @@ class Solution {
             return;
         }
 
-        if( memo[i][j] <= cost ) return ;
+        if( memo[i][j] <= cost ) return;
         memo[i][j] = cost;
-
-        if( i == n || j == m ){
-            ans = Math.min( ans , cost );
-            return;
-        }
 
         find( sb1 , sb2 , i , j + 1 , cost + 1 );//insert
 
