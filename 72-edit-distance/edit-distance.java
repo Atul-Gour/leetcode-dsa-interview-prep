@@ -9,7 +9,7 @@ class Solution {
 
         // System.out.print(i + " " + j + " " + cost + " " + memo[j] + " " + memo[m]);
 
-        // if(cost >= ans)return;
+        if(cost >= ans)return;
 
         while( i < n && j < m && sb1.charAt(i) == sb2.charAt(j) ){
             i++;
