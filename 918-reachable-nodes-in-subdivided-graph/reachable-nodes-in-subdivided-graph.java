@@ -35,20 +35,17 @@ class Solution {
             for (int nei = 0; nei < n; nei++) {
                 if (graph[nearestNodeId][nei] != -1) {
 
-                     if (!visited[nei] && maxMovesRemaining >= graph[nearestNodeId][nei] + 1) {
+                     int originalCost = graph[nearestNodeId][nei];
 
-                        pq.add(new int[]{nei, maxMovesRemaining - graph[nearestNodeId][nei] - 1});
-                    }
+int movesCost = Math.min(maxMovesRemaining, originalCost);
+ans += movesCost;
 
-                    int movesCost = Math.min(maxMovesRemaining, graph[nearestNodeId][nei]);
+graph[nei][nearestNodeId] -= movesCost;
+graph[nearestNodeId][nei] -= movesCost;
 
-                    graph[nei][nearestNodeId] -= movesCost;
-                    graph[nearestNodeId][nei] -= movesCost;
-
-                    ans += movesCost;
-
-
-
+if (!visited[nei] && maxMovesRemaining > originalCost) {
+    pq.add(new int[]{nei, maxMovesRemaining - originalCost - 1});
+}
 
                 }
             }
