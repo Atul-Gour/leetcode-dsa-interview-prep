@@ -1,54 +1,64 @@
-
-
-
 class Solution {
-        public int reachableNodes(int[][] edges, int maxMoves, int n) {
-        int[][] graph = new int[n][n];
+    public int reachableNodes(int[][] edges, int maxMoves, int n) {
 
-        for (int[] edge : graph) {
-            Arrays.fill(edge, -1);
+        List<int[]>[] adj = new ArrayList[n];
+        for(int i = 0; i < n; i++){
+            adj[i] = new ArrayList<>();
         }
-        for (int[] edge: edges) {
-            // source -> end = Distance / Intermediatory nodes
-            graph[edge[0]][edge[1]] = edge[2];
-            graph[edge[1]][edge[0]] = edge[2];
+
+        for(int[] e : edges){
+            adj[e[0]].add(new int[]{e[1], e[2]});
+            adj[e[1]].add(new int[]{e[0], e[2]});
         }
-        int ans  = 0;
 
-        boolean[] visited = new boolean[n];
-        // Comparator on the basis of max moves possible
-        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> (b[1] - a[1]));
-        pq.add(new int[] {0, maxMoves});
+        // max moves left when reaching node
+        int[] dist = new int[n];
+        Arrays.fill(dist, -1);
+        dist[0] = maxMoves;
 
-        while (!pq.isEmpty()) {
-            int[] nearestEl = pq.poll();
-            int nearestNodeId = nearestEl[0];
-            int maxMovesRemaining = nearestEl[1];
-            if (visited[nearestNodeId]) {
-                continue;
-            }
-            visited[nearestNodeId] = true;
-            // beacuse you are visiting the curr node
-            ans++;
+        PriorityQueue<int[]> pq = new PriorityQueue<>(
+            (a,b) -> b[1] - a[1]
+        );
 
+        pq.offer(new int[]{0, maxMoves});
 
-            for (int nei = 0; nei < n; nei++) {
-                if (graph[nearestNodeId][nei] != -1) {
+        while(!pq.isEmpty()){
+            int[] curr = pq.poll();
+            int node = curr[0];
+            int moves = curr[1];
 
-                     int originalCost = graph[nearestNodeId][nei];
+            if(moves < dist[node]) continue;
 
-int movesCost = Math.min(maxMovesRemaining, originalCost);
-ans += movesCost;
+            for(int[] nei : adj[node]){
+                int next = nei[0];
+                int cost = nei[1];
 
-graph[nei][nearestNodeId] -= movesCost;
-graph[nearestNodeId][nei] -= movesCost;
+                int remain = moves - cost - 1;
 
-if (!visited[nei] && maxMovesRemaining > originalCost) {
-    pq.add(new int[]{nei, maxMovesRemaining - originalCost - 1});
-}
-
+                if(remain >= 0 && remain > dist[next]){
+                    dist[next] = remain;
+                    pq.offer(new int[]{next, remain});
                 }
             }
+        }
+
+        int ans = 0;
+
+        // Count original nodes
+        for(int d : dist){
+            if(d >= 0) ans++;
+        }
+
+        // Count subdivided nodes
+        for(int[] e : edges){
+            int u = e[0];
+            int v = e[1];
+            int k = e[2];
+
+            int a = dist[u] < 0 ? 0 : dist[u];
+            int b = dist[v] < 0 ? 0 : dist[v];
+
+            ans += Math.min(k, a + b);
         }
 
         return ans;
