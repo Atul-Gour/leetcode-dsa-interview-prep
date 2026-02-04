@@ -1,50 +1,55 @@
 class Solution {
 
-    int[][] memo;
+    int[][] memo ;
     int ans = Integer.MAX_VALUE;
 
-    private void find(StringBuilder sb1, StringBuilder sb2, int i, int j, int cost) {
-
+    private void find( StringBuilder sb1 ,StringBuilder sb2 , int i , int j , int cost){
         int n = sb1.length();
         int m = sb2.length();
 
-        if(cost >= ans) return;
+        // System.out.print(i + " " + j + " " + cost + " " + memo[j] + " " + memo[m]);
 
-        while(i < n && j < m && sb1.charAt(i) == sb2.charAt(j)){
+        if(cost >= ans)return;
+
+        while( i < n && j < m && sb1.charAt(i) == sb2.charAt(j) ){
             i++;
             j++;
         }
 
-        if(i == n){
-            ans = Math.min(ans, cost + (m - j));
-            return;
-        }
+        if( i == n ) cost += m - j;
+        if( j == m ) cost += n - i;
 
-        if(j == m){
-            ans = Math.min(ans, cost + (n - i));
-            return;
+        if( memo[i][j] <= cost ){
+            // System.out.println(" Pruned");
+            return ;
         }
-
-        if(memo[i][j] <= cost) return;
         memo[i][j] = cost;
 
-        find(sb1, sb2, i, j + 1, cost + 1);     // insert
-        find(sb1, sb2, i + 1, j, cost + 1);     // delete
-        find(sb1, sb2, i + 1, j + 1, cost + 1); // replace
+        if( i == n || j == m ){
+            ans = Math.min( ans , cost );
+            return;
+        }
+
+        find( sb1 , sb2 , i , j + 1 , cost + 1 );//insert
+
+        find( sb1 , sb2 , i + 1 , j , cost + 1 );//delete
+
+        find( sb1 , sb2 , i + 1 , j + 1 , cost + 1 );//replace
+
     }
 
     public int minDistance(String word1, String word2) {
-
-        int n = word1.length();
-        int m = word2.length();
-
+        StringBuilder sb1 = new StringBuilder(word1);
+        StringBuilder sb2 = new StringBuilder(word2);
+        int m = sb2.length();
+        int n = sb1.length();
         memo = new int[n + 1][m + 1];
 
-        for(int[] row : memo){
-            Arrays.fill(row, Integer.MAX_VALUE);
+        for(int[] a : memo){
+            Arrays.fill( a , Integer.MAX_VALUE );
         }
-
-        find(new StringBuilder(word1), new StringBuilder(word2), 0, 0, 0);
+        
+        find( sb1 , sb2 , 0 , 0 , 0);
 
         return ans;
     }
