@@ -1,52 +1,27 @@
 class Solution {
-
-    int[][] memo ;
-    int ans = Integer.MAX_VALUE;
-
-    private void find( String sb1 ,String sb2 , int i , int j , int cost){
-        int n = sb1.length();
-        int m = sb2.length();
-
-
-        if(cost >= ans)return;
-
-        while( i < n && j < m && sb1.charAt(i) == sb2.charAt(j) ){
-            i++;
-            j++;
-        }
-
-        if(i == n){
-            ans = Math.min(ans, cost + (m - j));
-            return;
-        }
-
-        if(j == m){
-            ans = Math.min(ans, cost + (n - i));
-            return;
-        }
-
-        if( memo[i][j] <= cost ) return;
-        memo[i][j] = cost;
-
-        find( sb1 , sb2 , i , j + 1 , cost + 1 );//insert
-
-        find( sb1 , sb2 , i + 1 , j , cost + 1 );//delete
-
-        find( sb1 , sb2 , i + 1 , j + 1 , cost + 1 );//replace
-
-    }
-
+    
     public int minDistance(String word1, String word2) {
         int m = word2.length();
         int n = word1.length();
-        memo = new int[n + 1][m + 1];
+        int dp[][] = new int[n + 1][m + 1];
 
-        for(int[] a : memo){
-            Arrays.fill( a , Integer.MAX_VALUE );
+        for(int i = 0 ; i <= m ; i++ ){
+            dp[n][i] = m - i;
+        }
+        for(int i = 0 ; i <= n ; i++ ){
+            dp[i][m] = n - i;
         }
         
-        find( word1 , word2 , 0 , 0 , 0);
-
-        return ans;
+        for( int i = n - 1 ; i >= 0 ; i-- ){
+            for( int j = m - 1 ; j >= 0 ; j-- ){
+                if(word1.charAt(i) == word2.charAt(j)){
+                    dp[i][j] = dp[i + 1][j + 1];
+                }
+                else{
+                    dp[i][j] = 1 + Math.min( dp[i+1][j+1] , Math.min( dp[i+1][j] , dp[i][j+1] ) );
+                }
+            }
+        }
+        return dp[0][0];
     }
 }
