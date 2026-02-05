@@ -37,7 +37,7 @@ class Solution {
 
                 if(remain >= 0 && remain > dist[next]){
                     dist[next] = remain;
-                    pq.offer(new int[]{next, remain});
+                    if( remain > 0 )pq.offer(new int[]{next, remain});
                 }
             }
         }
