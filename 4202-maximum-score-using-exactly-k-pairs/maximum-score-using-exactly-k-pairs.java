@@ -14,8 +14,12 @@ class Solution {
         for( int i = 0 ; i <= n ; i++ ){
             for( int j = 0 ; j <= m ; j++ ){
                 for( int k = 0 ; k <= pairs ; k++ ){
-                    if( i == n || j == m )memo[i][j][k] = Long.MIN_VALUE / 2;
-                    if( k == pairs ) memo[i][j][k] = 0;
+                    if(k == pairs){
+                        memo[i][j][k] = 0;
+                    }
+                    else if(i == n || j == m){
+                        memo[i][j][k] = Long.MIN_VALUE / 2;
+                    }
                 }
             }
         }
