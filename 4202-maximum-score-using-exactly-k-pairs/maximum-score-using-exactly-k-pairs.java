@@ -5,38 +5,40 @@ class Solution {
         int n = nums1.length;
         int m = nums2.length;
 
-        long[][][] memo = new long[n + 1][m + 1][pairs + 1];
-        
-        for( int i = 0 ; i <= n ; i++ ){
-            for( int j = 0 ; j <= m ; j++ ){
-                for( int k = 0 ; k <= pairs ; k++ ){
-                    if(k == pairs){
-                        memo[i][j][k] = 0;
-                    }
-                    else{
-                        memo[i][j][k] = Long.MIN_VALUE / 2 ;
-                    }
+        long[][] curr = new long[m + 1][pairs + 1];
+        long[][] next = new long[m + 1][pairs + 1];
+
+        for (int j = 0; j <= m; j++) {
+            for (int k = 0; k <= pairs; k++) {
+                if (k == pairs) {
+                    next[j][k] = 0;
+                } else {
+                    next[j][k] = Long.MIN_VALUE / 2;
                 }
             }
-        }
-        
 
+        }
         for( int i = n - 1 ; i >= 0 ; i-- ){
             for( int j = m - 1 ; j >= 0 ; j-- ){
                 for( int k = pairs - 1 ; k >= 0 ; k-- ){
+                    if( j == m - 1 ){
+                        curr[j+1][k] = Long.MIN_VALUE / 2;
+                    }
                     
-                    long skip1 = memo[i+1][j][k];
+                    long skip1 = next[j][k];
 
-                    long skip2 = memo[i][j+1][k];
+                    long skip2 = curr[j+1][k];
 
-                    long take = (long) nums1[i] * nums2[j] + memo[i+1][j+1][k+1];
+                    long take = (long) nums1[i] * nums2[j] + next[j+1][k+1];
 
-                    memo[i][j][k] = Math.max(take, Math.max(skip1, skip2));
+                    curr[j][k] = Math.max(take, Math.max(skip1, skip2));
                     
                 }
             }
+            next = curr;
+            curr = new long[m + 1][pairs + 1];
         }
 
-        return memo[0][0][0];
+        return next[0][0];
     }
 }
