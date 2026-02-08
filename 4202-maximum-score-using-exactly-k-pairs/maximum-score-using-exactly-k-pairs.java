@@ -1,42 +1,42 @@
 class Solution {
 
-    long[][][] memo;
-
-    private long solve(int i, int j, int p,
-            int[] nums1, int[] nums2, int k) {
+    public long maxScore(int[] nums1, int[] nums2, int pairs) {
 
         int n = nums1.length;
         int m = nums2.length;
 
-        if (p == k)
-            return 0;
+        long[][][] memo = new long[n + 1][m + 1][pairs + 1];
 
-        if (i == n || j == m)
-            return Long.MIN_VALUE / 2;
-
-        if (memo[i][j][p] != Long.MIN_VALUE)
-            return memo[i][j][p];
-
-        long skip1 = solve(i + 1, j, p, nums1, nums2, k);
-        long skip2 = solve(i, j + 1, p, nums1, nums2, k);
-
-        long take = (long) nums1[i] * nums2[j] +
-                solve(i + 1, j + 1, p + 1, nums1, nums2, k);
-
-        return memo[i][j][p] = Math.max(take, Math.max(skip1, skip2));
-    }
-
-    public long maxScore(int[] nums1, int[] nums2, int k) {
-
-        int n = nums1.length;
-        int m = nums2.length;
-
-        memo = new long[n][m][k + 1];
-
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < m; j++)
+        for (int i = 0; i <= n; i++)
+            for (int j = 0; j <= m; j++)
                 Arrays.fill(memo[i][j], Long.MIN_VALUE);
+        
+        for( int i = 0 ; i <= n ; i++ ){
+            for( int j = 0 ; j <= m ; j++ ){
+                for( int k = 0 ; k <= pairs ; k++ ){
+                    if( i == n || j == m )memo[i][j][k] = Long.MIN_VALUE / 2;
+                    if( k == pairs ) memo[i][j][k] = 0;
+                }
+            }
+        }
+        
 
-        return solve(0, 0, 0, nums1, nums2, k);
+        for( int i = n - 1 ; i >= 0 ; i-- ){
+            for( int j = m - 1 ; j >= 0 ; j-- ){
+                for( int k = pairs - 1 ; k >= 0 ; k-- ){
+                    
+                    long skip1 = memo[i+1][j][k];
+
+                    long skip2 = memo[i][j+1][k];
+
+                    long take = (long) nums1[i] * nums2[j] + memo[i+1][j+1][k+1];
+
+                    memo[i][j][k] = Math.max(take, Math.max(skip1, skip2));
+                    
+                }
+            }
+        }
+
+        return memo[0][0][0];
     }
 }
