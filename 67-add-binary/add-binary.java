@@ -12,6 +12,7 @@ class Solution {
             if( j >= 0 ) bBit = b.charAt( j ) - '0';
 
             aBit += (bBit + carry) ;
+            
             if( aBit == 0 ){
                 sb.append('0');
             }
