@@ -13,34 +13,23 @@ class Solution {
                     if(k == pairs){
                         memo[i][j][k] = 0;
                     }
-                    else if(i == n || j == m){
-                        memo[i][j][k] = Long.MIN_VALUE;
-                    }
                     else{
-                        memo[i][j][k] = Long.MIN_VALUE ;
+                        memo[i][j][k] = Long.MIN_VALUE / 2 ;
                     }
                 }
             }
         }
-        long skip1, skip2 , take, next;
         
 
         for( int i = n - 1 ; i >= 0 ; i-- ){
             for( int j = m - 1 ; j >= 0 ; j-- ){
                 for( int k = pairs - 1 ; k >= 0 ; k-- ){
                     
-                    skip1 = memo[i+1][j][k];
+                    long skip1 = memo[i+1][j][k];
 
-                    skip2 = memo[i][j+1][k];
+                    long skip2 = memo[i][j+1][k];
 
-                    take = Long.MIN_VALUE;
-
-                    next = memo[i+1][j+1][k+1];
-
-                    if(next != Long.MIN_VALUE){
-                        take = (long)nums1[i] * nums2[j] + next;
-                    }
-
+                    long take = (long) nums1[i] * nums2[j] + memo[i+1][j+1][k+1];
 
                     memo[i][j][k] = Math.max(take, Math.max(skip1, skip2));
                     
