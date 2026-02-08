@@ -6,10 +6,6 @@ class Solution {
         int m = nums2.length;
 
         long[][][] memo = new long[n + 1][m + 1][pairs + 1];
-
-        for (int i = 0; i <= n; i++)
-            for (int j = 0; j <= m; j++)
-                Arrays.fill(memo[i][j], Long.MIN_VALUE);
         
         for( int i = 0 ; i <= n ; i++ ){
             for( int j = 0 ; j <= m ; j++ ){
@@ -19,6 +15,9 @@ class Solution {
                     }
                     else if(i == n || j == m){
                         memo[i][j][k] = Long.MIN_VALUE / 2;
+                    }
+                    else{
+                        memo[i][j][k] = Long.MIN_VALUE ;
                     }
                 }
             }
