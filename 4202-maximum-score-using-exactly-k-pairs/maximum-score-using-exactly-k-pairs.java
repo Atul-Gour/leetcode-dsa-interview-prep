@@ -19,11 +19,16 @@ class Solution {
 
         }
         for( int i = n - 1 ; i >= 0 ; i-- ){
+
+            for(int j=0;j<=m;j++){
+                for(int k=0;k<=pairs;k++){
+                    if(k == pairs) curr[j][k] = 0;
+                    else curr[j][k] = Long.MIN_VALUE / 2;
+                }
+            }
+
             for( int j = m - 1 ; j >= 0 ; j-- ){
                 for( int k = pairs - 1 ; k >= 0 ; k-- ){
-                    if( j == m - 1 ){
-                        curr[j+1][k] = Long.MIN_VALUE / 2;
-                    }
                     
                     long skip1 = next[j][k];
 
