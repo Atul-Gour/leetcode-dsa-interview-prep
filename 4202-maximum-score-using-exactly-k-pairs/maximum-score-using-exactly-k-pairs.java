@@ -14,7 +14,7 @@ class Solution {
                         memo[i][j][k] = 0;
                     }
                     else if(i == n || j == m){
-                        memo[i][j][k] = Long.MIN_VALUE / 2;
+                        memo[i][j][k] = Long.MIN_VALUE;
                     }
                     else{
                         memo[i][j][k] = Long.MIN_VALUE ;
@@ -32,7 +32,14 @@ class Solution {
 
                     long skip2 = memo[i][j+1][k];
 
-                    long take = (long) nums1[i] * nums2[j] + memo[i+1][j+1][k+1];
+                    long take = Long.MIN_VALUE;
+
+                    long next = memo[i+1][j+1][k+1];
+
+                    if(next != Long.MIN_VALUE){
+                        take = (long)nums1[i] * nums2[j] + next;
+                    }
+
 
                     memo[i][j][k] = Math.max(take, Math.max(skip1, skip2));
                     
