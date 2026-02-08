@@ -22,19 +22,20 @@ class Solution {
                 }
             }
         }
+        long skip1, skip2 , take, next;
         
 
         for( int i = n - 1 ; i >= 0 ; i-- ){
             for( int j = m - 1 ; j >= 0 ; j-- ){
                 for( int k = pairs - 1 ; k >= 0 ; k-- ){
                     
-                    long skip1 = memo[i+1][j][k];
+                    skip1 = memo[i+1][j][k];
 
-                    long skip2 = memo[i][j+1][k];
+                    skip2 = memo[i][j+1][k];
 
-                    long take = Long.MIN_VALUE;
+                    take = Long.MIN_VALUE;
 
-                    long next = memo[i+1][j+1][k+1];
+                    next = memo[i+1][j+1][k+1];
 
                     if(next != Long.MIN_VALUE){
                         take = (long)nums1[i] * nums2[j] + next;
