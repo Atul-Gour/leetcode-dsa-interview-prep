@@ -19,9 +19,9 @@ class Node {
 */
 
 class Solution {
-    Node[] nodes ;
+    Node[] nodes = new Node[101];
 
-    private Node make( Node original ){
+    public Node cloneGraph( Node original ){
 
         if( original == null )return null;
 
@@ -32,18 +32,12 @@ class Solution {
             Node temp = nodes[neigh.val];
 
             if( temp == null ){
-                temp = make( neigh );
+                temp = cloneGraph( neigh );
             }
 
             newNode.neighbors.add( temp );
         }
 
         return newNode;        
-    }
-
-    public Node cloneGraph(Node node) {
-        nodes = new Node[101];
-
-        return make(node);
     }
 }
