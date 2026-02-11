@@ -1,7 +1,5 @@
 class Solution {
     public int longestWPI(int[] hours) {
-        int l = 0;
-        int r = 0;
         int n = hours.length;
         long[] prefix = new long[n + 1];
         for (int i = 0; i < n; i++) {
