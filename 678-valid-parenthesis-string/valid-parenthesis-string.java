@@ -1,27 +1,22 @@
 class Solution {
     public boolean checkValidString(String s) {
-        int maxOpen = 0;
-        int minOpen = 0;
+        int n = s.length();
 
-        for( int i = 0 ; i < s.length() ; i++){
-            char ch = s.charAt(i);
+        boolean dp[][] = new boolean[n + 1][n + 1];
 
-            if( ch == '(' ){
-                maxOpen++;
-                minOpen++;
+        dp[n][0] = true;
+        
+        for( int i = n - 1 ; i >= 0; i-- ){
+            for(int j = 0; j <= n; j++){
+                char ch = s.charAt(i);
+
+                if( ch == '(' ) {if( j + 1 <= n )dp[i][j] = dp[i+1][j+1];}
+                else if( ch == ')' ) {if( j - 1 >= 0 )dp[i][j] = dp[i+1][j-1];}
+                else {
+                    dp[i][j] = dp[i+1][j] || j - 1 >= 0 && dp[i+1][j-1] || (j + 1 <= n) && dp[i+1][j+1];
+                }
             }
-            else if( ch == ')' ) {
-                maxOpen--;
-                minOpen--;
-            }else{
-                minOpen--;
-                maxOpen++;
-            }
-
-            if( maxOpen < 0 )return false;
-            minOpen = Math.max(minOpen, 0);
         }
-
-        return minOpen == 0;
+        return dp[0][0];
     }
 }
