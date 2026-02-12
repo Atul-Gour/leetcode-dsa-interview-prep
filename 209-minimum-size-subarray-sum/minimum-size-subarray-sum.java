@@ -1,27 +1,19 @@
 class Solution {
     public int minSubArrayLen(int k, int[] nums) {
         int n = nums.length;
-        long[] prefix = new long[n + 1];
-        ArrayDeque<Integer> deque = new ArrayDeque<>();
-
-        for (int i = 0; i < n; i++) {
-            prefix[i + 1] = nums[i] + prefix[i];
-        }
+        int l = 0;
+        long sum = 0;
         int ans = Integer.MAX_VALUE;
 
-        for (int i = 0; i <= n; i++) {
+        for (int r = 0; r < n; r++) {
 
-            long target = prefix[i] - k;
-            
-            while( !deque.isEmpty() && target >= prefix[ deque.peekFirst() ] ){
-                ans = Math.min(ans, i - deque.pollFirst() );
+            sum += nums[r];
+
+            while( sum >= k ){
+                ans = Math.min(ans, r - l + 1 );
+                sum -= nums[l];
+                l++;
             }
-
-            while( !deque.isEmpty() && prefix[i] <= prefix[ deque.peekLast() ] ){
-                deque.pollLast();
-            }
-
-            deque.addLast( i );
         }
 
         return ans == Integer.MAX_VALUE? 0 : ans;
