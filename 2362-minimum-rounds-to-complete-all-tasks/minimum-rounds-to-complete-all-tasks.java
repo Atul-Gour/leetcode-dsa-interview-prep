@@ -11,16 +11,10 @@ class Solution {
 
         for( int t : map.keySet() ){
             int task = map.get(t);
-            
+
             if( task == 1 )return -1;
             
-            int rem = task % 3;
-
-            if( rem == 0 ){
-                ans += task / 3;
-            }else{
-                ans += (task / 3) + 1;
-            }
+            ans += (task + 2)/3;
         }
 
         return ans;
