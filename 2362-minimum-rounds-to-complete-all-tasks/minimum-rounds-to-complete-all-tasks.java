@@ -9,8 +9,7 @@ class Solution {
 
         int ans = 0;
 
-        for( int t : map.keySet() ){
-            int task = map.get(t);
+        for( int task : map.values() ){
 
             if( task == 1 )return -1;
             
