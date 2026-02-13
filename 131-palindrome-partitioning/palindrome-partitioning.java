@@ -1,48 +1,33 @@
 class Solution {
-    boolean isSubstring(String s, int left, int right) {
-        while (left < right) {
-            if (s.charAt(left) != s.charAt(right)) return false;
-            left++;
-            right--;
+
+    void solve( int index , char[] arr , ArrayList<String> currList , List<List<String>> ans ){
+        int n = arr.length;
+        if( index >= n ){
+            ans.add(new ArrayList<>( currList ));
+            return ;
         }
-        return true;
-    }
 
-    void find( HashMap<Integer , ArrayList<Integer>> map , List<List<String>> ans , List<String> curr , int index , String s){
+        StringBuilder sb = new StringBuilder();
 
-        int n = s.length();
+        for(int i = index ; i < n ; i++){
 
-        if(index == n){
-            ans.add( new ArrayList<>(curr));
-            return;
-        }else if(index > n || !map.containsKey(index)) return;
+            sb.append(arr[i]);
+            StringBuilder reverseSb = new StringBuilder(sb);
+            reverseSb.reverse();
 
-        ArrayList<Integer> list = map.get(index);
-
-        for(int i: list){
-            curr.add(s.substring(index , i+1));
-            find ( map , ans , curr , i+1 , s );
-            curr.remove( curr.size()-1 );
+            if( sb.compareTo(reverseSb) == 0 ){
+                currList.add(sb.toString());
+                solve( i + 1 , arr , currList , ans );
+                currList.remove( currList.size() - 1 );
+            }
         }
 
     }
 
     public List<List<String>> partition(String s) {
-        int n = s.length();
-
         List<List<String>> ans = new ArrayList<>();
+        solve( 0 , s.toCharArray() , new ArrayList<>() , ans );
 
-        HashMap<Integer , ArrayList<Integer>> map = new HashMap<>();
-
-        for(int i=0 ; i < n ; i++){
-            for(int j = i ; j < n ; j++){
-                if(isSubstring( s , i , j )){
-                    map.putIfAbsent(i , new ArrayList<>());
-                    map.get(i).add(j);
-                }
-            }
-        }
-        find ( map , ans , new ArrayList<>() , 0 , s );
         return ans;
     }
 }
