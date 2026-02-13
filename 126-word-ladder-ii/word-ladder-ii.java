@@ -1,77 +1,90 @@
-import java.util.*;
-
 class Solution {
+    
+    void dfs( String currentWord , String beginWord, ArrayList<String> currList , List<List<String>> ans ,HashMap<String , ArrayList<String>> parent ){
 
-    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
-
-        List<List<String>> ans = new ArrayList<>();
-        Set<String> dict = new HashSet<>(wordList);
-        if (!dict.contains(endWord)) return ans;
-
-        Map<String, List<String>> parent = new HashMap<>();
-        Map<String, Integer> dist = new HashMap<>();
-
-        for (String w : dict) parent.put(w, new ArrayList<>());
-        parent.put(beginWord, new ArrayList<>());
-
-        Queue<String> q = new LinkedList<>();
-        q.offer(beginWord);
-        dist.put(beginWord, 0);
-
-        int wordLen = beginWord.length();
-
-        while (!q.isEmpty()) {
-            String curr = q.poll();
-            int d = dist.get(curr);
-
-            char[] arr = curr.toCharArray();
-            for (int i = 0; i < wordLen; i++) {
-                char original = arr[i];
-
-                for (char c = 'a'; c <= 'z'; c++) {
-                    if (c == original) continue;
-                    arr[i] = c;
-
-                    String next = new String(arr);
-                    if (!dict.contains(next)) continue;
-
-                    if (!dist.containsKey(next)) {
-                        dist.put(next, d + 1);
-                        parent.get(next).add(curr);
-                        q.offer(next);
-                    } else if (dist.get(next) == d + 1) {
-                        parent.get(next).add(curr);
-                    }
-                }
-                arr[i] = original;
-            }
+        if( currentWord.equals( beginWord ) ){
+            ArrayList temp = new ArrayList<>(currList);
+            Collections.reverse( temp );
+            ans.add( temp );
+            return;
         }
 
-        if (!dist.containsKey(endWord)) return ans;
+        for( String neigh : parent.get(currentWord) ){
+            currList.add(neigh);
+            dfs( neigh , beginWord , currList , ans , parent );
+            currList.remove( currList.size() - 1 );
+        }
 
-        LinkedList<String> path = new LinkedList<>();
-        dfs(endWord, beginWord, parent, path, ans);
-
-        return ans;
     }
 
-    private void dfs(
-            String curr,
-            String begin,
-            Map<String, List<String>> parent,
-            LinkedList<String> path,
-            List<List<String>> ans) {
+    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
+        HashSet<String> set = new HashSet<>();
+        List<List<String>> ans = new ArrayList<>();
+        HashMap<String , ArrayList<String>> parent = new HashMap<>();
+        HashMap<String , Integer> map = new HashMap<>();
 
-        path.addFirst(curr);
-
-        if (curr.equals(begin)) {
-            ans.add(new ArrayList<>(path));
-        } else {
-            for (String p : parent.get(curr)) {
-                dfs(p, begin, parent, path, ans);
-            }
+        map.put( beginWord , 1 );
+        for( String word : wordList ){
+            set.add(word);
+            parent.put(word , new ArrayList<>());
         }
+        if( !set.contains(endWord) )return ans;
+        set.add(endWord);
+        set.remove(beginWord);
+        parent.put(endWord , new ArrayList<>());
 
-        path.removeFirst();
+        Set<String> currQ = new HashSet<>();
+        Set<String> nextQ = new HashSet<>();
+        currQ.add(beginWord);
+
+        int steps = 2;
+
+        while( !currQ.isEmpty() ){
+            
+
+            for( String originalString : currQ ){
+
+                char[] curr = originalString.toCharArray();
+                
+
+                for( int i = 0 ; i < curr.length ; i++ ){
+                    char ch = curr[i];
+                    for( char c = 'a' ; c <= 'z' ; c++ ){
+                        if( c == ch )continue;
+                        curr[i] = c;
+                        String newString = new String(curr);
+                        if( !set.contains( newString ) )continue;
+
+                        if( !map.containsKey(newString) ){
+                            map.put( newString , steps );
+                        }
+
+                        if( map.get(newString) == steps ){
+
+                            parent.get(newString).add(originalString);
+
+                            if( !newString.equals(endWord) ){
+                                nextQ.add( newString );
+                            }
+                        }
+                        
+                    }
+                    curr[i] = ch;
+                }
+            }
+
+            HashSet<String> temp = new HashSet<>();
+            currQ = nextQ;
+            nextQ = temp;
+
+            steps++;
+        }
+        
+        // System.out.println(parent);
+        ArrayList temp = new ArrayList<>();
+        temp.add(endWord);
+        dfs( endWord , beginWord , temp , ans , parent );
+
+        return ans;
     }
 }
