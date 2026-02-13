@@ -1,46 +1,37 @@
 class Solution {
-
     public int ladderLength(String beginWord, String endWord, List<String> wordList) {
-
-        Queue<String> q = new LinkedList<>();
-        int level = 2;
         HashSet<String> set = new HashSet<>();
-        
-        for( String s : wordList ){
-            set.add(s);
-        }
+        set.addAll(wordList);
+        if( !set.contains(endWord) )return 0;
+        Queue<String> q = new ArrayDeque<>();
 
-        if( !set.contains(endWord)){
-            return 0;
-        }
-        
         q.offer(beginWord);
-        set.remove(beginWord);
-        
-        while(!q.isEmpty()){
+
+        int steps = 1;
+
+        while( !q.isEmpty() ){
             int size = q.size();
-            
-            while(size-- > 0){
-                String curr = q.poll();
-                
-                for(int i = 0 ; i < curr.length() ; i++){
-                    for( char ch = 'a' ; ch <= 'z'  ; ch++ ){
-                        String newCurr = curr.substring(0 , i) + ch + curr.substring(i + 1 , curr.length());
-                        if(set.contains(newCurr)){
-                            
-                            if(newCurr.equals(endWord)) return level;
-                            
-                            q.offer(newCurr);
-                            set.remove( newCurr );
+
+            while( size-- > 0 ){
+                char[] curr = q.poll().toCharArray();
+
+                for( int i = 0 ; i < curr.length ; i++ ){
+                    char ch = curr[i];
+                    for( char c = 'a' ; c <= 'z' ; c++ ){
+                        if( c == ch )continue;
+                        curr[i] = c;
+                        String newString = new String(curr);
+                        if( newString.equals(endWord) )return steps + 1;
+                        if( set.contains( newString ) ){
+                            q.offer( newString );
+                            set.remove( newString );
                         }
                     }
+                    curr[i] = ch;
                 }
-                
             }
-            level++;
+            steps++;
         }
-        
         return 0;
     }
-
 }
