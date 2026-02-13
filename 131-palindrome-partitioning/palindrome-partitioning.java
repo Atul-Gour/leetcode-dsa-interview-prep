@@ -1,33 +1,40 @@
 class Solution {
 
-    void solve( int index , char[] arr , ArrayList<String> currList , List<List<String>> ans ){
-        int n = arr.length;
-        if( index >= n ){
-            ans.add(new ArrayList<>( currList ));
-            return ;
+    void solve(int index, String s, List<String> currList, List<List<String>> ans) {
+
+        if (index == s.length()) {
+            ans.add(new ArrayList<>(currList));
+            return;
         }
 
-        StringBuilder sb = new StringBuilder();
+        for (int i = index; i < s.length(); i++) {
 
-        for(int i = index ; i < n ; i++){
+            if (isPalindrome(s, index, i)) {
 
-            sb.append(arr[i]);
-            StringBuilder reverseSb = new StringBuilder(sb);
-            reverseSb.reverse();
-
-            if( sb.compareTo(reverseSb) == 0 ){
-                currList.add(sb.toString());
-                solve( i + 1 , arr , currList , ans );
-                currList.remove( currList.size() - 1 );
+                currList.add(s.substring(index, i + 1));
+                solve(i + 1, s, currList, ans);
+                currList.remove(currList.size() - 1);
             }
         }
+    }
 
+    boolean isPalindrome(String s, int left, int right) {
+
+        while (left < right) {
+            if (s.charAt(left) != s.charAt(right))
+                return false;
+
+            left++;
+            right--;
+        }
+
+        return true;
     }
 
     public List<List<String>> partition(String s) {
-        List<List<String>> ans = new ArrayList<>();
-        solve( 0 , s.toCharArray() , new ArrayList<>() , ans );
 
+        List<List<String>> ans = new ArrayList<>();
+        solve(0, s, new ArrayList<>(), ans);
         return ans;
     }
 }
