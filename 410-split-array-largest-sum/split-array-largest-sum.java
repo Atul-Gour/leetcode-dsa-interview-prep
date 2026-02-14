@@ -1,41 +1,48 @@
+import java.util.*;
+
 class Solution {
-    private long solve( int index , int current , long prefix[] , long[][] dp){
-        int n = dp[0].length;
-        int k = dp.length;
 
-        if( index >= n ){
-            return Integer.MIN_VALUE;
+    private long solve(int index, int parts, long[] prefix, long[][] dp, int n, int k) {
+
+        if (parts == k) {
+            return (index == n) ? 0 : Long.MAX_VALUE;
         }
 
-        if( dp[current][index] != -1 ) return dp[current][index];
-        if( current == k - 1 ){
-            return dp[current][index] = prefix[n-1] - prefix[index-1];
+        if (index == n) {
+            return Long.MAX_VALUE;
         }
 
-        long ans = Integer.MAX_VALUE;
-        for( int i = index ; i < n ; i++ ){
-            long curr = prefix[i] - prefix[index-1];
-            long futureMax = solve( i + 1 , current + 1 , prefix , dp );
-            if( futureMax == Integer.MIN_VALUE )break;
-            ans = Math.min( ans , Math.max( curr , futureMax )  );
+        if (dp[parts][index] != -1) return dp[parts][index];
+
+        long ans = Long.MAX_VALUE;
+
+        for (int i = index; i < n; i++) {
+
+            long currSum = prefix[i + 1] - prefix[index];
+
+            long future = solve(i + 1, parts + 1, prefix, dp, n, k);
+
+            if (future == Long.MAX_VALUE) continue;
+
+            ans = Math.min(ans, Math.max(currSum, future));
         }
 
-        return dp[current][index] = ans;
-
+        return dp[parts][index] = ans;
     }
+
     public int splitArray(int[] nums, int k) {
+
         int n = nums.length;
-        long[][] dp = new long[k][n + 1];
-        long prefix[] = new long[n + 1];
 
-        for( int i = 1 ; i <= n ; i++ ){
-            prefix[i] = prefix[i - 1] + nums[i - 1];
+        long[] prefix = new long[n + 1];
+        for (int i = 0; i < n; i++) {
+            prefix[i + 1] = prefix[i] + nums[i];
         }
 
-        for( long[] d : dp ){
-            Arrays.fill( d , -1 );
-        }
+        long[][] dp = new long[k][n];
+        for (long[] row : dp)
+            Arrays.fill(row, -1);
 
-        return (int)solve( 1 , 0 , prefix , dp);
+        return (int) solve(0, 0, prefix, dp, n, k);
     }
 }
