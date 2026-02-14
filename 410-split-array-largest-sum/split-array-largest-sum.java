@@ -11,34 +11,33 @@ class Solution {
             prefix[i + 1] = prefix[i] + nums[i];
         }
 
-        long[][] dp = new long[k + 1][n + 1];
+        long[][] dp = new long[k + 1][n];
 
-        for (int i = 0; i <= k; i++) {
-            Arrays.fill(dp[i], Long.MAX_VALUE);
+        // Base case: 1 partition
+        for (int i = 0; i < n; i++) {
+            dp[1][i] = prefix[n] - prefix[i];
         }
 
-        dp[k][n] = 0;
+        // Fill for partitions = 2 to k
+        for (int p = 2; p <= k; p++) {
 
-        for (int parts = k - 1; parts >= 0; parts--) {
-
-            for (int index = n - 1; index >= 0; index--) {
+            for (int i = 0; i <= n - p; i++) {
 
                 long ans = Long.MAX_VALUE;
 
-                for (int i = index; i <= n - (k - parts); i++) {
+                // Try placing first cut
+                for (int j = i; j <= n - p; j++) {
 
-                    long currSum = prefix[i + 1] - prefix[index];
-                    long future = dp[parts + 1][i + 1];
+                    long firstPart = prefix[j + 1] - prefix[i];
+                    long secondPart = dp[p - 1][j + 1];
 
-                    if (future == Long.MAX_VALUE) continue;
-
-                    ans = Math.min(ans, Math.max(currSum, future));
+                    ans = Math.min(ans, Math.max(firstPart, secondPart));
                 }
 
-                dp[parts][index] = ans;
+                dp[p][i] = ans;
             }
         }
 
-        return (int) dp[0][0];
+        return (int) dp[k][0];
     }
 }
