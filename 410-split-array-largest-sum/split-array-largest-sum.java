@@ -16,7 +16,7 @@ class Solution {
 
         long ans = Long.MAX_VALUE;
 
-        for (int i = index; i < n; i++) {
+        for (int i = index; i <= n -(k - parts) ; i++) {
 
             long currSum = prefix[i + 1] - prefix[index];
 
