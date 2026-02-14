@@ -1,43 +1,47 @@
-import java.util.*;
-
 class Solution {
 
     public int splitArray(int[] nums, int k) {
 
-        int n = nums.length;
+        int max = 0;
+        int sum = 0;
 
-        long[] prefix = new long[n + 1];
-        for (int i = 0; i < n; i++) {
-            prefix[i + 1] = prefix[i] + nums[i];
+        for (int num : nums) {
+            max = Math.max(max, num);
+            sum += num;
         }
 
-        long[][] dp = new long[k + 1][n + 1];
+        int low = max;
+        int high = sum;
 
-        for (int i = 0; i <= k; i++) {
-            Arrays.fill(dp[i], Long.MAX_VALUE);
-        }
+        while (low < high) {
 
-        dp[k][n] = 0;
+            int mid = low + (high - low) / 2;
 
-        for (int parts = k - 1; parts >= 0; parts--) {
-
-            for (int index = n - (k - parts); index >= 0; index--) {
-
-                long ans = Long.MAX_VALUE;
-
-                for (int i = index; i <= n - (k - parts); i++) {
-
-                    long currSum = prefix[i + 1] - prefix[index];
-                    long future = dp[parts + 1][i + 1];
-
-
-                    ans = Math.min(ans, Math.max(currSum, future));
-                }
-
-                dp[parts][index] = ans;
+            if (canSplit(nums, k, mid)) {
+                high = mid;
+            } else {
+                low = mid + 1;
             }
         }
 
-        return (int) dp[0][0];
+        return low;
+    }
+
+    private boolean canSplit(int[] nums, int k, int maxSum) {
+
+        int count = 1;
+        int currSum = 0;
+
+        for (int num : nums) {
+
+            currSum += num;
+
+            if (currSum > maxSum) {
+                count++;
+                currSum = num;
+            }
+        }
+
+        return count <= k;
     }
 }
