@@ -16,7 +16,7 @@ class Solution {
         for( int i = index ; i < n ; i++ ){
             long curr = prefix[i] - prefix[index-1];
             long futureMax = solve( i + 1 , current + 1 , prefix , dp );
-            if( futureMax == Integer.MIN_VALUE )continue;
+            if( futureMax == Integer.MIN_VALUE )break;
             ans = Math.min( ans , Math.max( curr , futureMax )  );
         }
 
