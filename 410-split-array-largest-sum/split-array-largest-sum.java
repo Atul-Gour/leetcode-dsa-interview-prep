@@ -30,7 +30,6 @@ class Solution {
                     long currSum = prefix[i + 1] - prefix[index];
                     long future = dp[parts + 1][i + 1];
 
-                    if (future == Long.MAX_VALUE) continue;
 
                     ans = Math.min(ans, Math.max(currSum, future));
                 }
