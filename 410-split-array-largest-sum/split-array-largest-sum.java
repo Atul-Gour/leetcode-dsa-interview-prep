@@ -2,34 +2,6 @@ import java.util.*;
 
 class Solution {
 
-    private long solve(int index, int parts, long[] prefix, long[][] dp, int n, int k) {
-
-        if (parts == k) {
-            return (index == n) ? 0 : Long.MAX_VALUE;
-        }
-
-        if (index == n) {
-            return Long.MAX_VALUE;
-        }
-
-        if (dp[parts][index] != -1) return dp[parts][index];
-
-        long ans = Long.MAX_VALUE;
-
-        for (int i = index; i <= n -(k - parts) ; i++) {
-
-            long currSum = prefix[i + 1] - prefix[index];
-
-            long future = solve(i + 1, parts + 1, prefix, dp, n, k);
-
-            if (future == Long.MAX_VALUE) continue;
-
-            ans = Math.min(ans, Math.max(currSum, future));
-        }
-
-        return dp[parts][index] = ans;
-    }
-
     public int splitArray(int[] nums, int k) {
 
         int n = nums.length;
@@ -39,10 +11,34 @@ class Solution {
             prefix[i + 1] = prefix[i] + nums[i];
         }
 
-        long[][] dp = new long[k][n];
-        for (long[] row : dp)
-            Arrays.fill(row, -1);
+        long[][] dp = new long[k + 1][n + 1];
 
-        return (int) solve(0, 0, prefix, dp, n, k);
+        for (int i = 0; i <= k; i++) {
+            Arrays.fill(dp[i], Long.MAX_VALUE);
+        }
+
+        dp[k][n] = 0;
+
+        for (int parts = k - 1; parts >= 0; parts--) {
+
+            for (int index = n - 1; index >= 0; index--) {
+
+                long ans = Long.MAX_VALUE;
+
+                for (int i = index; i <= n - (k - parts); i++) {
+
+                    long currSum = prefix[i + 1] - prefix[index];
+                    long future = dp[parts + 1][i + 1];
+
+                    if (future == Long.MAX_VALUE) continue;
+
+                    ans = Math.min(ans, Math.max(currSum, future));
+                }
+
+                dp[parts][index] = ans;
+            }
+        }
+
+        return (int) dp[0][0];
     }
 }
