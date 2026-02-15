@@ -1,35 +1,27 @@
 class Solution {
+    long solve(int i, int[] nums, int[] colors, long[] dp) {
+        int n = nums.length;
+        if (i >= n)return 0;
+        if (dp[i] != -1)return dp[i];
+        long ans ;
+        long take = nums[i];
+        long notTake = solve(i + 1, nums, colors, dp);
+        if (i + 1 < n) {
+            if (colors[i + 1] != colors[i]) {
+                take += solve(i + 1, nums, colors, dp);
+            } else {
+                take += solve(i + 2, nums, colors, dp);
+            }
+        }
+        ans =  Math.max(take, notTake);
+
+        return dp[i] = ans;
+    }
 
     public long rob(int[] nums, int[] colors) {
-
         int n = nums.length;
-        if (n == 0) return 0;
-        if (n == 1) return nums[0];
-
-        long[] dp = new long[n];
-
-        dp[0] = nums[0];
-
-        if (colors[1] == colors[0]) {
-            dp[1] = Math.max(nums[0], nums[1]);
-        } else {
-            dp[1] = nums[0] + nums[1];
-        }
-
-        for (int i = 2; i < n; i++) {
-
-            long skip = dp[i - 1];
-            long take;
-
-            if (colors[i] == colors[i - 1]) {
-                take = nums[i] + dp[i - 2];
-            } else {
-                take = nums[i] + dp[i - 1];
-            }
-
-            dp[i] = Math.max(skip, take);
-        }
-
-        return dp[n - 1];
+        long dp[] = new long[n];
+        Arrays.fill(dp, -1);
+        return solve(0, nums, colors, dp);
     }
 }
