@@ -1,24 +1,32 @@
 class Solution {
+    long key(String s, int k) {
+        long hash = 0;
+        long BASE = 131; 
+
+        for (int i = 0; i < k; i++) {
+            hash = hash * BASE + (s.charAt(i) - 'a' + 1);
+        }
+        return hash;
+    }
 
     public int prefixConnected(String[] words, int k) {
-
-        HashMap<String, Integer> map = new HashMap<>();
-
+        HashMap<Long, ArrayList<String>> map = new HashMap<>();
         for (String word : words) {
-            if (word.length() < k) continue;
-
-            String prefix = word.substring(0, k);
-            map.put(prefix, map.getOrDefault(prefix, 0) + 1);
+            if (word.length() < k)
+                continue;
+            long key = key(word, k);
+            map.computeIfAbsent(key, f -> new ArrayList<>()).add(word);
         }
-
-        int groups = 0;
-
-        for (int count : map.values()) {
-            if (count >= 2) {
-                groups++;
-            }
+        int count = 0;
+        HashSet<String> set = new HashSet<>();
+        for (Long hash : map.keySet()) {
+            ArrayList<String> list = map.get(hash);
+            int n = list.size();
+            if (n <= 1)
+                continue;
+            
+            count++;
         }
-
-        return groups;
+        return count;
     }
 }
