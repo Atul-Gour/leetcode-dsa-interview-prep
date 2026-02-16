@@ -1,57 +1,51 @@
 class Solution {
-    public int findTheCity(int n, int[][] edges, int threshold) {
-
-        ArrayList<int[]>[] adj = new ArrayList[n];
-        for(int i=0;i<n;i++) adj[i] = new ArrayList<>();
-
-        for(int[] e : edges){
-            adj[e[0]].add(new int[]{e[1], e[2]});
-            adj[e[1]].add(new int[]{e[0], e[2]});
+    public int findTheCity(int n, int[][] edges, int distanceThreshold) {
+        int dist[][] = new int[n][n];
+        for (int d[] : dist) {
+            Arrays.fill(d, (int)1e5);
         }
 
-        int answer = 0;
-        int minReachable = Integer.MAX_VALUE;
+        for (int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            int w = edge[2];
 
-        for(int src = 0; src < n; src++){
+            dist[u][v] = w;
+            dist[v][u] = w;
+        }
+        for (int i = 0; i < n; i++) {
+            dist[i][i] = 0;
+        }
 
-            int[] dist = new int[n];
-            Arrays.fill(dist, Integer.MAX_VALUE);
-            dist[src] = 0;
-
-            PriorityQueue<int[]> pq =
-                new PriorityQueue<>((a,b)->a[1]-b[1]);
-
-            pq.offer(new int[]{src,0});
-
-            while(!pq.isEmpty()){
-
-                int[] curr = pq.poll();
-                int node = curr[0];
-                int d = curr[1];
-
-                if(d > dist[node]) continue;
-
-                for(int[] neigh : adj[node]){
-                    int newDist = d + neigh[1];
-
-                    if(newDist < dist[neigh[0]]){
-                        dist[neigh[0]] = newDist;
-                        pq.offer(new int[]{neigh[0], newDist});
+        for (int k = 0; k < n; k++) {
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (dist[i][k] != 1e5 && dist[k][j] != 1e5) {
+                        dist[i][j] = Math.min(dist[i][j], dist[i][k] + dist[k][j]);
                     }
                 }
             }
-
-            int reachable = 0;
-            for(int i=0;i<n;i++){
-                if(i != src && dist[i] <= threshold) reachable++;
-            }
-
-            if(reachable <= minReachable){
-                minReachable = reachable;
-                answer = src;
-            }
         }
 
-        return answer;
+        int ans = n-1;
+        int minReach = Integer.MAX_VALUE;
+
+        for (int i = 0; i < n; i++) {
+            int reach = 0;
+            for (int j = 0; j < n; j++) {
+                if ( i != j && dist[i][j] <= distanceThreshold ) {
+                    reach++;
+                }
+            }
+
+            if( reach < minReach ){
+                minReach = reach;
+                ans = i;
+            }else if( reach == minReach ){
+                ans = Math.max( ans , i );
+            }
+
+        }
+        return ans;
     }
 }
