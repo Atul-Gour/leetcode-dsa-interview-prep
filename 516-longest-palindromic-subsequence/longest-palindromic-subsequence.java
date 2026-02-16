@@ -22,9 +22,8 @@ class Solution {
     }
 
     public int longestPalindromeSubseq(String s) {
-        StringBuilder sb = new StringBuilder(s);
-        sb.reverse();
-        return longestCommonSubsequence( s , sb.toString() );
+        String s2 = new StringBuilder(s).reverse().toString();
+        return longestCommonSubsequence( s , s2 );
 
     }
 }
