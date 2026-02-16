@@ -12,27 +12,25 @@ class Solution {
 
     }
 
-    public String longestPalindrome(String ss) {
-        char arr[] = ss.toCharArray();
+    public String longestPalindrome(String s) {
+        if( s == null || s.length() < 1 )return "";
+        char arr[] = s.toCharArray();
         int n = arr.length;
 
-        String s = "";
-        int maxLen = 0;
+        int start = 0;
+        int end = 0;
 
         for( int i = 0  ; i < n ; i++ ){
             int oddLen = expand( arr , i , i );
-            if( oddLen > maxLen ){
-                s = ss.substring(i - oddLen/2 , i + oddLen/2 + 1);
-                maxLen = oddLen;
-            }
-
             int evenLen = expand( arr , i , i + 1 );
-            if( evenLen > maxLen ){
-                s = ss.substring(i - evenLen/2 + 1 , i + evenLen/2 + 1);
-                maxLen = evenLen;
+            int len = Math.max(oddLen, evenLen);
+
+            if (len > end - start) {
+                start = i - (len - 1) / 2;
+                end = i + len / 2;
             }
         }
 
-        return s;
+        return s.substring(start , end + 1);
     }
 }
