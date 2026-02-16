@@ -1,22 +1,38 @@
 class Solution {
-    public String longestPalindrome(String s) {
-        if(s==null || s.length()<1)return "";
-        int start= 0;
-        int end=0;
-        for(int i=0;i<s.length();i++){
-            int len = Math.max(expand(s,i,i), expand(s,i,i+1));
-            if(len>end-start+1){
-                end= i+(len/2);
-                start= i-(len-1)/2;
+
+    static private int expand (char arr[] , int i , int j ){
+        int n = arr.length;
+
+        while( i >= 0 && j < n && arr[i] == arr[j] ){
+            i--;
+            j++;
+        }
+
+        return j - i - 1;
+
+    }
+
+    public String longestPalindrome(String ss) {
+        char arr[] = ss.toCharArray();
+        int n = arr.length;
+
+        String s = "";
+        int maxLen = 0;
+
+        for( int i = 0  ; i < n ; i++ ){
+            int oddLen = expand( arr , i , i );
+            if( oddLen > maxLen ){
+                s = ss.substring(i - oddLen/2 , i + oddLen/2 + 1);
+                maxLen = oddLen;
+            }
+
+            int evenLen = expand( arr , i , i + 1 );
+            if( evenLen > maxLen ){
+                s = ss.substring(i - evenLen/2 + 1 , i + evenLen/2 + 1);
+                maxLen = evenLen;
             }
         }
-        return s.substring(start, end+1);
-    }
-    int expand(String s, int left, int right){
-        while(left>=0 && right<s.length() && s.charAt(left)== s.charAt(right)){
-            left--;
-            right++;
-        }
-        return right-left-1;
+
+        return s;
     }
 }
