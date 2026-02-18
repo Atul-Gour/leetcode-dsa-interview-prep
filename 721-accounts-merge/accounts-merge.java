@@ -66,10 +66,6 @@ class Solution {
             ans.add(account);
 
         }
-
-        // System.out.println(parent);
-        // // System.out.println(rank);
-        // // System.out.println(emails);
     
         return ans;
     }
