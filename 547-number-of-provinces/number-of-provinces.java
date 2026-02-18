@@ -1,11 +1,11 @@
 class Solution {
 
-    private void bfs( int node , boolean[] visited ,  ArrayList< ArrayList<Integer>> adj ){
+    private void dfs( int node , boolean[] visited ,  ArrayList< ArrayList<Integer>> adj ){
         
         visited[node] = true;
 
         for( int u : adj.get( node )){
-            if( !visited[u] ) bfs( u , visited , adj );
+            if( !visited[u] ) dfs( u , visited , adj );
         }
     }
 
@@ -21,7 +21,6 @@ class Solution {
             for( int j = 0 ; j < n ; j++ ){
                 if( isConnected[i][j] == 1 ){
                     adj.get(i).add(j);
-                    adj.get(j).add(i);
                 }
             }
         }
@@ -32,7 +31,7 @@ class Solution {
             if( visited[i] )continue;
 
             ans++;
-            bfs( i , visited , adj );
+            dfs( i , visited , adj );
         }
 
         return ans;
