@@ -1,13 +1,16 @@
 class DSU {
 
     int[] parent;
-    int[] rank;
+    int[] size;
 
     DSU(int n) {
-        parent = new int[n*n];
-        rank = new int[n*n];
+        parent = new int[n];
+        size = new int[n];
 
-        for(int i = 0 ; i < n*n ; i++)parent[i] = i;
+        for (int i = 0; i < n; i++) {
+            parent[i] = i;
+            size[i] = 1;
+        }
     }
 
     int find(int node) {
@@ -24,16 +27,12 @@ class DSU {
         if (pa == pb)
             return false;
 
-        int ra = rank[pa];
-        int rb = rank[pb];
-
-        if (ra < rb)
+        if (size[pa] < size[pb]) {
             parent[pa] = pb;
-        else if (rb < ra)
+            size[pb] += size[pa];
+        } else {
             parent[pb] = pa;
-        else {
-            parent[pa] = pb;
-            rank[pb]++;
+            size[pa] += size[pb];
         }
 
         return true;
@@ -42,17 +41,12 @@ class DSU {
 
 class Solution {
 
-    static private int key(int a, int b) {
-        return (int) a << 32 | b;
-    }
-
     public int largestIsland(int[][] grid) {
         int n = grid.length;
 
-        DSU dsu = new DSU(n);
-        HashMap<Integer, Integer> freq = new HashMap<>();
-        int[][] matrix = new int[n][n];
+        DSU dsu = new DSU(n*n);
         int[][] dirs = { { 0, -1 }, { -1, 0 } };
+        // int[][] dirs = { { 0, -1 }, { 0, 1 }, { 1, 0 }, { -1, 0 } };
 
         int ans = 0;
 
@@ -60,8 +54,6 @@ class Solution {
             for (int j = 0; j < n; j++) {
                 if (grid[i][j] == 1) {
                     int key = i * n + j;
-                    dsu.parent[key] = key;
-                    dsu.rank[key] = 0;
 
                     for (int d[] : dirs) {
                         int newX = i + d[0];
@@ -73,18 +65,6 @@ class Solution {
                         }
                     }
 
-                }
-            }
-        }
-
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (grid[i][j] == 1) {
-                    int key = i * n + j;
-                    int keyP = dsu.find(key);
-                    freq.put(keyP, freq.getOrDefault(keyP, 0) + 1);
-                    matrix[i][j] = keyP;
-                    ans = Math.max(ans, freq.get(keyP));
                 }
             }
         }
@@ -104,16 +84,23 @@ class Solution {
                         int newY = j + d[1];
 
                         if (newX < n && newX >= 0 && newY < n && newY >= 0 && grid[newX][newY] == 1) {
-                            set.add(matrix[newX][newY]);
+                            int parent = dsu.find(newX * n + newY);
+                            set.add(parent);
                         }
                     }
 
                     for (int key : set) {
-                        currAns += freq.get(key);
+                        currAns += dsu.size[key];
                     }
 
                     ans = Math.max(ans, currAns);
                 }
+            }
+        }
+
+        for (int i = 0; i < n * n; i++) {
+            if (dsu.find(i) == i) {
+                ans = Math.max(ans, dsu.size[i]);
             }
         }
 
