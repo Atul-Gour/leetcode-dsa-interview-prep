@@ -45,8 +45,8 @@ class Solution {
         int n = grid.length;
 
         DSU dsu = new DSU(n*n);
-        int[][] dirs = { { 0, -1 }, { -1, 0 } };
-        // int[][] dirs = { { 0, -1 }, { 0, 1 }, { 1, 0 }, { -1, 0 } };
+        // int[][] dirs = { { 0, -1 }, { -1, 0 } };
+        int[][] dirs = { { 0, -1 }, { 0, 1 }, { 1, 0 }, { -1, 0 } };
 
         int ans = 0;
 
