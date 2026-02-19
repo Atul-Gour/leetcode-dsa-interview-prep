@@ -50,7 +50,7 @@ class Solution {
         for( int[] stone :stones ){
             int x = stone[0];
             int y = stone[1];
-            long key = x * n + y;
+            long key = ((long)x << 32) | y;
 
             dsu.parent.put( key , key );
             dsu.size.put( key , 1 );
