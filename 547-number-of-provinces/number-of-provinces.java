@@ -1,45 +1,63 @@
 class Solution {
+    static class DSU{
 
-    static private int findParent( int node , int[] parent ){
-        if(parent[node] == node)
-            return node;
+        int[] parent;
+        int[] rank;
 
-        return parent[node] = findParent( parent[node] , parent );
+        DSU(int n){
+            parent = new int[n];
+            rank = new int[n];
+            for( int i = 0 ; i < n ; i++ ) parent[i] = i;
+        }
+
+        int find( int node ){
+            if( parent[node] == node )return node;
+            return parent[node] = find( parent[node] );
+        }
+
+        boolean union( int a , int b ){
+            int pa = find(a);
+            int pb = find(b);
+
+            if( pa == pb )return false;
+
+            int ra = rank[pa];
+            int rb = rank[pb];
+
+            if( ra < rb )parent[pa] = pb;
+            else if( rb < ra )parent[pb] = pa;
+            else{
+                parent[pa] = pb;
+                rank[pb]++;
+            }
+
+            return true;
+        }
+
+        int provinces(){
+            int count = 0;
+            for( int i = 0 ; i < parent.length ; i++ ){
+                int pCurr = find(parent[i]);
+                if( pCurr == i )count++;
+            }
+
+            return count;
+        }
+
     }
-
     public int findCircleNum(int[][] isConnected) {
         int n = isConnected.length;
 
-        int[] parent = new int[n];
-        int[] rank = new int[n];
+        DSU dsu = new DSU(n);
 
         for( int i = 0 ; i < n ; i++ ){
-            parent[i] = i;
-        }
-
-        int count = 0;
-
-        for(int i = 0; i < n; i++){
             for( int j = 0 ; j < n ; j++ ){
-                if( i != j && isConnected[i][j] != 0  ){
-                    int parentA = findParent( i , parent );
-                    int parentB = findParent( j , parent );
-                    if( parentA == parentB )continue;
-
-                    if( rank[parentA] <= rank[parentB] ){
-                        if( rank[parentA] == rank[parentB] ) rank[parentB]++;
-                        parent[parentA] = parentB;
-                    }else{
-                        parent[parentB] = parentA;
-                    }
+                if( isConnected[i][j] == 1 ){
+                    dsu.union(i , j);
                 }
             }
         }
-        
-        for(int i = 0; i < n; i++){
-            if(parent[i] == i) count++;
-        }
 
-        return count;
+        return dsu.provinces();
     }
 }
