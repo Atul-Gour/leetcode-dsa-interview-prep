@@ -1,7 +1,7 @@
 class DSU {
 
-    HashMap<Long , Long> parent;
-    HashMap<Long , Integer> size;
+    HashMap<Long, Long> parent;
+    HashMap<Long, Integer> size;
 
     DSU() {
         parent = new HashMap<>();
@@ -11,9 +11,9 @@ class DSU {
     long find(long node) {
         if (parent.get(node) == node)
             return node;
-        
+
         long newParent = find(parent.get(node));
-        parent.put( node , newParent );
+        parent.put(node, newParent);
 
         return newParent;
     }
@@ -22,18 +22,18 @@ class DSU {
         long pa = find(a);
         long pb = find(b);
 
-        if (pa == pb) return;
+        if (pa == pb)
+            return;
 
         if (size.get(pa) < size.get(pb)) {
-            parent.put(pa , pb);
-            size.put(pb , size.get(pb) + size.get(pa) );
+            parent.put(pa, pb);
+            size.put(pb, size.get(pb) + size.get(pa));
         } else {
-            parent.put(pb , pa);
-            size.put(pa , size.get(pa) + size.get(pb) );
+            parent.put(pb, pa);
+            size.put(pa, size.get(pa) + size.get(pb));
         }
     }
 }
-
 
 class Solution {
 
@@ -42,46 +42,38 @@ class Solution {
         long[] rows = new long[10001];
         long[] cols = new long[10001];
 
-        Arrays.fill( rows , -1 );
-        Arrays.fill( cols , -1 );
+        Arrays.fill(rows, -1);
+        Arrays.fill(cols, -1);
 
         DSU dsu = new DSU();
 
-        for( int[] stone :stones ){
+        for (int[] stone : stones) {
             int x = stone[0];
             int y = stone[1];
-            long key = ((long)x << 32) | y;
+            long key = ((long) x << 32) | y;
 
-            dsu.parent.put( key , key );
-            dsu.size.put( key , 1 );
+            dsu.parent.put(key, key);
+            dsu.size.put(key, 1);
 
-            if( rows[x] == -1 ){
+            if (rows[x] == -1) {
                 rows[x] = key;
-            }else{
-                dsu.union( key , rows[x] );
+            } else {
+                dsu.union(key, rows[x]);
             }
 
-            if( cols[y] == -1 ){
+            if (cols[y] == -1) {
                 cols[y] = key;
-            }else{
-                dsu.union( key , cols[y] );
+            } else {
+                dsu.union(key, cols[y]);
             }
         }
 
-        HashMap<Long , Integer> freq = new HashMap<>();
-        
-        for( long node : dsu.parent.keySet() ){
-            long nodeP = dsu.find( node );
-            freq.put( nodeP , freq.getOrDefault( nodeP , 0 ) + 1 );
+        int components = 0;
+        for (long node : dsu.parent.keySet()) {
+            if (dsu.find(node) == node)
+                components++;
         }
 
-        int ans = 0;
-
-        for( int count : freq.values() ){
-            if( count <= 1 )continue;
-            ans += count - 1;
-        }
-
-        return ans;
+        return n - components;
     }
 }
