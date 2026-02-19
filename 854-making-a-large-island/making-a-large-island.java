@@ -1,39 +1,39 @@
 class DSU {
 
-    HashMap<Long, Long> parent;
-    HashMap<Long, Integer> rank;
+    int[] parent;
+    int[] rank;
 
-    DSU() {
-        parent = new HashMap<>();
-        rank = new HashMap<>();
+    DSU(int n) {
+        parent = new int[n*n];
+        rank = new int[n*n];
+
+        for(int i = 0 ; i < n*n ; i++)parent[i] = i;
     }
 
-    long find(long node) {
-        if (parent.get(node) == node)
+    int find(int node) {
+        if (parent[node] == node)
             return node;
 
-        long newParent = find(parent.get(node));
-        parent.put(node, newParent);
-        return newParent;
+        return parent[node] = find(parent[node]);
     }
 
-    boolean union(long a, long b) {
-        long pa = find(a);
-        long pb = find(b);
+    boolean union(int a, int b) {
+        int pa = find(a);
+        int pb = find(b);
 
         if (pa == pb)
             return false;
 
-        int ra = rank.get(pa);
-        int rb = rank.get(pb);
+        int ra = rank[pa];
+        int rb = rank[pb];
 
         if (ra < rb)
-            parent.put(pa, pb);
+            parent[pa] = pb;
         else if (rb < ra)
-            parent.put(pb, pa);
+            parent[pb] = pa;
         else {
-            parent.put(pa, pb);
-            rank.put(pb, rank.get(pb) + 1);
+            parent[pa] = pb;
+            rank[pb]++;
         }
 
         return true;
@@ -42,32 +42,33 @@ class DSU {
 
 class Solution {
 
-    static private long key(int a, int b) {
-        return (long) a << 32 | b;
+    static private int key(int a, int b) {
+        return (int) a << 32 | b;
     }
 
     public int largestIsland(int[][] grid) {
         int n = grid.length;
-        DSU dsu = new DSU();
-        HashMap<Long , Integer> freq = new HashMap<>();
-        long[][] matrix = new long[n][n];
+
+        DSU dsu = new DSU(n);
+        HashMap<Integer, Integer> freq = new HashMap<>();
+        int[][] matrix = new int[n][n];
         int[][] dirs = { { 0, -1 }, { -1, 0 } };
-        
+
         int ans = 0;
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (grid[i][j] == 1) {
-                    long key = (long) i << 32 | j;
-                    dsu.parent.put(key, key);
-                    dsu.rank.put(key, 0);
+                    int key = i * n + j;
+                    dsu.parent[key] = key;
+                    dsu.rank[key] = 0;
 
                     for (int d[] : dirs) {
                         int newX = i + d[0];
                         int newY = j + d[1];
 
                         if (newX < n && newX >= 0 && newY < n && newY >= 0 && grid[newX][newY] == 1) {
-                            long newKey = (long) newX << 32 | newY;
+                            int newKey = newX * n + newY;
                             dsu.union(key, newKey);
                         }
                     }
@@ -79,11 +80,11 @@ class Solution {
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (grid[i][j] == 1) {
-                    long key = (long) i << 32 | j;
-                    long keyP = dsu.find( key );
-                    freq.put(keyP , freq.getOrDefault(keyP , 0) + 1 );
+                    int key = i * n + j;
+                    int keyP = dsu.find(key);
+                    freq.put(keyP, freq.getOrDefault(keyP, 0) + 1);
                     matrix[i][j] = keyP;
-                    ans = Math.max(ans , freq.get(keyP));
+                    ans = Math.max(ans, freq.get(keyP));
                 }
             }
         }
@@ -96,9 +97,9 @@ class Solution {
 
                     int currAns = 1;
 
-                    HashSet<Long> set = new HashSet<>();
+                    HashSet<Integer> set = new HashSet<>();
 
-                    for( int[] d : dirss ){
+                    for (int[] d : dirss) {
                         int newX = i + d[0];
                         int newY = j + d[1];
 
@@ -107,11 +108,11 @@ class Solution {
                         }
                     }
 
-                    for( long key : set ){
+                    for (int key : set) {
                         currAns += freq.get(key);
                     }
-                    
-                    ans = Math.max(ans , currAns);
+
+                    ans = Math.max(ans, currAns);
                 }
             }
         }
