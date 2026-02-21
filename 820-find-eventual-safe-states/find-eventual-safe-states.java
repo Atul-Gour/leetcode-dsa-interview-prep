@@ -1,49 +1,46 @@
 class Solution {
+    public List<Integer> eventualSafeNodes(int[][] graph) {
+        int n = graph.length;
+        int outdegree[] = new int[n];
+        Queue<Integer> q = new ArrayDeque<>();
 
-    private boolean dfs(
-            int node,
-            int[][] graph,
-            boolean[] vis,
-            boolean[] pathVis,
-            boolean[] safe
-    ) {
-
-        vis[node] = true;
-        pathVis[node] = true;
-        safe[node] = false; // assume unsafe
-
-        for (int neigh : graph[node]) {
-            if (!vis[neigh]) {
-                if (dfs(neigh, graph, vis, pathVis, safe)) {
-                    return true;
-                }
-            } else if (pathVis[neigh]) {
-                return true; // cycle
+        for( int i = 0 ; i < n ; i++ ){
+            outdegree[i] = graph[i].length;
+            if( outdegree[i] == 0 ){
+                q.offer( i );
             }
         }
+        
+        ArrayList<Integer>[] adj = new ArrayList[n];
 
-        safe[node] = true;   // proven safe
-        pathVis[node] = false;
-        return false;
-    }
+        for( int i = 0 ; i < n ; i++ ){
+            adj[i] = new ArrayList<>();
+        }
 
-    public List<Integer> eventualSafeNodes(int[][] graph) {
-
-        int n = graph.length;
-        boolean[] vis = new boolean[n];
-        boolean[] pathVis = new boolean[n];
-        boolean[] safe = new boolean[n];
-
-        for (int i = 0; i < n; i++) {
-            if (!vis[i]) {
-                dfs(i, graph, vis, pathVis, safe);
+        for( int i = 0 ; i < n ; i++ ){
+            for( int neigh : graph[i] ){
+                adj[neigh].add(i);
             }
         }
 
         List<Integer> ans = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            if (safe[i]) ans.add(i);
+        boolean[] safe = new boolean[n];
+
+        while( !q.isEmpty() ){
+            int curr = q.poll();
+            safe[curr] = true;
+
+            for( int neigh : adj[curr] ){
+                if( safe[neigh] )continue;
+                outdegree[neigh]--;
+                if( outdegree[neigh] == 0 ) q.offer(neigh);
+            }
         }
+
+        for( int i = 0 ; i < n ; i++ ){
+            if( safe[i] )ans.add(i);
+        }
+
         return ans;
     }
 }
