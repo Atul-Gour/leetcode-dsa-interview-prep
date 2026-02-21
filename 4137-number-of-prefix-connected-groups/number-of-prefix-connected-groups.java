@@ -10,19 +10,20 @@ class Solution {
     }
 
     public int prefixConnected(String[] words, int k) {
-        HashMap<Long, ArrayList<String>> map = new HashMap<>();
+        HashMap<Long , Integer> map = new HashMap<>();
+        
         for (String word : words) {
-            if (word.length() < k)
-                continue;
+            if (word.length() < k)continue;
             long key = key(word, k);
-            map.computeIfAbsent(key, f -> new ArrayList<>()).add(word);
+            
+            map.put( key , map.getOrDefault( key , 0 ) + 1 );
+            
         }
+
         int count = 0;
-        HashSet<String> set = new HashSet<>();
-        for (Long hash : map.keySet()) {
-            ArrayList<String> list = map.get(hash);
-            int n = list.size();
-            if (n <= 1)
+
+        for (int val : map.values()) {
+            if (val <= 1)
                 continue;
             
             count++;
