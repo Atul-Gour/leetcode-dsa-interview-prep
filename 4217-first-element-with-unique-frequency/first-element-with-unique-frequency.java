@@ -1,21 +1,27 @@
 class Solution {
     public int firstUniqueFreq(int[] nums) {
-        HashMap<Integer , Integer> map = new HashMap<>();
-        HashMap<Integer , Integer> freq = new HashMap<>();
+
         int n = nums.length;
-        
-
+        int max = 0;
         for( int ele : nums ){
-            freq.put( ele , freq.getOrDefault(ele , 0) + 1 );
+            max = Math.max( max , ele );
         }
 
-        for( int f : freq.values() ){
-            map.put(f , map.getOrDefault( f , 0 ) + 1);
+        HashSet<Integer>[] freqNums = new HashSet[n + 1];
+        int[] numFreq = new int[max + 1];
+
+        for( int i = 0 ; i <= n ; i++ ){
+            freqNums[i] = new HashSet<>();
+        }        
+
+        for( int ele : nums ){
+            freqNums[numFreq[ele]].remove(ele);
+            numFreq[ele]++;
+            freqNums[numFreq[ele]].add( ele );
         }
 
         for( int ele : nums ){
-            int currFreq = freq.get(ele);
-            if( map.get(currFreq) == 1 )return ele;
+            if( freqNums[numFreq[ele]].size() == 1 )return ele;
         }
         return -1;
     }
