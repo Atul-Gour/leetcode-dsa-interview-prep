@@ -31,7 +31,7 @@ class Solution {
             safe[curr] = true;
 
             for( int neigh : adj[curr] ){
-                if( safe[neigh] )continue;
+                // if( safe[neigh] )continue;
                 outdegree[neigh]--;
                 if( outdegree[neigh] == 0 ) q.offer(neigh);
             }
