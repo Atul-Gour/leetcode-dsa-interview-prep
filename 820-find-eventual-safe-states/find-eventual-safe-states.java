@@ -1,41 +1,42 @@
 class Solution {
-    public List<Integer> eventualSafeNodes(int[][] graph) {
-        int n = graph.length;
-        int outdegree[] = new int[n];
-        Queue<Integer> q = new ArrayDeque<>();
 
-        for( int i = 0 ; i < n ; i++ ){
-            outdegree[i] = graph[i].length;
-            if( outdegree[i] == 0 ){
-                q.offer( i );
-            }
-        }
+    static private boolean dfs( int node , int[][] graph , int[] visited  , boolean[] safe){
+        if( visited[node] == 2 )return safe[node];
         
-        ArrayList<Integer>[] adj = new ArrayList[n];
+        visited[node] = 1;
 
-        for( int i = 0 ; i < n ; i++ ){
-            adj[i] = new ArrayList<>();
+        for( int neigh : graph[node] ){
+
+            if( visited[neigh] == 1 ){
+                visited[node] = 2;
+                return safe[node] = false;
+            }
+            else{
+                if( !dfs( neigh , graph , visited , safe ) ){
+                    visited[node] = 2;
+                    return safe[node] = false;
+                }
+            }
+            
         }
 
+        visited[node] = 2;
+        return safe[node] = true;
+    }
+
+    public List<Integer> eventualSafeNodes(int[][] graph) {
+
+        int n = graph.length;
+        boolean[] safe = new boolean[n];
+        int[] visited = new int[n];      
+
         for( int i = 0 ; i < n ; i++ ){
-            for( int neigh : graph[i] ){
-                adj[neigh].add(i);
+            if( visited[i] == 0 ){
+                dfs( i , graph , visited , safe );
             }
         }
 
         List<Integer> ans = new ArrayList<>();
-        boolean[] safe = new boolean[n];
-
-        while( !q.isEmpty() ){
-            int curr = q.poll();
-            safe[curr] = true;
-
-            for( int neigh : adj[curr] ){
-                // if( safe[neigh] )continue;
-                outdegree[neigh]--;
-                if( outdegree[neigh] == 0 ) q.offer(neigh);
-            }
-        }
 
         for( int i = 0 ; i < n ; i++ ){
             if( safe[i] )ans.add(i);
