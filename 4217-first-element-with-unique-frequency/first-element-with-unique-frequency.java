@@ -7,21 +7,17 @@ class Solution {
             max = Math.max( max , ele );
         }
 
-        HashSet<Integer>[] freqNums = new HashSet[n + 1];
-        int[] numFreq = new int[max + 1];
-
-        for( int i = 0 ; i <= n ; i++ ){
-            freqNums[i] = new HashSet<>();
-        }        
+        int[] freqNums = new int[n + 1];
+        int[] numFreq = new int[max + 1];       
 
         for( int ele : nums ){
-            freqNums[numFreq[ele]].remove(ele);
+            freqNums[numFreq[ele]]--;
             numFreq[ele]++;
-            freqNums[numFreq[ele]].add( ele );
+            freqNums[numFreq[ele]]++;
         }
 
         for( int ele : nums ){
-            if( freqNums[numFreq[ele]].size() == 1 )return ele;
+            if( freqNums[numFreq[ele]] == 1 )return ele;
         }
         return -1;
     }
