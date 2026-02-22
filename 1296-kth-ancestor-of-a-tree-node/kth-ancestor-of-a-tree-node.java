@@ -1,27 +1,29 @@
 class TreeAncestor {
-    int[][] dp;
-    final int MAX = 17;
+    int[][] table;
+    int MAX ;
 
 
     public TreeAncestor(int n, int[] parent) {
-        int[][] dp = new int[MAX][n];
 
-        dp[0] = parent;
+        this.MAX = (int)(Math.log(n)/Math.log(2)) + 1;
+        int[][] table = new int[MAX][n];
+        
+        table[0] = parent;
 
         for( int i = 1 ; i < MAX ; i++ ){
             for( int j = 0 ; j < n ; j++ ){
-                if( dp[i-1][j] == -1 ) dp[i][j] = -1;
-                else dp[i][j] = dp[i-1][ dp[i-1][j] ];
+                if( table[i-1][j] == -1 ) table[i][j] = -1;
+                else table[i][j] = table[i-1][ table[i-1][j] ];
             }
         }
 
-        this.dp = dp;
+        this.table = table;
     }
     
     public int getKthAncestor(int node, int k) {
         for( int i = 0 ; i < MAX ; i++ ){
             if(( k & ( 1 << i )) != 0 ){
-                node = dp[i][node];
+                node = table[i][node];
             }
             if( node == -1 )return node;
         }
