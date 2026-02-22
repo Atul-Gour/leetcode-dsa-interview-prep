@@ -1,13 +1,9 @@
 class TreeAncestor {
-    int[] parent;
-    int n;
     int[][] dp;
     final int MAX = 17;
 
 
     public TreeAncestor(int n, int[] parent) {
-        this.parent = parent;
-        this.n = n;
         int[][] dp = new int[MAX][n];
 
         for( int j = 0 ; j < n ; j++ ){
