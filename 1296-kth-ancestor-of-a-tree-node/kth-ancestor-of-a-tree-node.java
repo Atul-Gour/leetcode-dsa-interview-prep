@@ -1,13 +1,13 @@
 class TreeAncestor {
     int[][] table;
-    int MAX ;
+    final int MAX ;
 
 
     public TreeAncestor(int n, int[] parent) {
 
         this.MAX = (int)(Math.log(n)/Math.log(2)) + 1;
         int[][] table = new int[MAX][n];
-        
+
         table[0] = parent;
 
         for( int i = 1 ; i < MAX ; i++ ){
