@@ -6,9 +6,7 @@ class TreeAncestor {
     public TreeAncestor(int n, int[] parent) {
         int[][] dp = new int[MAX][n];
 
-        for( int j = 0 ; j < n ; j++ ){
-            dp[0][j] = parent[j];
-        }
+        dp[0] = parent;
 
         for( int i = 1 ; i < MAX ; i++ ){
             for( int j = 0 ; j < n ; j++ ){
