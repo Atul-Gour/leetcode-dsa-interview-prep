@@ -15,12 +15,12 @@ class Solution {
             while( !queue.isEmpty() && prefix[queue.peekLast()] >= prefix[i] ){
                 queue.removeLast();
             }
-
-            queue.addLast(i);
             
-            while( prefix[i] - prefix[queue.peekFirst()] >= k ){
+            while( !queue.isEmpty() && prefix[i] - prefix[queue.peekFirst()] >= k ){
                 ans = Math.min( ans , i - queue.removeFirst() );
             }
+
+            queue.addLast(i);
         }
 
         return ans == Integer.MAX_VALUE ? -1 : ans;
