@@ -7,7 +7,7 @@ class Solution {
             nums[i+1] = nums[i] + (hours[i] > 8 ? 1 : -1) ;
         }
 
-        Stack<Integer> st = new Stack<>();
+        Deque<Integer> st = new ArrayDeque<>();
 
         for( int i = 0 ; i <= n ; i++ ){
             if( !st.isEmpty() && nums[st.peek()] <= nums[i] )continue;
