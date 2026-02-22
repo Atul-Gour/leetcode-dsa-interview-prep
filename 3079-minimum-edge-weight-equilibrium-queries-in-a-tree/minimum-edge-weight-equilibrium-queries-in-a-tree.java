@@ -94,7 +94,8 @@ class Solution {
         int[][] freq = new int[n][27];
 
         int[] depth = new int[n];
-        final int MAX = (int)(Math.log(n)/Math.log(2)) + 1;
+        int MAX = 0;
+        while ((1 << MAX) <= n) MAX++;
         int[][] parent = new int[MAX][n];
 
         build( 0 , -1 , 0 , freq , adj , depth , parent );
