@@ -104,7 +104,6 @@ class Solution {
 
         for( int i = 0 ; i < queries.length ; i++ ){
             int lca = lca( depth , parent , queries[i][0] , queries[i][1] , MAX );
-            System.out.println( queries[i][0] + " " + queries[i][1] + " = " + lca );
             ans[i] = solve( queries[i] , freq , lca );
         }
 
