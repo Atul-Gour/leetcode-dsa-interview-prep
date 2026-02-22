@@ -9,8 +9,8 @@ class Solution {
             TreeNode curr = stack.pop();
             if( curr == null )continue;
             list.add(curr.val);
-            if( curr.right != null )stack.push(curr.right);
-            if( curr.left != null )stack.push(curr.left);
+            stack.push(curr.right);
+            stack.push(curr.left);
         }
 
         return list;
