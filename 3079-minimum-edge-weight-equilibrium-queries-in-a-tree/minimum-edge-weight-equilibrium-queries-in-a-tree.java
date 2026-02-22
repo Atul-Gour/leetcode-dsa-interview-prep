@@ -1,17 +1,19 @@
 class Solution {
 
-    void build( int node , int parent , int wt , int[][] freq , ArrayList<int[]>[] adj ){
+    void build( int node , int parent , int wt , int[][] freq , ArrayList<int[]>[] adj , int[] depth , int[][] parentArray ){
 
         if( parent != -1 ){
             for( int i = 0 ; i < 27 ; i++ ){
                 freq[node][i] = freq[parent][i];
             }
             freq[node][wt]++;
+            depth[node] = depth[parent] + 1;
         }
+        parentArray[0][node] = parent;
 
         for( int[] neigh : adj[node] ){
             if( neigh[0] == parent )continue;
-            build( neigh[0] , node , neigh[1] , freq , adj );
+            build( neigh[0] , node , neigh[1] , freq , adj , depth , parentArray );
         }
     
     }
@@ -34,32 +36,6 @@ class Solution {
     }
 
     void buildParent( int[][] parent , int[] depth , ArrayList<int[]>[] adj , int MAX ){
-        
-        Queue<int[]> q = new ArrayDeque<>();
-        q.offer( new int[]{0 , -1} );
-        int height = 0;
-
-        while( !q.isEmpty() ){
-            int n = q.size();
-
-            for( int i = 0 ; i < n ; i++ ){
-                int c[] = q.poll();
-                int curr = c[0];
-                depth[curr] = height;
-                parent[0][curr] = c[1];
-
-                for( int[] neigh : adj[curr] ){
-                    if( neigh[0] == c[1] )continue;
-                    q.offer( new int[]{neigh[0] , curr} );
-                }
-            }
-
-            height++;
-        }
-
-        
-
-        // lca table creation
 
         for( int i = 1 ; i < MAX ; i++ ){
             for( int j = 0 ; j < parent[0].length ; j++ ){
@@ -117,12 +93,11 @@ class Solution {
 
         int[][] freq = new int[n][27];
 
-        build( 0 , -1 , 0 , freq , adj );
-
         int[] depth = new int[n];
         final int MAX = (int)(Math.log(n)/Math.log(2)) + 1;
         int[][] parent = new int[MAX][n];
 
+        build( 0 , -1 , 0 , freq , adj , depth , parent );
         buildParent( parent , depth , adj , MAX );
         
 
