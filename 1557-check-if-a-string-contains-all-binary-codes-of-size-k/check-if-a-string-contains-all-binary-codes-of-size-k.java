@@ -1,6 +1,6 @@
 class Solution {
     public boolean hasAllCodes(String s, int k) {
-        int n = (int) Math.pow(2, k);
+        int n = 1 << k;
         boolean[] present = new boolean[n];
 
         if (s.length() < k)
