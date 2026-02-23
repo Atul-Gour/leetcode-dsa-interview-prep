@@ -18,7 +18,6 @@ class Solution {
         List<Integer> list = new ArrayList<>();
         Stack<TreeNode> stack = new Stack<>();
         stack.push(root);
-        if( root == null )return list;
 
         while( !stack.isEmpty() ){
             TreeNode curr = stack.peek();
