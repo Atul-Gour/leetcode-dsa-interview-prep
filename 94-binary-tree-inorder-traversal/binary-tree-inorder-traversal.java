@@ -19,18 +19,19 @@ class Solution {
         Stack<TreeNode> stack = new Stack<>();
         stack.push(root);
         if( root == null )return list;
-        
+
         while( !stack.isEmpty() ){
             TreeNode curr = stack.peek();
 
-            if( curr == null ){
+            if( curr != null ){
+                stack.push( curr.left );
+            }else{
                 stack.pop();
                 if( stack.isEmpty() )return list;
-                TreeNode top = stack.pop();
-                list.add(top.val);
-                stack.push(top.right);
+                curr = stack.pop();
+                list.add( curr.val );
+                stack.push( curr.right );
             }
-            else stack.push(curr.left);
         }
 
         return list;
