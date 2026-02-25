@@ -1,6 +1,6 @@
 class Solution {
 
-    private void find( TreeNode curr  , int x , int y , HashMap<Integer , ArrayList< int[] > > plane ){
+    private void find( TreeNode curr  , int x , int y , TreeMap<Integer , ArrayList< int[] > > plane ){
         if( curr == null )return;
 
         plane.computeIfAbsent( x , f -> new ArrayList<>() ).add( new int[]{ y , curr.val } );
@@ -10,17 +10,12 @@ class Solution {
     }
 
     public List<List<Integer>> verticalTraversal(TreeNode root) {
-        HashMap<Integer , ArrayList< int[] > > plane = new HashMap<>();
+        TreeMap<Integer , ArrayList< int[] > > plane = new TreeMap<>();
         List<List<Integer>> ans = new ArrayList<>();
 
         find( root , 0 , 0 , plane );
 
-        Set<Integer> keysSet = plane.keySet();
-        List<Integer> keys = new ArrayList<>();
-        keys.addAll(keysSet);
-        Collections.sort(keys);
-
-        for( int x : keys ){
+        for( int x : plane.keySet() ){
             ArrayList<int[]> vertices = plane.get(x);
             List<Integer> column = new ArrayList<>();
 
