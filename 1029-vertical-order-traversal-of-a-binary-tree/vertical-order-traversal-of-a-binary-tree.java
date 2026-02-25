@@ -1,45 +1,57 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
 class Solution {
 
+    private void find( TreeNode curr  , int x , int y , HashMap<Integer , ArrayList< int[] > > plane ){
+        if( curr == null )return;
+
+        plane.computeIfAbsent( x , f -> new ArrayList<>() ).add( new int[]{ y , curr.val } );
+
+        find( curr.left , x - 1 , y + 1 , plane );
+        find( curr.right , x + 1 , y + 1 , plane );
+    }
+
     public List<List<Integer>> verticalTraversal(TreeNode root) {
-        Map<Integer, List<int[]>> map = new HashMap<>();
-        Queue<Object[]> q = new LinkedList<>();
-
-        q.add(new Object[]{root, 0, 0});
-
-        int minCol = 0, maxCol = 0;
-
-        while (!q.isEmpty()) {
-            Object[] arr = q.poll();
-            TreeNode node = (TreeNode) arr[0];
-            int row = (int) arr[1];
-            int col = (int) arr[2];
-
-            if (node == null) continue;
-
-            minCol = Math.min(minCol, col);
-            maxCol = Math.max(maxCol, col);
-
-            map.computeIfAbsent(col, k -> new ArrayList<>())
-               .add(new int[]{row, node.val});
-
-            q.add(new Object[]{node.left, row + 1, col - 1});
-            q.add(new Object[]{node.right, row + 1, col + 1});
-        }
-
+        HashMap<Integer , ArrayList< int[] > > plane = new HashMap<>();
         List<List<Integer>> ans = new ArrayList<>();
 
-        for (int c = minCol; c <= maxCol; c++) {
-            List<int[]> list = map.get(c);
+        find( root , 0 , 0 , plane );
 
-            list.sort((a, b) -> {
-                if (a[0] != b[0]) return a[0] - b[0];
-                return a[1] - b[1];
-            });
+        Set<Integer> keysSet = plane.keySet();
+        List<Integer> keys = new ArrayList<>();
+        keys.addAll(keysSet);
+        Collections.sort(keys);
 
-            List<Integer> colList = new ArrayList<>();
-            for (int[] p : list) colList.add(p[1]);
+        for( int x : keys ){
+            ArrayList<int[]> vertices = plane.get(x);
+            List<Integer> column = new ArrayList<>();
 
-            ans.add(colList);
+            Collections.sort( vertices , (a ,b) -> {
+                if( a[0] != b[0] ){
+                    return Integer.compare( a[0] , b[0] );
+                }else{
+                    return Integer.compare( a[1] , b[1] );
+                }
+            } );
+
+            for( int[] vertex : vertices ){
+                column.add( vertex[1] );
+            }
+
+            ans.add(column);
         }
 
         return ans;
