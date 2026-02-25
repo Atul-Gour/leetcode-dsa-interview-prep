@@ -14,18 +14,35 @@
  * }
  */
 class Solution {
-    int ans= Integer.MIN_VALUE;
-    int dfs(TreeNode curr){
-        if(curr==null)return 0;
-        int leftVal= dfs(curr.left);
-        int rightVal = dfs(curr.right);
-        int currAns = curr.val + leftVal + rightVal;
-        ans =Math.max(currAns, ans);
-        currAns= Math.max(leftVal,rightVal)+curr.val;
-        return currAns<0 ? 0 : currAns;
+    int ans = Integer.MIN_VALUE;
+
+    private int find( TreeNode root ){
+        if( root == null )return -1001;
+
+        int left = find( root.left );
+        int right = find( root.right );
+
+        if( left == -1001 && right == -1001 ){
+            ans = Math.max( ans , root.val );
+            return root.val;
+        }
+
+        long currMax = root.val;
+        currMax = Math.max( currMax , root.val + left );
+        currMax = Math.max( currMax , root.val + right );
+        currMax = Math.max( currMax , Integer.MIN_VALUE );
+        int returnMax = (int)currMax;
+
+        currMax = Math.max( currMax , root.val + right + left );
+        currMax = Math.max( currMax , Integer.MIN_VALUE );
+        ans = (int) Math.max( ans , currMax );
+        
+        return returnMax;
     }
+
     public int maxPathSum(TreeNode root) {
-        dfs(root);
-        return ans;
+        find( root );
+        
+        return ans == Integer.MIN_VALUE ? 0 : ans;
     }
 }
