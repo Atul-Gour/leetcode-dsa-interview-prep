@@ -14,23 +14,20 @@ public class Codec {
         if( root == null )return "#N";
 
         StringBuilder sb = new StringBuilder();
-        Queue<TreeNode> q = new ArrayDeque<>();
+        Queue<TreeNode> q = new LinkedList<>();
         q.offer(root);
 
         while( !q.isEmpty() ){
             TreeNode curr = q.poll();
-            if(curr.val == 1001){
+            if( curr == null ){
                 sb.append("#N");
                 continue;
             }
 
             sb.append("#" + curr.val);
+            q.offer(curr.left);
+            q.offer(curr.right);
 
-            if( curr.left == null ) q.offer(new TreeNode(1001));
-            else q.offer(curr.left);
-
-            if( curr.right == null )q.offer(new TreeNode(1001));
-            else q.offer(curr.right);
         }
         
         return sb.toString();
