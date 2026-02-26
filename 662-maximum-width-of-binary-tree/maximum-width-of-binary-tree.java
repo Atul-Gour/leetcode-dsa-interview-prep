@@ -1,45 +1,55 @@
-class Pair {
-    TreeNode node;
-    long index;
-
-    Pair(TreeNode node, long index) {
-        this.node = node;
-        this.index = index;
-    }
-}
-
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
 class Solution {
+
+    static class MyNode{
+        TreeNode node ;
+        int x = 0;
+
+        MyNode( TreeNode node , int x ){
+            this.node = node;
+            this.x = x;
+        }
+    }
+
     public int widthOfBinaryTree(TreeNode root) {
-        if (root == null) return 0;
+        if( root == null ) return 0;
 
-        Queue<Pair> q = new LinkedList<>();
-        q.offer(new Pair(root, 0));
+        int maxWidth = 0;
+        Queue<MyNode> q = new ArrayDeque<>();
+        q.offer( new MyNode( root , 1 ) );
 
-        int ans = 0;
-
-        while (!q.isEmpty()) {
+        while( !q.isEmpty() ){
             int size = q.size();
-            long min = q.peek().index;
+            int currWidth = 1;
 
-            long first = 0, last = 0;
+            for( int i = 0 ; i < size ; i++ ){
+                MyNode currNode = q.poll();
+                
+                if( i == 0 )currWidth -= currNode.x;
+                if( i == size - 1 ) currWidth += currNode.x;
 
-            for (int i = 0; i < size; i++) {
-                Pair p = q.poll();
-                long idx = p.index - min;
-
-                if (i == 0) first = idx;
-                if (i == size - 1) last = idx;
-
-                if (p.node.left != null)
-                    q.offer(new Pair(p.node.left, 2 * idx));
-
-                if (p.node.right != null)
-                    q.offer(new Pair(p.node.right, 2 * idx + 1));
+                if( currNode.node.left != null )q.offer( new MyNode( currNode.node.left , (currNode.x * 2) - 1 ) );
+                if( currNode.node.right != null )q.offer( new MyNode( currNode.node.right , currNode.x * 2 ) );
             }
 
-            ans = Math.max(ans, (int)(last - first + 1));
+            maxWidth = Math.max( maxWidth , currWidth );
+
         }
 
-        return ans;
+        return maxWidth;
     }
 }
