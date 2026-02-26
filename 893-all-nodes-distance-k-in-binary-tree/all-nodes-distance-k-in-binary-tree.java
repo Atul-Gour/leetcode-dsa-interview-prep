@@ -1,33 +1,23 @@
 class Solution {
 
-    private void dfs(TreeNode root,
-                     HashMap<TreeNode, List<TreeNode>> graph) {
+    private void buildParent(TreeNode root,
+                             TreeNode parent,
+                             HashMap<TreeNode, TreeNode> parentMap) {
 
         if (root == null) return;
 
-        graph.putIfAbsent(root, new ArrayList<>());
+        parentMap.put(root, parent);
 
-        if (root.left != null) {
-            graph.putIfAbsent(root.left, new ArrayList<>());
-            graph.get(root).add(root.left);
-            graph.get(root.left).add(root);
-            dfs(root.left, graph);
-        }
-
-        if (root.right != null) {
-            graph.putIfAbsent(root.right, new ArrayList<>());
-            graph.get(root).add(root.right);
-            graph.get(root.right).add(root);
-            dfs(root.right, graph);
-        }
+        buildParent(root.left, root, parentMap);
+        buildParent(root.right, root, parentMap);
     }
 
     public List<Integer> distanceK(TreeNode root,
                                    TreeNode target,
                                    int k) {
 
-        HashMap<TreeNode, List<TreeNode>> graph = new HashMap<>();
-        dfs(root, graph);
+        HashMap<TreeNode, TreeNode> parentMap = new HashMap<>();
+        buildParent(root, null, parentMap);
 
         Queue<TreeNode> q = new ArrayDeque<>();
         HashSet<TreeNode> visited = new HashSet<>();
@@ -43,13 +33,23 @@ class Solution {
             while (size-- > 0) {
                 TreeNode curr = q.poll();
 
-                for (TreeNode neigh : graph.get(curr)) {
-                    if (!visited.contains(neigh)) {
-                        visited.add(neigh);
-                        q.offer(neigh);
-                    }
+                if (curr.left != null && !visited.contains(curr.left)) {
+                    visited.add(curr.left);
+                    q.offer(curr.left);
+                }
+
+                if (curr.right != null && !visited.contains(curr.right)) {
+                    visited.add(curr.right);
+                    q.offer(curr.right);
+                }
+
+                TreeNode parent = parentMap.get(curr);
+                if (parent != null && !visited.contains(parent)) {
+                    visited.add(parent);
+                    q.offer(parent);
                 }
             }
+
             dist++;
         }
 
