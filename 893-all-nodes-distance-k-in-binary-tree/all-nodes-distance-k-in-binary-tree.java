@@ -1,61 +1,61 @@
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode(int x) { val = x; }
- * }
- */
 class Solution {
-    static private void dfs( TreeNode root , HashMap<Integer , HashSet<Integer>> edges ){
-        if( root == null )return;
 
-        int u = root.val;
-        edges.putIfAbsent( u , new HashSet<>() );
+    private void dfs(TreeNode root,
+                     HashMap<TreeNode, List<TreeNode>> graph) {
 
-        if( root.left != null ){
-            int v = root.left.val;
-            edges.computeIfAbsent( v , f -> new HashSet<>() ).add(u);
-            edges.get(u).add(v);
-            dfs( root.left , edges );
+        if (root == null) return;
+
+        graph.putIfAbsent(root, new ArrayList<>());
+
+        if (root.left != null) {
+            graph.putIfAbsent(root.left, new ArrayList<>());
+            graph.get(root).add(root.left);
+            graph.get(root.left).add(root);
+            dfs(root.left, graph);
         }
-        if( root.right != null ){
-            int v = root.right.val;
-            edges.computeIfAbsent( v , f -> new HashSet<>() ).add(u);
-            edges.get(u).add(v);
-            dfs( root.right , edges );
+
+        if (root.right != null) {
+            graph.putIfAbsent(root.right, new ArrayList<>());
+            graph.get(root).add(root.right);
+            graph.get(root.right).add(root);
+            dfs(root.right, graph);
         }
     }
-    public List<Integer> distanceK(TreeNode root, TreeNode target, int k) {
-        HashMap<Integer , HashSet<Integer>> edges = new HashMap<>();
 
-        dfs(root , edges);
-        Queue<int[]> q = new ArrayDeque<>();
-        q.offer( new int[]{ target.val , -1 } );
+    public List<Integer> distanceK(TreeNode root,
+                                   TreeNode target,
+                                   int k) {
 
-        int length = 0;
+        HashMap<TreeNode, List<TreeNode>> graph = new HashMap<>();
+        dfs(root, graph);
 
-        while( !q.isEmpty() && length < k ){
+        Queue<TreeNode> q = new ArrayDeque<>();
+        HashSet<TreeNode> visited = new HashSet<>();
+
+        q.offer(target);
+        visited.add(target);
+
+        int dist = 0;
+
+        while (!q.isEmpty() && dist < k) {
             int size = q.size();
 
-            while( size-- > 0 ){
-                int curr[] = q.poll();
+            while (size-- > 0) {
+                TreeNode curr = q.poll();
 
-                for( int neigh : edges.get(curr[0]) ){
-                    if( neigh == curr[1] )continue;
-                    q.add( new int[]{ neigh , curr[0] } );
+                for (TreeNode neigh : graph.get(curr)) {
+                    if (!visited.contains(neigh)) {
+                        visited.add(neigh);
+                        q.offer(neigh);
+                    }
                 }
             }
-
-            length++;
+            dist++;
         }
 
         List<Integer> ans = new ArrayList<>();
-        if( length == k ){
-            while( !q.isEmpty() ){
-                ans.add( q.poll()[0] );
-            }
+        while (!q.isEmpty()) {
+            ans.add(q.poll().val);
         }
 
         return ans;
