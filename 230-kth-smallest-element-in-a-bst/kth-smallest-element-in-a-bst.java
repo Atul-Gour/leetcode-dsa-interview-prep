@@ -14,19 +14,19 @@
  * }
  */
 class Solution {
-    int index=0;
+    int step = 0;
+
     public int kthSmallest(TreeNode root, int k) {
-        if(root==null)return -1;
-        
-        int value = kthSmallest(root.left,k);
-        if(value!=-1)return value;
+        if( root == null )return -1;
 
-        if(index++ == k-1){
-            return root.val;
-        }
+        int left = kthSmallest(root.left , k);
+        if(left != -1)return left;
 
-        value = kthSmallest(root.right,k);
-        if(value!=-1)return value;
+        step++;
+        if( step == k )return root.val;
+
+        int right = kthSmallest(root.right , k);
+        if(right != -1)return right;
 
         return -1;
     }
