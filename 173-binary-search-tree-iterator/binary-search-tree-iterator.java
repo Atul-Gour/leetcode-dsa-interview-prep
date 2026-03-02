@@ -1,66 +1,40 @@
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
 class BSTIterator {
-    TreeNode curr = null;
-
+    TreeNode curr;
 
     public BSTIterator(TreeNode root) {
-        this.curr = root;
+        curr = root;
     }
     
     public int next() {
-        int nextNode = curr.val;
+        while (curr != null) {
 
-        while(curr != null){
-            if( curr.left == null ){
-                nextNode = curr.val;
+            if (curr.left == null) {
+                int val = curr.val;
                 curr = curr.right;
-                return nextNode;
-            }else{
-                TreeNode temp = curr.left;
-                while(temp.right != null && temp.right != curr){
-                    temp = temp.right;
-                }
+                return val;
+            }
 
-                if( temp.right == null ){
-                    temp.right = curr;
-                    nextNode = curr.val;
-                    curr = curr.left;
-                }else{
-                    temp.right = null;
-                    nextNode = curr.val;
-                    curr = curr.right;
-                    return nextNode;
-                }
+            TreeNode temp = curr.left;
+
+            while (temp.right != null && temp.right != curr) {
+                temp = temp.right;
+            }
+
+            if (temp.right == null) {
+                temp.right = curr;   // create thread
+                curr = curr.left;
+            } else {
+                temp.right = null;   // remove thread
+                int val = curr.val;
+                curr = curr.right;
+                return val;
             }
         }
 
-        
-
-        return nextNode;
+        return -1; // won't reach if hasNext() is used properly
     }
     
     public boolean hasNext() {
         return curr != null;
     }
 }
-
-/**
- * Your BSTIterator object will be instantiated and called as such:
- * BSTIterator obj = new BSTIterator(root);
- * int param_1 = obj.next();
- * boolean param_2 = obj.hasNext();
- */
