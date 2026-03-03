@@ -1,57 +1,61 @@
 class Solution {
 
+    private boolean create( TreeNode node , int min , int max , HashMap<Integer , TreeNode> roots ){
+
+        if( node.val <= min || node.val >= max )return false;
+
+        if( node.left != null ){
+            if(roots.containsKey( node.left.val ) ){
+                node.left = roots.get(node.left.val);
+                roots.remove( node.left.val );
+                if( !create( node.left , min , Math.min( max , node.val ) , roots ))return false;
+            }
+            else{
+                if( node.left.val <= min || node.left.val >= Math.min( max , node.val ) )return false;
+            }
+        }
+
+        if( node.right != null ){
+            if(roots.containsKey( node.right.val ) ){
+                node.right = roots.get(node.right.val);
+                roots.remove( node.right.val );
+                if( !create( node.right , Math.max( min , node.val ) , max , roots ) )return false;
+            }
+            else{
+                if( node.right.val <= Math.max( min , node.val ) || node.right.val >= max )return false;
+            }
+        }
+
+        return true;
+
+    }
+
     public TreeNode canMerge(List<TreeNode> trees) {
+        HashMap<Integer , TreeNode> roots = new HashMap<>();
+        HashMap< Integer , Integer > nodeFreq  = new HashMap<>();
 
-        Map<Integer, TreeNode> roots = new HashMap<>();
-        Map<Integer, Integer> count = new HashMap<>();
-
-        for (TreeNode t : trees) {
-            roots.put(t.val, t);
-            count.put(t.val, count.getOrDefault(t.val, 0) + 1);
-
-            if (t.left != null)
-                count.put(t.left.val, count.getOrDefault(t.left.val, 0) + 1);
-
-            if (t.right != null)
-                count.put(t.right.val, count.getOrDefault(t.right.val, 0) + 1);
+        for( TreeNode tree : trees ){
+            roots.put( tree.val , tree );
+            nodeFreq.put( tree.val , nodeFreq.getOrDefault( tree.val , 0 ) + 1 );
+            if( tree.left != null ) nodeFreq.put( tree.left.val , nodeFreq.getOrDefault( tree.left.val , 0 ) + 1 );
+            if( tree.right != null ) nodeFreq.put( tree.right.val , nodeFreq.getOrDefault( tree.right.val , 0 ) + 1 );
         }
 
         TreeNode root = null;
 
-        for (TreeNode t : trees) {
-            if (count.get(t.val) == 1) {
-                root = t;
+        for( Map.Entry< Integer , Integer > entry : nodeFreq.entrySet() ){
+            if( entry.getValue() == 1 && roots.containsKey( entry.getKey() ) ){
+                root = roots.get( entry.getKey() );
                 break;
             }
         }
 
-        if (root == null) return null;
+        if(root == null)return root;
+        roots.remove( root.val );
+        if( !create( root , Integer.MIN_VALUE , Integer.MAX_VALUE , roots ) ) return null;
 
-        roots.remove(root.val);
-
-        if (!build(root, Long.MIN_VALUE, Long.MAX_VALUE, roots))
-            return null;
-
-        if (!roots.isEmpty()) return null;
-
-        return root;
+        if( roots.size() == 0 )return root;
+        else return null;
     }
 
-    private boolean build(TreeNode node, long min, long max, Map<Integer, TreeNode> roots) {
-
-        if (node == null) return true;
-
-        if (node.val <= min || node.val >= max) return false;
-
-        if (node.left == null && node.right == null && roots.containsKey(node.val)) {
-
-            TreeNode merge = roots.get(node.val);
-            node.left = merge.left;
-            node.right = merge.right;
-            roots.remove(node.val);
-        }
-
-        return build(node.left, min, node.val, roots) &&
-               build(node.right, node.val, max, roots);
-    }
 }
