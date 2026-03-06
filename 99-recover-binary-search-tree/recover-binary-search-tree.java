@@ -1,5 +1,5 @@
 class Solution {
-     TreeNode first , middle , last , prev;
+    TreeNode first , middle , last , prev;
 
     private void swap( TreeNode a , TreeNode b ){
         int temp = a.val;
@@ -10,7 +10,7 @@ class Solution {
     private void Inorder( TreeNode root ){
         if( root == null ) return ;
 
-        if(root.left != null)  Inorder( root.left );
+         Inorder( root.left );
 
         if( prev != null ){
             if( root.val <= prev.val ){
@@ -26,7 +26,7 @@ class Solution {
 
         prev = root;
 
-        if(root.right != null) Inorder( root.right );        
+         Inorder( root.right );        
     }
 
     public void recoverTree(TreeNode root) {
