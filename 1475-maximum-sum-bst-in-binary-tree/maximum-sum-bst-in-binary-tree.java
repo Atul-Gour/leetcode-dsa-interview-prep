@@ -16,8 +16,6 @@ class Solution {
     private node find( TreeNode root ){
         
         node right = null , left = null;
-        int min = Integer.MIN_VALUE;
-        int max = Integer.MAX_VALUE;
         int currMin = root.val;
         int currMax = root.val;
         int currSum = root.val;
@@ -25,22 +23,21 @@ class Solution {
 
         if( root.left != null ){
             left = find( root.left );
-            if( !left.valid )canTake = false;
+            if( !left.valid || root.val <= left.max  )canTake = false;
 
             currSum += left.sum;
             currMin = left.min;
-            min = left.max;
         }
 
         if( root.right != null ){
             right = find( root.right );
-            if( !right.valid )canTake = false;
+            if( !right.valid || root.val >= right.min )canTake = false;
 
             currSum += right.sum;
             currMax = right.max;
-            max = right.min;
         }
-        if( root.val <= min || root.val >= max || !canTake  ) return new node(0 , 0 , 0 , false);
+
+        if( !canTake  ) return new node(0 , 0 , 0 , false);
         ans = Math.max( ans , currSum );
         return new node( currMin , currMax , currSum , true );
     }
