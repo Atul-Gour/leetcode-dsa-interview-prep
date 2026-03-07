@@ -1,50 +1,40 @@
+import java.util.*;
+
 class Solution {
-    public int leastInterval(char[] tasksLetter, int n) {
-        int tasksFreq[] = new int[26];
-        int time[] = new int[26];
+    public int leastInterval(char[] tasks, int n) {
 
-        for (char taskLetter : tasksLetter) {
-            tasksFreq[taskLetter - 'A']++;
-        }
+        int freq[] = new int[26];
 
-        int interval = 1;
+        for(char c : tasks)
+            freq[c-'A']++;
 
-        boolean allSolved = false;
+        PriorityQueue<Integer> maxHeap =
+                new PriorityQueue<>(Collections.reverseOrder());
 
-        while (!allSolved) {
-            allSolved = true;
-            int minIntervalReq = Integer.MAX_VALUE;
-            int index = -1;
+        for(int f : freq)
+            if(f > 0)
+                maxHeap.offer(f);
 
-            for (int i = 0; i < 26; i++) {
-                if (tasksFreq[i] > 0) {
-                    allSolved = false;
+        Queue<int[]> cooldown = new LinkedList<>();
 
-                    if (time[i] == 0 || interval - time[i] >= n + 1) {
-                        if (minIntervalReq > 0 || tasksFreq[i] > tasksFreq[index]) {
-                            minIntervalReq = 0;
-                            index = i;
-                        }
-                    } else {
-                        int req = n - (interval - time[i]) + 1;
-                        if (req < minIntervalReq) {
-                            minIntervalReq = req;
-                            index = i;
-                        }
-                    }
-                }
+        int time = 0;
+
+        while(!maxHeap.isEmpty() || !cooldown.isEmpty()){
+
+            time++;
+
+            if(!maxHeap.isEmpty()){
+                int f = maxHeap.poll() - 1;
+
+                if(f > 0)
+                    cooldown.offer(new int[]{f, time + n});
             }
 
-            if (allSolved)
-                return interval - 1;
-
-            interval += minIntervalReq;
-            time[index] = interval;
-            tasksFreq[index]--;
-            interval++;
+            if(!cooldown.isEmpty() && cooldown.peek()[1] == time){
+                maxHeap.offer(cooldown.poll()[0]);
+            }
         }
 
-        return 0;
-
+        return time;
     }
 }
