@@ -6,23 +6,17 @@ class Solution {
         int end = newInterval[1];
         int i = 0;
         int n = intervals.length;
-        boolean put = false;
 
         for( ; i < n ; i++ ){
             if( intervals[i][1] < start ){
                 list.add( intervals[i] );
             }
-            else{
-                if( intervals[i][0] <= end ){
-                    start = Math.min( intervals[i][0] , newInterval[0] );
-                    end = Math.max( intervals[i][1] , newInterval[1] );
-                }
-                break;
-            }
+            else break;
         }
 
-        for( ; i < n && !put ; i++ ){
+        for( ; i < n ; i++ ){
             if( intervals[i][0] <= end ){
+                start = Math.min( start , intervals[i][0]  );
                 end = Math.max( intervals[i][1] , end );
             }else break;
         }
