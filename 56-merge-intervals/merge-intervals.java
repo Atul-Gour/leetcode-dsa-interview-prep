@@ -4,10 +4,7 @@ class Solution {
         int n = intervals.length;
         ArrayList<int[]> list = new ArrayList<>();
 
-        Arrays.sort( intervals , (a , b) -> {
-            if( a[0] != b[0] ) return a[0] - b[0];
-            else return b[1] - a[1];
-        });
+        Arrays.sort( intervals , (a , b) -> Integer.compare( a[0] , b[0] ) );
 
         for( int i = 0 ; i < n ; i++ ){
             int start = intervals[i][0];
