@@ -44,7 +44,6 @@ class Solution {
 
     public int maxSumBST(TreeNode root) {
         find(root);
-
         return ans;
     }
 }
