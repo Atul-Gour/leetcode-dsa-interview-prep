@@ -1,60 +1,54 @@
 class Solution {
-    public int mostBooked(int n, int[][] meetings) {
+    public int mostBooked(int m, int[][] meetings) {
 
-        // Count of meetings per room
-        int[] count = new int[n];
+        Arrays.sort(meetings, (a,b)->a[0]-b[0]);
 
-        // Sort meetings by start time
-        Arrays.sort(meetings, (a, b) -> a[0] - b[0]);
+        long[] freq = new long[m];
 
-        // Free rooms: smallest index first
-        PriorityQueue<Integer> freeRooms = new PriorityQueue<>();
+        PriorityQueue<Integer> free =
+                new PriorityQueue<>();
 
-        // Busy rooms: earliest end time first, then room index
-        PriorityQueue<long[]> busyRooms = new PriorityQueue<>(
-            (a, b) -> a[0] != b[0]
-                    ? Long.compare(a[0], b[0])
-                    : Long.compare(a[1], b[1])
-        );
+        PriorityQueue<long[]> busy =
+                new PriorityQueue<>((a,b)->{
+                    if( a[0] != b[0] ) return Long.compare(a[0],b[0]);
+                    else return Long.compare(a[1],b[1]);
+                });
 
-        // Initially all rooms are free
-        for (int i = 0; i < n; i++) {
-            freeRooms.offer(i);
-        }
+        for(int i=0;i<m;i++)
+            free.offer(i);
 
-        for (int[] meeting : meetings) {
-            long start = meeting[0];
-            long end = meeting[1];
+        for(int[] meet : meetings){
+
+            long start = meet[0];
+            long end = meet[1];
             long duration = end - start;
 
-            // Free rooms that have finished before this meeting starts
-            while (!busyRooms.isEmpty() && busyRooms.peek()[0] <= start) {
-                freeRooms.offer((int) busyRooms.poll()[1]);
+            while(!busy.isEmpty() && busy.peek()[0] <= start){
+                free.offer((int)busy.poll()[1]);
             }
 
-            if (!freeRooms.isEmpty()) {
-                // Assign available room with smallest index
-                int room = freeRooms.poll();
-                count[room]++;
-                busyRooms.offer(new long[]{end, room});
-            } else {
-                // Delay meeting in the room that ends earliest
-                long[] earliest = busyRooms.poll();
-                long newEnd = earliest[0] + duration;
-                int room = (int) earliest[1];
+            if(!free.isEmpty()){
 
-                count[room]++;
-                busyRooms.offer(new long[]{newEnd, room});
+                int room = free.poll();
+                freq[room]++;
+                busy.offer(new long[]{end, room});
+
+            }else{
+
+                long[] room = busy.poll();
+                long newEnd = room[0] + duration;
+
+                freq[(int)room[1]]++;
+
+                busy.offer(new long[]{newEnd, room[1]});
             }
         }
 
-        // Find room with maximum meetings
         int ans = 0;
-        for (int i = 1; i < n; i++) {
-            if (count[i] > count[ans]) {
+
+        for(int i=1;i<m;i++)
+            if(freq[i] > freq[ans])
                 ans = i;
-            }
-        }
 
         return ans;
     }
