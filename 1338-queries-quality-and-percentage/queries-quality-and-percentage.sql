@@ -4,12 +4,11 @@ select q.query_name ,
         avg(rating :: numeric /position)  , 2
     ) as quality ,
 
-    coalesce(Round(
-        ( select count(*) 
-          from Queries qq 
-          where q.query_name = qq.query_name and rating < 3
-          group by q.query_name ) * 100.0 / count(*) , 2
-    ),0) as poor_query_percentage
-    
+    Round(
+        coalesce(
+            100.0 * COUNT(*) FILTER (WHERE rating < 3) / COUNT(*) 
+        ,0)
+    , 2) as poor_query_percentage
+
 from Queries q
 group by q.query_name
