@@ -6,7 +6,7 @@ select q.query_name ,
 
     Round(
         coalesce(
-            100.0 * COUNT(*) FILTER (WHERE rating < 3) / COUNT(*) 
+            100.0 * count(*) filter (where rating < 3) / COUNT(*) 
         ,0)
     , 2) as poor_query_percentage
 
