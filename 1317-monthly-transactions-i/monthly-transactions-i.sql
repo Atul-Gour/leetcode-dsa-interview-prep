@@ -1,9 +1,16 @@
-select 
-    to_char(t.trans_date , 'YYYY-MM' ) as month,
+SELECT 
+    month,
     t.country,
-    count(*) as trans_count,
-    count(*) filter (where t.state = 'approved' ) as approved_count,
-    sum(t.amount) as trans_total_amount,
-    coalesce(sum(t.amount) filter (where t.state = 'approved' ) , 0) as approved_total_amount
-from Transactions t
-group by to_char(t.trans_date , 'YYYY-MM' ) , t.country
+    COUNT(*) AS trans_count,
+    COUNT(*) FILTER (WHERE t.state = 'approved') AS approved_count,
+    SUM(t.amount) AS trans_total_amount,
+    COALESCE(SUM(t.amount) FILTER (WHERE t.state = 'approved'),0) AS approved_total_amount
+FROM (
+    SELECT 
+        TO_CHAR(trans_date,'YYYY-MM') AS month,
+        country,
+        state,
+        amount
+    FROM Transactions
+) t
+GROUP BY month, t.country;
