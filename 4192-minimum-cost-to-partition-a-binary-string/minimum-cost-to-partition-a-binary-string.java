@@ -1,36 +1,34 @@
 class Solution {
-    private int[] pre;
-    private int encCost, flatCost, n;
-    private Map<Long, Long> memo = new HashMap<>();
+    int encCost;
+    int flatCost;
+    int[] pre;
+    Map<Long, Long> memo = new HashMap<>();
 
     public long minCost(String s, int encCost, int flatCost) {
-        this.n = s.length();
+        pre = new int[s.length() + 1];
+        for (int i = 1; i < pre.length; i++) {
+            pre[i] = pre[i - 1] + (s.charAt(i - 1) - '0');
+        }
         this.encCost = encCost;
         this.flatCost = flatCost;
-        this.pre = new int[n + 1];
-        
-        for (int i = 0; i < n; i++)
-            pre[i + 1] = pre[i] + (s.charAt(i) == '1' ? 1 : 0);
-
-        return solve(0, n);
+        return helper(0, s.length());
     }
 
-    private long solve(int i, int len) {
-        long key = (long) i * 100001 + len;
-        if (memo.containsKey(key)) return memo.get(key);
+    private long helper(int l, int r) {
+        long key = (long) l * 100001 + r;
+        Long cached = memo.get(key);
+        if (cached != null) return cached;
 
-        int ones = pre[i + len] - pre[i];
-        long wholeCost = (ones == 0) ? flatCost : (long) len * ones * encCost;
+        int L = r - l;
+        int X = pre[r] - pre[l];
+        long cost = (X == 0) ? flatCost : (long) L * X * encCost;
 
-        long best = wholeCost;
-        
-        if (len % 2 == 0) {
-            int half = len / 2;
-            long splitCost = solve(i, half) + solve(i + half, half);
-            best = Math.min(best, splitCost);
+        if (L % 2 == 0) {
+            int mid = l + (r - l) / 2;
+            cost = Math.min(cost, helper(l, mid) + helper(mid, r));
         }
 
-        memo.put(key, best);
-        return best;
+        memo.put(key, cost);
+        return cost;
     }
 }
