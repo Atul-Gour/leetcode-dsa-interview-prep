@@ -1,39 +1,48 @@
 class Solution {
+    private long currCost( int[] prefixOneCount , int i , int j , int encCost, int flatCost ){
+        int sensitiveCount = prefixOneCount[j + 1] - prefixOneCount[i];
+        int cost = 0;
+        if( sensitiveCount == 0 )return flatCost;
+        else return (long)(j - i + 1) * sensitiveCount * encCost;
+    }
     public long minCost(String s, int encCost, int flatCost) {
         int n = s.length();
-        int[] pre = new int[n + 1];
-        for (int i = 0; i < n; i++)
-            pre[i + 1] = pre[i] + (s.charAt(i) == '1' ? 1 : 0);
+        int prefixOneCount[] = new int[n+1];
 
-        // count how many times n is divisible by 2
-        int m = 0;
-        int tmp = n;
-        while (tmp % 2 == 0) { tmp /= 2; m++; }
+        // count levels
+        int m = 0, tmp = n;
+        while( tmp % 2 == 0 ){ tmp /= 2; m++; }
 
-        long[][] dp = new long[m + 1][];
+        // jagged dp: dp[len][i] instead of dp[i][j]
+        long[][] dp = new long[n + 1][];
+        dp[1] = new long[n]; // single chars, length=1
 
-        // bottom level: smallest segments (length = n >> m, which is odd or 1)
-        int baseLen = n >> m;
-        dp[m] = new long[1 << m];
-        for (int i = 0; i < (1 << m); i++) {
-            int start = i * baseLen;
-            int x = pre[start + baseLen] - pre[start];
-            dp[m][i] = (x == 0) ? flatCost : (long) baseLen * x * encCost;
+        for( int i = 1 ; i <= n ; i++ ){
+            if( s.charAt(i-1) == '1' )
+                prefixOneCount[i] = prefixOneCount[i-1] + 1;
+            else prefixOneCount[i] = prefixOneCount[i-1];
         }
 
-        // build up from bottom
-        for (int k = m - 1; k >= 0; k--) {
-            int len = n >> k;
-            dp[k] = new long[1 << k];
-            for (int i = 0; i < (1 << k); i++) {
-                int start = i * len;
-                int x = pre[start + len] - pre[start];
-                long wholeCost = (x == 0) ? flatCost : (long) len * x * encCost;
-                long splitCost = dp[k + 1][2 * i] + dp[k + 1][2 * i + 1];
-                dp[k][i] = Math.min(wholeCost, splitCost);
+        for( int i = 0 ; i < n ; i++ ){
+            if( s.charAt(i) == '1' )
+                dp[1][i] = encCost;
+            else dp[1][i] = flatCost;
+        }
+
+        for( int len = 2 ; len <= n ; len++ ){
+            if( n % len != 0 ) continue; // only valid segment lengths
+            dp[len] = new long[n / len];
+            for( int i = 0 ; i < n / len ; i++ ){
+                int l = i * len;
+                int r = l + len - 1;
+                long wholeCost = currCost( prefixOneCount , l , r , encCost, flatCost );
+                long separationCost = Long.MAX_VALUE;
+                if( len % 2 == 0 ){
+                    separationCost = dp[len/2][2*i] + dp[len/2][2*i+1];
+                }
+                dp[len][i] = Math.min( wholeCost , separationCost );
             }
         }
-
-        return dp[0][0];
+        return dp[n][0];
     }
 }
