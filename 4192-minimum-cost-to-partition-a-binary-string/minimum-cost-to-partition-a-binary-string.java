@@ -19,7 +19,7 @@ class Solution {
 
         // bottom level: fill smallest segments first (they can't split, odd length)
         int baseLen = tmp; // = n / 2^m, this is odd
-        int baseCount = (int) Math.pow(2, m); // = 2^m segments at bottom
+        int baseCount = n/tmp; // = 2^m segments at bottom
         dp[m] = new long[baseCount];
         for (int i = 0; i < baseCount; i++) {
             int start = i * baseLen;
