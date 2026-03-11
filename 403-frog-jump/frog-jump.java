@@ -1,35 +1,31 @@
 class Solution {
+    public boolean canCross(int[] stones) {
 
-    int[][] dp;
-    int[] stones ;
-
-    boolean find( int index , int k ){
         int n = stones.length;
-        if( index == n-1 )return true;
-        if( index >= n ) return false;
 
+        boolean[][] dp = new boolean[n][n + 1];
 
-        for( int i = index + 1 ; i < n ; i++ ){
-            int jumpNeeded = stones[i] - stones[index];
-            if( jumpNeeded == k || jumpNeeded == k - 1 || jumpNeeded == k + 1 ){
-                if( dp[i][jumpNeeded] == -1  )continue;
-                dp[i][jumpNeeded] = 1;
-                if( find( i , jumpNeeded ) )return true;
-                dp[i][jumpNeeded] = -1;
+        dp[0][0] = true;
+
+        for (int i = 1; i < n; i++) {
+
+            for (int j = 0; j < i; j++) {
+
+                int jump = stones[i] - stones[j];
+
+                if (jump > n) continue;
+
+                if (dp[j][jump] || 
+                   (jump - 1 >= 0 && dp[j][jump - 1]) || 
+                   (jump + 1 <= n && dp[j][jump + 1])) {
+
+                    dp[i][jump] = true;
+
+                    if (i == n - 1) return true;
+                }
             }
-            if( jumpNeeded > k + 1 )return false;
         }
 
         return false;
-    }
-
-    public boolean canCross(int[] stones) {
-        if( stones[1] != 1 )return false;
-        int n = stones.length;
-
-        this.stones = stones;
-        this.dp = new int[n][10000];
-        
-        return find( 1 , 1 );
     }
 }
