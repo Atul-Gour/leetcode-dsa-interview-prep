@@ -15,12 +15,12 @@ class Solution {
 
         memo = new int[n + 2][n + 2];
 
-        return solve(arr, 0, n + 1);
+        return solve(arr, 1, n  );
     }
 
     private int solve(int[] arr, int left, int right){
 
-        if(left + 1 == right)
+        if(left > right)
             return 0;
 
         if(memo[left][right] != 0)
@@ -28,12 +28,12 @@ class Solution {
 
         int ans = 0;
 
-        for(int k = left + 1; k < right; k++){
+        for(int k = left ; k <= right; k++){
 
             int cost =
-                    solve(arr, left, k) +
-                    arr[left] * arr[k] * arr[right] +
-                    solve(arr, k, right);
+                    solve(arr, left, k-1) +
+                    arr[left - 1] * arr[k] * arr[right + 1] +
+                    solve(arr, k+1, right);
 
             ans = Math.max(ans, cost);
         }
