@@ -1,6 +1,6 @@
 class Solution {
 
-    int[][] memo;
+    int[][] dp;
 
     public int maxCoins(int[] nums) {
 
@@ -13,33 +13,26 @@ class Solution {
         for(int i = 0; i < n; i++)
             arr[i + 1] = nums[i];
 
-        memo = new int[n + 2][n + 2];
+        dp = new int[n + 2][n + 2];
 
-        return solve(arr, 1, n  );
-    }
-
-    private int solve(int[] arr, int left, int right){
-
-        if(left > right)
-            return 0;
-
-        if(memo[left][right] != 0)
-            return memo[left][right];
-
-        int ans = 0;
-
-        for(int k = left ; k <= right; k++){
-
-            int cost =
-                    solve(arr, left, k-1) +
-                    arr[left - 1] * arr[k] * arr[right + 1] +
-                    solve(arr, k+1, right);
-
-            ans = Math.max(ans, cost);
+        for( int i = 1 ; i < n + 1 ; i++ ){
+            dp[i][i] = arr[i-1] * arr[i] * arr[i+1];
         }
 
-        memo[left][right] = ans;
+        for( int len = 1 ; len < n ; len++  ){
+            for( int i = 1 ; i + len < n + 1 ; i++ ){
+                int j = i + len;
+                int max = Integer.MIN_VALUE;
 
-        return ans;
+                for( int k = i ; k <= j ; k++ ){
+                    max = Math.max( max , dp[i][k-1] + ( arr[i-1] * arr[k] * arr[j+1] ) + dp[k+1][j] );
+                }
+
+                dp[i][j] = max;
+            }
+        }
+
+        return dp[1][n];
     }
+
 }
