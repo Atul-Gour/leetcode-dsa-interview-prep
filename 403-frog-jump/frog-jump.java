@@ -28,7 +28,7 @@ class Solution {
         int n = stones.length;
 
         this.stones = stones;
-        this.dp = new int[10000][n];
+        this.dp = new int[n][10000];
         
         return find( 1 , 1 );
     }
