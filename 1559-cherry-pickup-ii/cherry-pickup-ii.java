@@ -1,50 +1,37 @@
 class Solution {
-
-    private int add(int i , int j1 , int j2 , int[][] grid){
+    private int find( int i , int j1 , int j2 , int[][] grid , int[][][] dp ){
         int n = grid.length;
         int m = grid[0].length;
+        if( i >= n )return 0;
+        if( dp[i][j1][j2] != -1 )return dp[i][j1][j2];
 
-        if(i > n - 1 || j1 < 0 || j2 < 0 || j1 > m-1 || j2 > m-1 ) return -1;
-
-        if( j1 == j2)return grid[i][j1];
+        int max = 0;
+        int dirs[] = {-1 , 0 , 1};
         
-        return grid[i][j1] + grid[i][j2];
-    }
-    
-    private int solve(int i , int j1 , int j2 , int[][][] dp , int[][] grid){
-        int n = grid.length;
-        int m = grid[0].length;
-        int ans = 0;
+        for( int dir : dirs ){
+            int jj1 = j1 + dir;
+            for( int dir2 : dirs ){
+                int jj2 = j2 + dir2;
 
-        if( i == n )return 0;
-        if(dp[i][j1][j2] != -1)return dp[i][j1][j2];
-
-        for(int x = -1 ; x <= 1 ; x++){
-            for(int y = -1 ; y <= 1 ; y++){
-                
-                int sum = add(i + 1, j1 + x , j2 + y , grid);
-                
-                if(sum == -1)continue;
-
-                ans = Math.max(ans , sum + solve(i + 1, j1 + x , j2 + y , dp , grid) );
+                if( jj1 < 0 || jj1 >= m || jj2 < 0 || jj2 >= m )continue;
+                int curr = find( i + 1 , jj1 , jj2 , grid , dp ) + grid[i][j1] + ( j1 == j2 ? 0 : grid[i][j2] );
+                max = Math.max( max , curr );
             }
         }
-        return dp[i][j1][j2] = ans;
 
+        return dp[i][j1][j2] = max;
     }
-
-
     public int cherryPickup(int[][] grid) {
         int n = grid.length;
         int m = grid[0].length;
-        int[][][] dp = new int[n][m][m];
 
-        for(int[][] arr : dp){
-            for(int[] a : arr){
-                Arrays.fill(a , -1);
+        int[][][] dp = new int[n][m][m];
+        for( int[][] arr : dp ){
+            for( int[] a : arr ){
+                Arrays.fill( a , -1 );
             }
         }
 
-        return solve(0 , 0 , m-1 , dp , grid) + grid[0][0] + grid[0][m-1];
+        return find( 0 , 0 , m-1 , grid , dp );
     }
 }
