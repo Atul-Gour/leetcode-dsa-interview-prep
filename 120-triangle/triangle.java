@@ -13,8 +13,6 @@ class Solution {
                 if( j == 0 )dp2[j] = dp[j] + triangle.get(i).get(j);
                 else dp2[j] = Math.min( dp[j-1] , dp[j] ) + triangle.get(i).get(j);
             }
-            for(int ele : dp2)System.out.print(ele + " ");
-            System.out.println();
 
             int[] temp = dp;
             dp = dp2;
