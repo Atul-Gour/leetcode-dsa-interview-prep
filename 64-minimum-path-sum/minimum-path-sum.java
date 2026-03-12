@@ -1,30 +1,19 @@
 class Solution {
-    int solve(int[][] grid , int[][] visited , int i , int j ){
-
-        if( visited[i][j] != -1) return visited[i][j];
-
+    public int minPathSum(int[][] grid) {
         int n = grid.length;
         int m = grid[0].length;
-
-        if(i == n-1 && j == m-1)return grid[i][j];
-
-        int right = Integer.MAX_VALUE;
-        int left = Integer.MAX_VALUE;
-
-        if(i < n-1 ) left = grid[i][j] + solve( grid , visited , i+1 , j);
-        if(j < m-1 ) right = grid[i][j] + solve( grid , visited , i , j+1);
-
-        return visited[i][j] = Math.min( left , right );
-
-    }
-    public int minPathSum(int[][] grid) {
-
-        int[][] visited = new int[ grid.length ][ grid[0].length ];
-
-        for(int[] arr : visited){
-            Arrays.fill( arr , -1);
-        }
+        long[] dp = new long[m];
         
-        return solve( grid , visited , 0 , 0 );
+        for(int i = n-1; i >= 0; i--){
+            dp[m-1] += grid[i][m-1];
+            for(int j = m-1; j >= 0; j--){
+                if(j + 1 < m){
+                    if( i + 1 < n )dp[j] = Math.min(dp[j] , dp[j+1]) + grid[i][j];
+                    else dp[j] = dp[j+1] + grid[i][j];
+                }
+            }
+        }
+
+        return (int) dp[0];
     }
 }
