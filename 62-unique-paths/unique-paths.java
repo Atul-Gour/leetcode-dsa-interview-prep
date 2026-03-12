@@ -4,9 +4,10 @@ class Solution {
         dp[m-1][n-1] = 1;
         for( int i = m-1 ; i >= 0 ; i-- ){
             for( int j = n-1 ; j >= 0 ; j-- ){
+                if( i == m-1 && j == n-1 )continue;
                 long down = i + 1 < m ? dp[i+1][j] : 0;
                 long right = j + 1 < n ? dp[i][j+1] : 0;
-                dp[i][j] = dp[i][j] + right + down;
+                dp[i][j] = right + down;
             }
         }
         
