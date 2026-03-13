@@ -3,26 +3,28 @@ import java.util.*;
 class Solution {
 
     private void findMap(int index, int elements, int sum, int[] nums,
-                         ArrayList<Integer>[] list) {
+                         HashSet<Integer>[] set) {
 
-        list[elements].add(sum);
+        set[elements].add(sum);
 
         if (index == nums.length) return;
 
-        findMap(index + 1, elements, sum, nums, list);
-        findMap(index + 1, elements + 1, sum + nums[index], nums, list);
+        findMap(index + 1, elements, sum, nums, set);
+        findMap(index + 1, elements + 1, sum + nums[index], nums, set);
     }
 
-    private ArrayList<Integer>[] helper(int[] nums) {
+    private HashSet<Integer>[] helper(int[] nums) {
 
         int n = nums.length;
 
-        ArrayList<Integer>[] list = new ArrayList[n + 1];
-        for (int i = 0; i <= n; i++) list[i] = new ArrayList<>();
+        HashSet<Integer>[] set = new HashSet[n + 1];
 
-        findMap(0, 0, 0, nums, list);
+        for (int i = 0; i <= n; i++)
+            set[i] = new HashSet<>();
 
-        return list;
+        findMap(0, 0, 0, nums, set);
+
+        return set;
     }
 
     public int minimumDifference(int[] nums) {
@@ -33,24 +35,27 @@ class Solution {
         int total = 0;
         for (int x : nums) total += x;
 
-        ArrayList<Integer>[] left =
+        HashSet<Integer>[] left =
                 helper(Arrays.copyOfRange(nums, 0, half));
 
-        ArrayList<Integer>[] right =
+        HashSet<Integer>[] right =
                 helper(Arrays.copyOfRange(nums, half, n));
 
+        ArrayList<Integer>[] sortedRight = new ArrayList[half + 1];
+
         for (int i = 0; i <= half; i++) {
-            Collections.sort(right[i]);
+            sortedRight[i] = new ArrayList<>(right[i]);
+            Collections.sort(sortedRight[i]);
         }
 
         int ans = Integer.MAX_VALUE;
 
         for (int i = 0; i <= half; i++) {
 
-            ArrayList<Integer> list1 = left[i];
-            ArrayList<Integer> list2 = right[half - i];
+            HashSet<Integer> set1 = left[i];
+            ArrayList<Integer> list2 = sortedRight[half - i];
 
-            for (int a : list1) {
+            for (int a : set1) {
 
                 int target = total / 2 - a;
 
