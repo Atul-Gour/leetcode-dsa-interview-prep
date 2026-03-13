@@ -2,29 +2,16 @@ import java.util.*;
 
 class Solution {
 
-    private void findMap(int index, int elements, int sum, int[] nums,
-                         HashSet<Integer>[] set) {
+    private void gen(int idx, int end, int[] arr, int cnt, long sum,
+                     HashSet<Long>[] res) {
 
-        set[elements].add(sum);
+        if (idx == end) {
+            res[cnt].add(sum);
+            return;
+        }
 
-        if (index == nums.length) return;
-
-        findMap(index + 1, elements, sum, nums, set);
-        findMap(index + 1, elements + 1, sum + nums[index], nums, set);
-    }
-
-    private HashSet<Integer>[] helper(int[] nums) {
-
-        int n = nums.length;
-
-        HashSet<Integer>[] set = new HashSet[n + 1];
-
-        for (int i = 0; i <= n; i++)
-            set[i] = new HashSet<>();
-
-        findMap(0, 0, 0, nums, set);
-
-        return set;
+        gen(idx + 1, end, arr, cnt, sum, res);
+        gen(idx + 1, end, arr, cnt + 1, sum + arr[idx], res);
     }
 
     public int minimumDifference(int[] nums) {
@@ -32,46 +19,54 @@ class Solution {
         int n = nums.length;
         int half = n / 2;
 
-        int total = 0;
-        for (int x : nums) total += x;
+        int[] left = Arrays.copyOfRange(nums, 0, half);
+        int[] right = Arrays.copyOfRange(nums, half, n);
 
-        HashSet<Integer>[] left =
-                helper(Arrays.copyOfRange(nums, 0, half));
-
-        HashSet<Integer>[] right =
-                helper(Arrays.copyOfRange(nums, half, n));
-
-        ArrayList<Integer>[] sortedRight = new ArrayList[half + 1];
+        HashSet<Long>[] L = new HashSet[half + 1];
+        HashSet<Long>[] R = new HashSet[half + 1];
 
         for (int i = 0; i <= half; i++) {
-            sortedRight[i] = new ArrayList<>(right[i]);
-            Collections.sort(sortedRight[i]);
+            L[i] = new HashSet<>();
+            R[i] = new HashSet<>();
         }
 
-        int ans = Integer.MAX_VALUE;
+        gen(0, half, left, 0, 0, L);
+        gen(0, half, right, 0, 0, R);
+
+        ArrayList<Long>[] sortedR = new ArrayList[half + 1];
+
+        for (int i = 0; i <= half; i++) {
+            sortedR[i] = new ArrayList<>(R[i]);
+            Collections.sort(sortedR[i]);
+        }
+
+        long total = 0;
+        for (int x : nums) total += x;
+
+        long ans = Long.MAX_VALUE;
 
         for (int i = 0; i <= half; i++) {
 
-            HashSet<Integer> set1 = left[i];
-            ArrayList<Integer> list2 = sortedRight[half - i];
+            int j = half - i;
 
-            for (int a : set1) {
+            for (long a : L[i]) {
 
-                int target = total / 2 - a;
+                long need = total / 2 - a;
+                ArrayList<Long> list = sortedR[j];
 
-                int idx = Collections.binarySearch(list2, target);
+                int idx = Collections.binarySearch(list, need);
                 if (idx < 0) idx = -idx - 1;
 
-                if (idx < list2.size())
+                if (idx < list.size())
                     ans = Math.min(ans,
-                            Math.abs(total - 2 * (a + list2.get(idx))));
+                            Math.abs(total - 2 * (a + list.get(idx))));
 
                 if (idx > 0)
                     ans = Math.min(ans,
-                            Math.abs(total - 2 * (a + list2.get(idx - 1))));
+                            Math.abs(total - 2 * (a + list.get(idx - 1))));
             }
         }
 
-        return ans;
+        return (int) ans;
     }
 }
