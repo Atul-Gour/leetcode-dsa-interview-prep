@@ -1,6 +1,5 @@
 public class Codec {
 
-    // Encodes a tree to a single string.
     public String serialize(TreeNode root) {
         if( root == null )return "#N";
 
@@ -24,7 +23,6 @@ public class Codec {
         return sb.toString();
     }
 
-    // Decodes your encoded data to tree.
     public TreeNode deserialize(String data) {
         String[] nodes = data.split("#");
         if( nodes[1].equals("N") )return null;
