@@ -19,9 +19,8 @@ class Solution {
                 if( j < nums[i] ) dp[i][j] = dp[i-1][j];
                 else dp[i][j] = dp[i-1][ j - nums[i] ] || dp[i-1][j];
 
-                if( dp[i][j] && j == sum ) return true;
             }
         }
-        return false;
+        return dp[n-1][sum];
     }
 }
