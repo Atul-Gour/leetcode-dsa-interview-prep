@@ -1,56 +1,46 @@
 class Solution {
-    public int[] findOrder(int numCourses, int[][] prerequisites) {
-        ArrayList<Integer>[] adj = new ArrayList[numCourses];
-        Queue<Integer> q = new LinkedList<>();
+    public int[] findOrder(int n, int[][] prerequisites) {
+        ArrayList<Integer>[] adj = new ArrayList[n];
 
-        int in[] = new int[numCourses];
+        for( int i = 0 ; i < n ; i++ ) adj[i] = new ArrayList<>();
 
-        for(int i = 0 ; i < numCourses ; i++ ){
-            adj[i] = new ArrayList<>();
+        for( int[] prerequisite : prerequisites ){
+            adj[prerequisite[1]].add(prerequisite[0]);
         }
-        for( int e[] : prerequisites ){
-            adj[e[1]].add(e[0]);
-        }
-        
-        for(int i = 0 ; i < numCourses ; i++){
-            for(int neigh : adj[i]){
-                in[neigh]++;
-            }
-        }
-        
-        for(int i = 0 ; i < numCourses ; i++){
-            if( in[i] == 0 ){
-                q.offer(i);
+
+        int[] indegree = new int[n];
+
+        for( int i = 0 ; i < n ; i++ ){
+            for( int neigh : adj[i] ){
+                indegree[neigh]++;
             }
         }
 
         ArrayList<Integer> ans = new ArrayList<>();
-        
-        boolean visited[] = new boolean[numCourses];
-        
-        while( !q.isEmpty() ){
-            int curr = q.poll();
-            
-            for(int neigh : adj[curr]){
-                in[neigh]--;
-                if( in[neigh] == 0 ){
-                    q.offer(neigh);
-                }
-            }
-            
-            ans.add(curr);
-        }
-        if( ans.size() != numCourses ){
-            return new int[]{};
-        }
-        
-        int answer[] = new int[ans.size()];
-    
-        for(int i = 0 ; i < numCourses ; i++ ){
-            answer[i] = ans.get(i);
-        }
-        
-        return answer;
-    }
+        ArrayDeque<Integer> q = new ArrayDeque<>();
 
+        for( int i = 0 ; i < n ; i++ ){
+            if( indegree[i] == 0 )q.offer(i);
+        }
+
+        while( !q.isEmpty() ){
+            int node = q.poll();
+
+            for( int neigh : adj[node] ){
+                indegree[neigh]--;
+
+                if( indegree[neigh] == 0 )q.offer(neigh);
+            }
+
+            ans.add(node);
+        }
+
+        if( ans.size() != n )return new int[]{};
+
+        int[] ansArray = new int[n];
+
+        for( int i = 0 ; i < n ; i++ )ansArray[i] = ans.get(i);
+
+        return ansArray;
+    }
 }
