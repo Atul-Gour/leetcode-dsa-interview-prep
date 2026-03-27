@@ -1,33 +1,41 @@
 class Solution {
-    private int solve(int index, int curr, int target, int[] nums, int[][] dp, int sum) {
 
-        if (index == nums.length) {
-            return curr == target ? 1 : 0;
+    public int perfectSum(int[] nums, int target) {
+        
+        int n = nums.length;
+        int[][] dp = new int[n][target + 1];
+
+        if (nums[0] == 0) {
+            dp[0][0] = 2;  
+        } else {
+            dp[0][0] = 1;
+            if (nums[0] <= target) dp[0][nums[0]] = 1;
         }
-
-        int key = curr + sum;
-
-        if (dp[index][key] != -1) return dp[index][key];
-
-        int total = 0;
-
-        total += solve(index + 1, curr + nums[index], target, nums, dp, sum);
-        total += solve(index + 1, curr - nums[index], target, nums, dp, sum);
-
-        return dp[index][key] = total;
+        
+        for(  int i = 1 ; i < n ; i++ ){
+            for( int sum = 0 ; sum <= target ; sum++ ){
+                dp[i][sum] += dp[i-1][sum] ;
+                if( nums[i] <= sum ) dp[i][sum] += dp[i-1][sum - nums[i]] ;
+            }
+        }
+        
+        return dp[n-1][target] ;
+    }
+    
+    public int countPartitions(int[] arr, int diff) {
+        long total = 0;
+        for( int ele : arr ) total += ele;
+        if (Math.abs(diff) > total) return 0;
+        int target = (int)( total + diff );
+        
+        if( target % 2 != 0 )return 0;
+        
+        
+        return perfectSum(arr , target/2 );
     }
 
     public int findTargetSumWays(int[] nums, int target) {
 
-        int n = nums.length;
-
-        int sum = 0;
-        for (int num : nums) sum += num;
-
-        int[][] dp = new int[n][2 * sum + 1];
-
-        for (int[] arr : dp) Arrays.fill(arr, -1);
-
-        return solve(0, 0, target, nums, dp, sum);
+        return countPartitions( nums , target );
     }
 }
