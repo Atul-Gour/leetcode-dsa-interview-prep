@@ -48,7 +48,6 @@ class Solution {
                 if( dp[i][j] == 0 ) dp[i][j] = 1; 
             }
         }
-        int j = 0;
 
         return dp[0][0] == 2;
     }
