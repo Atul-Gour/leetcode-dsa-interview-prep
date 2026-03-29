@@ -11,9 +11,10 @@ class Solution {
                 minIdx = i;
                 maxIdx = i;
             }
-            if( prices[i] > prices[maxIdx] ) maxIdx = i;
-
-            if( minIdx < maxIdx ) ans = Math.max( ans , prices[maxIdx] - prices[minIdx] );
+            if( prices[i] > prices[maxIdx] ){
+                maxIdx = i;
+                ans = Math.max( ans , prices[maxIdx] - prices[minIdx] );
+            }
 
         }
 
