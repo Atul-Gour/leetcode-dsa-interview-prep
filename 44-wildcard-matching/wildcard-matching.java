@@ -1,35 +1,4 @@
 class Solution {
-    private int solve( int i , int j , String s , String p , int[][] dp ){
-
-        int n = s.length();
-        int m = p.length();
-
-        // System.out.println( i + " " + j );
-
-        if( dp[i][j] != 0 ) return dp[i][j];
-
-        if( i == n && j == m ) return dp[i][j] = 2;
-        if( j == m ) return dp[i][j] = 1;
-        if( i == n ){
-            for( int k = j ; k < m ; k++ ){
-                if( p.charAt(k) != '*' ) return dp[i][j] = 1;
-            }
-
-            return dp[i][j] = 2;
-        }
-        
-
-        if( p.charAt(j) == '?' ) return dp[i][j] = solve( i + 1 , j + 1 , s , p , dp ); 
-        else if( p.charAt(j) == '*' ){
-            for( int k = i ; k <= n ; k++ ){
-                if( solve( k , j + 1 , s , p , dp ) == 2 ) return dp[i][j] = 2;
-            }
-        }
-        else if( s.charAt(i) == p.charAt(j) ) return dp[i][j] = solve( i + 1 , j + 1 , s , p , dp );
-
-        return dp[i][j] = 1;
-
-    }
     
     private String reducedString( String s ){
         int n = s.length();
@@ -59,6 +28,40 @@ class Solution {
 
         int dp[][] = new int[n + 1][m + 1];
 
-        return solve( 0 , 0 , s , p , dp ) == 2;
+        dp[n][m] = 2;
+        for( int i = 0 ; i < n ; i++ ) dp[i][m] = 1;
+        for( int j = 0 ; j < m ; j++ ){
+            for( int k = j ; k < m ; k++ ){
+                if( p.charAt(k) != '*' ) dp[n][j] = 1;
+            }
+            if( dp[n][j] == 0 ) dp[n][j] = 2;
+        }
+
+
+        for( int i = n-1 ; i >= 0 ; i-- ){
+            for( int j = m-1 ; j >= 0 ; j-- ){
+
+                if( p.charAt(j) == '?' ) dp[i][j] = dp[i+1][j+1]; 
+
+                else if( p.charAt(j) == '*' ){
+                    for( int k = i ; k <= n ; k++ ){
+                        if( dp[k][j+1] == 2 ) 
+                                { dp[i][j] = 2 ; break; }
+                    }
+                }
+
+                else if( s.charAt(i) == p.charAt(j) ) dp[i][j] = dp[i+1][j+1]; 
+                
+                if( dp[i][j] == 0 ) dp[i][j] = 1; 
+            }
+        }
+        int j = 0;
+        
+        while( j < m && p.charAt(j) == '*' ){
+            if( dp[0][j] == 2 ) return true;
+            j++;
+        }
+
+        return dp[0][0] == 2;
     }
 }
