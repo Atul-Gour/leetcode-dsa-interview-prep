@@ -44,8 +44,7 @@ class Solution {
                 if( p.charAt(j) == '?' ) dp[i][j] = dp[i+1][j+1]; 
                 else if( p.charAt(j) == '*' ) dp[i][j] = (dp[i+1][j] == 2 || dp[i][j+1] == 2) ? 2 : 1;
                 else if( s.charAt(i) == p.charAt(j) ) dp[i][j] = dp[i+1][j+1];
-                
-                if( dp[i][j] == 0 ) dp[i][j] = 1; 
+                                
             }
         }
 
