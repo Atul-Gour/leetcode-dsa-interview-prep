@@ -30,11 +30,11 @@ class Solution {
 
         dp[n][m] = 2;
         for( int i = 0 ; i < n ; i++ ) dp[i][m] = 1;
-        for( int j = 0 ; j < m ; j++ ){
-            for( int k = j ; k < m ; k++ ){
-                if( p.charAt(k) != '*' ) dp[n][j] = 1;
-            }
-            if( dp[n][j] == 0 ) dp[n][j] = 2;
+        for (int j = m - 1; j >= 0; j--) {
+            if (p.charAt(j) == '*')
+                dp[n][j] = dp[n][j + 1];
+            else
+                dp[n][j] = 1;
         }
 
 
@@ -49,11 +49,6 @@ class Solution {
             }
         }
         int j = 0;
-        
-        while( j < m && p.charAt(j) == '*' ){
-            if( dp[0][j] == 2 ) return true;
-            j++;
-        }
 
         return dp[0][0] == 2;
     }
