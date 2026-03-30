@@ -5,23 +5,18 @@ class Solution {
         int[][] dp = new int[n + 2][2];
 
         for (int i = n - 1; i >= 0; i--) {
-            for (int buy = 0; buy < 2; buy++) {
 
-                int profit = 0;
+            // buy = 1 → we can buy
+            dp[i][1] = Math.max(
+                -prices[i] + dp[i + 1][0],  // buy
+                dp[i + 1][1]                // skip
+            );
 
-                if (buy == 1) {
-                    int take = -prices[i] + dp[i + 1][1 - buy];
-                    int skip = dp[i + 1][buy];
-                    profit = Math.max(take, skip);
-                } else {
-                    int take = prices[i] + dp[i + 2][1 - buy];
-                    int skip = dp[i + 1][buy];
-                    profit = Math.max(take, skip);
-                }
-
-                dp[i][buy] = profit;
-
-            }
+            // buy = 0 → we can sell
+            dp[i][0] = Math.max(
+                prices[i] + dp[i + 2][1],  // sell + cooldown
+                dp[i + 1][0]               // skip
+            );
         }
 
         return dp[0][1];
