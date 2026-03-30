@@ -6,7 +6,7 @@ class Solution {
 
         for (int i = n - 1; i >= 0; i--) {
             for (int buy = 1; buy >= 0; buy--) {
-                for (int trans = 0; trans < 2; trans++) {
+                for (int trans = 1; trans >= 0; trans--) {
 
                     int profit = 0;
 
