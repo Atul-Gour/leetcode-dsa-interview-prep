@@ -5,7 +5,7 @@ class Solution {
         int[][][] dp = new int[n + 1][2][3];
 
         for (int i = n - 1; i >= 0; i--) {
-            for (int buy = 0; buy <= 1; buy++) {
+            for (int buy = 1; buy >= 0; buy--) {
                 for (int trans = 0; trans < 2; trans++) {
 
                     int profit = 0;
