@@ -21,6 +21,6 @@ class Solution {
 
         for( int[] a : dp ) Arrays.fill( a , -1 );
 
-        return solve( 0 , 0 , arr , dp );
+        return solve( 1 , 0 , arr , dp );
     }
 }
