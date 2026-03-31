@@ -4,9 +4,9 @@ class Solution {
         int arr[] = new int[n];
         for( int i = 0 ; i < n-1 ; i++ ) arr[i + 1] = nums[i];
         arr[0] = -10001;
-        int[][] dp = new int[n+1][n+1];
+        int[][] dp = new int[n+1][n];
 
-        for( int i = n - 1 ; i >= 0 ; i-- ){
+        for( int i = n - 1 ; i >= 1 ; i-- ){
             for( int j = i-1 ; j >= 0 ; j-- ){
 
                 int skip = dp[i+1][j];
