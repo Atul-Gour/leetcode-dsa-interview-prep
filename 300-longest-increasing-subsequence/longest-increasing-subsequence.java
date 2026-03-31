@@ -1,26 +1,22 @@
 class Solution {
-    private int solve( int index , int prevIndex , int[] nums , int[][]dp ){
-        int n = nums.length;
-        if( index >= n || prevIndex >= n ) return 0;
-
-        if( dp[index][prevIndex] != -1 ) return dp[index][prevIndex];
-
-        int skip = solve( index + 1 , prevIndex , nums , dp );
-
-        int take = 0;
-        if( nums[prevIndex] < nums[index] ) take = 1 + solve( index + 1 , index , nums , dp );
-
-        return dp[index][prevIndex] = Math.max( skip , take );
-    }
     public int lengthOfLIS(int[] nums) {
-        int n = nums.length;
-        int arr[] = new int[n + 1];
-        for( int i = 0 ; i < n ; i++ ) arr[i + 1] = nums[i];
+        int n = nums.length + 1;
+        int arr[] = new int[n];
+        for( int i = 0 ; i < n-1 ; i++ ) arr[i + 1] = nums[i];
         arr[0] = -10001;
         int[][] dp = new int[n+1][n+1];
 
-        for( int[] a : dp ) Arrays.fill( a , -1 );
+        for( int i = n - 1 ; i >= 0 ; i-- ){
+            for( int j = i-1 ; j >= 0 ; j-- ){
 
-        return solve( 1 , 0 , arr , dp );
+                int skip = dp[i+1][j];
+                int take = 0;
+                if( arr[j] < arr[i] ) take = 1 + dp[i+1][i];
+
+                dp[i][j] = Math.max( skip , take );
+            }
+        }
+
+        return dp[1][0];
     }
 }
