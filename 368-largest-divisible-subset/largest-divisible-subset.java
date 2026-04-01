@@ -1,40 +1,35 @@
 class Solution {
-    public List<Integer> largestDivisibleSubset(int[] arr) {
-        int n = arr.length + 1;
-        int[] nums = new int[n];
-        for( int i = 1 ; i < n ; i++ ) nums[i] = arr[i-1];
-        nums[0] = 1;
-
-
+    public List<Integer> largestDivisibleSubset(int[] nums) {
         Arrays.sort( nums );
+        int n = nums.length;
         int[][] dp = new int[n + 1][n + 1];
         List<Integer> ans = new ArrayList<>();
 
         for( int i = n-1 ; i >= 0 ; i-- ){
-            for( int j = i-1 ; j >= 0 ; j-- ){
+            for( int j = i ; j >= 0 ; j-- ){
                 int skip = dp[i+1][j];
 
                 int take = 0;
-                if( (nums[i] % nums[j]) == 0 || (nums[j] % nums[i]) == 0 ){
-                    take = 1 + dp[i+1][i];
+                if( j == 0 || (nums[i] % nums[j - 1]) == 0 ){
+                    take = 1 + dp[i+1][i+1];
                 }
                 dp[i][j] = Math.max( take , skip );
             }
         }
 
-        int i = 1 , j = 0;
+        int i = 0 , j = 0;
 
         while( i < n ){
             int skip = dp[i+1][j];
 
             int take = 0;
-            if( (nums[i] % nums[j]) == 0 || (nums[j] % nums[i]) == 0 ){
-                take = 1 + dp[i+1][i];
+            if( j == 0 || (nums[i] % nums[j - 1]) == 0 ){
+                take = 1 + dp[i+1][i+1];
             }
 
             if( take > skip ){
                 ans.add( nums[i] );
-                j = i;
+                j = i+1;
             }
 
             i++;
