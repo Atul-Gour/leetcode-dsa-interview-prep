@@ -1,39 +1,47 @@
 class Solution {
 
-    private int dfs( String word , HashSet<String> set , HashMap<String , Integer> map ){
+    private boolean isPredecessor( String a , String b ){
+        int n = a.length();
+        int m = b.length();
 
-        if( map.containsKey( word ) ) return map.get( word );
-        set.remove( word );
+        if( n + 1 != m ) return false;
+        int i = 0 , j = 0;
 
-        int ans = 0;
-        for( int i = 0 ; i <= word.length() ; i++ ){
-            for( char ch = 'a' ; ch <= 'z' ; ch++ ){
+        while( i < n && j < m ){
 
-                String newString = word.substring(0 , i) + ch + word.substring(i);
+            if( a.charAt(i) == b.charAt(j) ){
+                i++; j++;
+            }else {
+                j++;
+            }
 
-                if( set.contains( newString ) ){
-                    ans = Math.max( ans , 1 + dfs( newString , set , map ) );
+        }
+
+        return (i == n) ;
+    }
+
+    public int longestStrChain(String[] words) {
+
+        Arrays.sort(words, (a, b) -> a.length() - b.length());
+
+        int n = words.length;
+        int dp[][] = new int[n + 1][n + 1];
+
+        for( int i = n - 1 ; i >= 0 ; i-- ){
+            for( int j = i ; j >= 0 ; j-- ){
+                
+                int skip = dp[i + 1][j];
+                int take = 0;
+
+                if( j == 0 || isPredecessor( words[j - 1] , words[i] ) ){
+                    take = 1 + dp[i + 1][i + 1];
                 }
 
+                dp[i][j] = Math.max( take , skip );
             }
         }
 
-        set.add(word);
-        map.put( word , ans );
-        return ans;
-    }
-    public int longestStrChain(String[] words) {
-        HashSet<String> set = new HashSet<>();
-        HashMap<String , Integer> map = new HashMap<>();
-
-        for( String word : words ) set.add( word );
-        int ans = 0;
-
-        for( String word : words ){
-            ans = Math.max( ans , 1 + dfs( word , set , map ) );
-        }
-
-        return ans;
+        return dp[0][0];
 
     }
 }
