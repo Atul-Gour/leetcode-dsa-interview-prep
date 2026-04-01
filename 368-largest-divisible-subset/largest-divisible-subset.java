@@ -1,6 +1,8 @@
 class Solution {
     public List<Integer> largestDivisibleSubset(int[] nums) {
+
         Arrays.sort( nums );
+
         int n = nums.length;
         int[][] dp = new int[n + 1][n + 1];
         List<Integer> ans = new ArrayList<>();
@@ -34,11 +36,6 @@ class Solution {
 
             i++;
         }
-
-        // for( int[] d : dp ){
-        //     for( int ele : d ) System.out.print(ele + " ");
-        //     System.out.println();
-        // }
 
         return ans;
     }
