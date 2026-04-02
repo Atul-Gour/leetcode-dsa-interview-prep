@@ -49,7 +49,7 @@ class Solution {
                         int skip = Integer.MIN_VALUE;
 
                         if (coins[i][j] < 0 && k < 2)
-                            skip = skip = dp[i + 1][j][k + 1];
+                            skip = dp[i + 1][j][k + 1];
 
                         down = Math.max(take, skip);
                     }
@@ -59,7 +59,7 @@ class Solution {
             }
         }
 
-        int ans = dp[0][0][0];
+        int ans = Math.max(dp[0][0][0], dp[0][0][1]);
 
         return ans;
 
