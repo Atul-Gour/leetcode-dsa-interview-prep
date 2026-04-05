@@ -19,11 +19,12 @@ class Solution {
 
                 int ans = Integer.MAX_VALUE;
                 for( int k = i ; k < j ; k++ ){
-                    int a = dp[i][k];
-                    int b = dp[k + 1][j];
-                    int c = arr[j] - arr[i - 1];
 
-                    ans = Math.min( ans , a + b + c );
+                    int cost =  dp[i][k] +
+                                dp[k + 1][j] +
+                                arr[j] - arr[i - 1];
+
+                    ans = Math.min( ans , cost );
                 }
                 dp[i][j] = ans;
 
