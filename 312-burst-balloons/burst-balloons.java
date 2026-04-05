@@ -2,8 +2,8 @@ class Solution {
     
     private int solve( int i , int j , int[] arr , int[][] dp ){
 
+        if( i > j ) return 0;
         if( dp[i][j] != -1 ) return dp[i][j];
-        if( i == j ) return dp[i][j] = arr[i - 1] * arr[i] * arr[i + 1] ;
         int ans = 0;
 
         for( int k = i ; k <= j ; k++ ){
@@ -11,7 +11,7 @@ class Solution {
                        solve( k + 1 , j , arr , dp ) + 
                        arr[i - 1] * arr[k] * arr[j + 1];      
 
-            ans = Math.max( ans , cost );  
+            ans = Math.max( ans , cost );
         }
 
         return dp[i][j] = ans;
