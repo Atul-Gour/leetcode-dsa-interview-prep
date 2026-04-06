@@ -1,23 +1,27 @@
-import java.util.*;
-
 class Solution {
+    private int solve( int i , int j , int k , int[] arr , int[][] dp ){
+        if( i > j ) return 0;
+        if( dp[i][j] != -1 ) return dp[i][j];
+
+        int maxValue = 0;
+        int ans = 0;
+
+        for( int step = 0 ; step < k   ; step++ ){
+            if( i + step > j )continue;
+            maxValue = Math.max( maxValue , arr[i + step] );
+
+            int profit = ((step + 1) * maxValue) + solve( i + step + 1 , j , k , arr , dp );
+            ans = Math.max( profit , ans );
+        }
+
+        return dp[i][j] = ans;
+    }
 
     public int maxSumAfterPartitioning(int[] arr, int k) {
         int n = arr.length;
-        int[] dp = new int[n + 1]; 
-        for (int index = n - 1; index >= 0; index--) {
+        int dp[][] = new int[n][n] ;
+        for( int[] d : dp ) Arrays.fill( d , -1 );
 
-            int max = 0;
-            int ans = 0;
-
-            for (int i = index; i < n && i < index + k; i++) {
-                max = Math.max(max, arr[i]);
-                ans = Math.max(ans, max * (i - index + 1) + dp[i + 1]);
-            }
-
-            dp[index] = ans;
-        }
-
-        return dp[0];
+        return solve( 0 , n - 1 , k , arr , dp );
     }
 }
