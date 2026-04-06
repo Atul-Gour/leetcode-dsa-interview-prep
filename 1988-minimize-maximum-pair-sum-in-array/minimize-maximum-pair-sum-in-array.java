@@ -5,8 +5,7 @@ class Solution {
         int max = 0;
         int n = nums.length;
         
-        for( int i = 0 ; i < n/2 ; i++ ){
-            int j = n - i - 1;
+        for( int i = 0 , j = n-1 ; i < n/2 && j >= n/2 ; i++ , j-- ){
             max = Math.max( max , nums[i] + nums[j] );
         }
 
