@@ -4,7 +4,7 @@ class Solution {
         int n = s.length();
         ArrayList<String> list = new ArrayList<>();
 
-        Stack<Character> st = new Stack<>();
+        int parenthesis = 0;
         StringBuilder sb = new StringBuilder();
 
         for( int i = 0 ; i < n ; i++ ){
@@ -12,15 +12,15 @@ class Solution {
             char ch = s.charAt(i);
 
             if( ch == '(' ){
-                st.push('(');
+                parenthesis++;
                 sb.append(ch);
             }
             else if( ch == ')' ){
-                st.pop();
+                parenthesis--;
                 sb.append(ch);
             }
             else if( ch == ',' ){
-                if( st.isEmpty() ){
+                if( parenthesis == 0 ){
                     list.add( sb.toString() );
                     sb.setLength(0);
                 }
