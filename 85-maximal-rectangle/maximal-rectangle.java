@@ -1,4 +1,44 @@
 class Solution {
+
+    private int maxRectangle( int[] nums ){
+        int n = nums.length;
+        int[] left = new int[n];
+        int[] right = new int[n];
+        Stack<Integer> st = new Stack<>();
+
+        for( int i = 0 ; i < n ; i++ ){
+            while( !st.isEmpty() && nums[st.peek()] >= nums[i] ){
+                st.pop();
+            }
+
+            if( st.isEmpty() ) left[i] = -1;
+            else left[i] = st.peek();
+            
+            st.push(i);
+        }
+
+        st.clear();
+
+        for( int i = n-1 ; i >= 0 ; i-- ){
+            while( !st.isEmpty() && nums[st.peek()] >= nums[i] ){
+                st.pop();
+            }
+
+            if( st.isEmpty() ) right[i] = n;
+            else right[i] = st.peek();
+            
+            st.push(i);
+        }
+
+        int maxRec = 0;
+
+        for( int i = 0 ; i < n ; i++ ){
+            maxRec = Math.max( maxRec , nums[i] * (right[i] - left[i] - 1) );
+        }
+
+        return maxRec;
+    }
+
     public int maximalRectangle(char[][] matrix) {
         int n = matrix.length;
         int m = matrix[0].length;
@@ -16,17 +56,8 @@ class Solution {
         int ans = 0;
 
         for( int i = 0 ; i < n ; i++ ){
-            for( int j = 0 ; j < m ; j++ ){
-
-                int min = Integer.MAX_VALUE;
-
-                for( int k = j ; k >= 0 ; k-- ){
-                    min = Math.min( min , grid[i][k] );
-                    if( min == 0 ) break;
-                    int cost =  min * ( j - k + 1 );
-                    ans = Math.max( ans , cost );
-                }
-            }
+            int maxRec = maxRectangle( grid[i] );
+            ans = Math.max( ans , maxRec );
         }
 
         return ans;
