@@ -1,69 +1,47 @@
+import java.util.*;
+
 class Solution {
-    private ArrayList<String> splitExpression( String s ){
-
-        int n = s.length();
-        ArrayList<String> list = new ArrayList<>();
-
-        int parenthesis = 0;
-        StringBuilder sb = new StringBuilder();
-
-        for( int i = 0 ; i < n ; i++ ){
-
-            char ch = s.charAt(i);
-
-            if( ch == '(' ){
-                parenthesis++;
-                sb.append(ch);
-            }
-            else if( ch == ')' ){
-                parenthesis--;
-                sb.append(ch);
-            }
-            else if( ch == ',' ){
-                if( parenthesis == 0 ){
-                    list.add( sb.toString() );
-                    sb.setLength(0);
-                }
-                else sb.append(ch);
-            }
-            else sb.append( ch );
-        }
-
-        if( !sb.isEmpty() ) list.add(sb.toString());
-        return list;
-    }
-
     public boolean parseBoolExpr(String expression) {
-        
-        char ch = expression.charAt(0);
 
-        if( ch == 't' ) return true;
-        else if( ch == 'f' ) return false;
-        else if( ch == '&' ){
-            String subExpression = expression.substring( 2 , expression.length() - 1 );
-            ArrayList<String> subExpressions = splitExpression( subExpression );
+        Stack<Character> st = new Stack<>();
 
-            for( String exp : subExpressions ){
-                if( !parseBoolExpr( exp ) ) return false;
+        for (char ch : expression.toCharArray()) {
+
+            if (ch == ',') continue;
+
+            if (ch != ')') {
+                st.push(ch);
+            } 
+            else {
+                int t = 0, f = 0;
+
+                // pop till '('
+                while (st.peek() != '(') {
+                    char val = st.pop();
+                    if (val == 't') t++;
+                    else f++;
+                }
+
+                st.pop(); // remove '('
+
+                char op = st.pop(); // operator
+
+                char res;
+
+                if (op == '&') {
+                    res = (f == 0) ? 't' : 'f';
+                } 
+                else if (op == '|') {
+                    res = (t > 0) ? 't' : 'f';
+                } 
+                else { // '!'
+                    res = (t == 1) ? 'f' : 't';
+                }
+
+                st.push(res);
             }
-
-            return true;
         }
-        else if( ch == '|' ){
-            String subExpression = expression.substring( 2 , expression.length() - 1 );
-            ArrayList<String> subExpressions = splitExpression( subExpression );
 
-            for( String exp : subExpressions ){
-                if( parseBoolExpr( exp ) ) return true;
-            }
-
-            return false;
-        }
-        else if( ch == '!' ){
-            String subExpression = expression.substring( 2 , expression.length() - 1 );
-
-            return !parseBoolExpr(subExpression);
-        }
-        else return false;
+        return st.peek() == 't';
     }
 }
