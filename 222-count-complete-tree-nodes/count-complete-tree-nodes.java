@@ -1,23 +1,33 @@
 class Solution {
 
-    private int[] count(TreeNode root, int index) {
-        if (root == null) return new int[]{0, 0};
+    static boolean found;
+    static int ans;
 
-        int[] left  = count(root.left,  2 * index);
-        int[] right = count(root.right, 2 * index + 1);
+    private int getLeftDepth(TreeNode root) {
+        int d = 0;
+        while (root != null) { root = root.left; d++; }
+        return d;
+    }
 
-        // leaf node
-        if (left[0] == 0 && right[0] == 0) return new int[]{index, 1};
+    private int count(TreeNode root, int index) {
+        if (root == null) return 0;
 
-        // left deeper — last node is in left subtree
-        if (left[1] > right[1]) return new int[]{left[0], left[1] + 1};
+        int leftDepth  = getLeftDepth(root.left);
+        int rightDepth = getLeftDepth(root.right);
 
-        // same depth or right deeper — last node is in right subtree
-        return new int[]{right[0], right[1] + 1};
+        if (leftDepth == rightDepth) {
+            if (root.right == null) return index;  
+            return count(root.right, 2 * index + 1);
+        } else {
+            return count(root.left, 2 * index);
+        }
     }
 
     public int countNodes(TreeNode root) {
         if (root == null) return 0;
-        return count(root, 1)[0];
+        found = false;
+        ans = 0;
+        int totalDepth = getLeftDepth(root) - 1;
+        return count(root, 1);
     }
 }
