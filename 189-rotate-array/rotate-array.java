@@ -1,11 +1,11 @@
 class Solution {
-    private void reveseArray(int[] nums, int i, int j) {
-        int n = i + (j - i + 1)/2;
-
-        for (; i < n && j >= n; i++, j--) {
+    private void reveseArray( int[]nums , int i , int j ){
+        while (i < j) {
             int temp = nums[i];
             nums[i] = nums[j];
             nums[j] = temp;
+            i++;
+            j--;
         }
     }
 
