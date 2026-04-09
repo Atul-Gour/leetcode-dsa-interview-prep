@@ -1,38 +1,45 @@
 class Solution {
+    private boolean hasCycleDfs( int node , boolean[] visited , boolean[] pathVisited , List<List<Integer>> graph ){
+
+        visited[node] = true;
+        pathVisited[node] = true;
+
+        for( int neigh : graph.get(node) ){
+            if( visited[neigh] && pathVisited[neigh] ) return true;
+
+            if( !visited[neigh] ){
+                if( hasCycleDfs( neigh , visited , pathVisited , graph ) ) return true;
+            }
+        }
+
+        pathVisited[node] = false;
+        return false;
+
+    }
     public boolean canFinish(int V, int[][] edges) {
+
         List<List<Integer>> graph = new ArrayList<>();
+        boolean[] visited = new boolean[V];
+        boolean[] pathVisited = new boolean[V];
 
         for (int i = 0; i < V; i++) {
             graph.add(new ArrayList<>());
         }
 
-        int indegree[] = new int[V];
-        ArrayDeque<Integer> q = new ArrayDeque<>();
-
         for (int[] edge : edges) {
             int u = edge[0];
             int v = edge[1];
 
-            indegree[u]++;
             graph.get(v).add(u);
         }
 
-        for( int i = 0 ; i < V ; i++ ) if( indegree[i] == 0 ) q.offer(i);
-
-        int processed = 0;
-        while( !q.isEmpty() ){
-            
-            int node = q.poll();
-            processed++;
-
-            for( int neigh : graph.get(node) ){
-                indegree[neigh]--;
-                if( indegree[neigh] == 0 ) q.offer( neigh );
+        for( int i = 0 ; i < V ; i++ ){
+            if( !visited[i] ){
+                if( hasCycleDfs( i , visited , pathVisited , graph ) ) return false;
             }
-
         }
 
-        return processed == V;
+        return true;
 
     }
 }
