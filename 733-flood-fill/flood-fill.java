@@ -1,28 +1,39 @@
 class Solution {
-
-    private void dfs( int[][] image , int i, int j, int color , int original , boolean[][] visited){
-        int n = image.length;
-        int m = image[0].length;
-
-        if( i >= n || j >= m || j < 0 || i < 0 || image[i][j] != original || visited[i][j] ) return;
-
-        visited[i][j] = true;
-        image[i][j] = color;
-
-        dfs( image , i , j + 1 , color , original , visited );
-        dfs( image , i , j - 1 , color , original , visited );
-        dfs( image , i + 1 , j , color , original , visited );
-        dfs( image , i - 1 , j , color , original , visited );
-
-
-    }
-
     public int[][] floodFill(int[][] image, int sr, int sc, int color) {
         int n = image.length;
         int m = image[0].length;
-        boolean[][] visited = new boolean[n][m];
 
-        dfs( image , sr , sc , color , image[sr][sc] , visited );
+        int startingColor = image[sr][sc];
+
+        boolean[][] visited = new boolean[n][m];
+        ArrayDeque<int[]> q = new ArrayDeque<>();
+        int[][] dirs = new int[][] { { 0, 1 }, { 1, 0 }, { 0, -1 }, { -1, 0 } };
+
+
+
+        q.offer(new int[] { sr, sc });
+        image[sr][sc] = color;
+        visited[sr][sc] = true;
+
+        while (!q.isEmpty()) {
+            int curr[] = q.poll();
+            int i = curr[0];
+            int j = curr[1];
+
+            for (int[] dir : dirs) {
+                int newI = i + dir[0];
+                int newJ = j + dir[1];
+
+                if (newI >= n || newI < 0 || newJ >= m || newJ < 0 || image[newI][newJ] != startingColor || visited[newI][newJ] )
+                    continue;
+                
+                visited[newI][newJ] = true;
+                image[newI][newJ] = color;
+                q.offer(new int[] { newI, newJ });
+            }
+        }
+
         return image;
+
     }
 }
