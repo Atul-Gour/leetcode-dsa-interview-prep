@@ -1,63 +1,41 @@
 class Solution {
-    static class DSU{
 
-        int[] parent;
-        int[] rank;
+    private void dfs( int node , ArrayList<Integer>[] graph , boolean[] visited ){
 
-        DSU(int n){
-            parent = new int[n];
-            rank = new int[n];
-            for( int i = 0 ; i < n ; i++ ) parent[i] = i;
-        }
+        for( int neigh : graph[node] ){
 
-        int find( int node ){
-            if( parent[node] == node )return node;
-            return parent[node] = find( parent[node] );
-        }
-
-        boolean union( int a , int b ){
-            int pa = find(a);
-            int pb = find(b);
-
-            if( pa == pb )return false;
-
-            int ra = rank[pa];
-            int rb = rank[pb];
-
-            if( ra < rb )parent[pa] = pb;
-            else if( rb < ra )parent[pb] = pa;
-            else{
-                parent[pa] = pb;
-                rank[pb]++;
+            if( !visited[neigh] ){
+                visited[neigh] = true;
+                dfs( neigh , graph , visited );
             }
-
-            return true;
+                
         }
-
-        int provinces(){
-            int count = 0;
-            for( int i = 0 ; i < parent.length ; i++ ){
-                int pCurr = find(parent[i]);
-                if( pCurr == i )count++;
-            }
-
-            return count;
-        }
-
     }
-    public int findCircleNum(int[][] isConnected) {
-        int n = isConnected.length;
 
-        DSU dsu = new DSU(n);
+    public int findCircleNum(int[][] isConnected) {
+
+        int n = isConnected.length;
+        ArrayList<Integer>[] graph = new ArrayList[n];
+
+        for( int i = 0 ; i < n ; i++ ) graph[i] = new ArrayList<>();
 
         for( int i = 0 ; i < n ; i++ ){
             for( int j = 0 ; j < n ; j++ ){
-                if( isConnected[i][j] == 1 ){
-                    dsu.union(i , j);
-                }
+                if( isConnected[i][j] == 1 ) graph[i].add(j);
             }
         }
 
-        return dsu.provinces();
+        int ans = 0;
+
+        boolean[] visited = new boolean[n];
+        for( int i = 0 ; i < n ; i++ ){
+            if( !visited[i] ){
+                visited[i] = true;
+                dfs( i , graph , visited );
+                ans++;
+            }
+        }
+        
+        return ans;
     }
 }
