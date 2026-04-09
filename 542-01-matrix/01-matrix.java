@@ -10,7 +10,6 @@ class Solution {
             for (int j = 0; j < m; j++) {
                 if (mat[i][j] == 0) {
                     q.offer(new int[]{i, j});
-                    ans[i][j] = 0;
                 } else {
                     ans[i][j] = Integer.MAX_VALUE;
                 }
