@@ -1,89 +1,92 @@
 class Solution {
-    
-    void dfs( String currentWord , String beginWord, ArrayList<String> currList , List<List<String>> ans ,HashMap<String , ArrayList<String>> parent ){
 
-        if( currentWord.equals( beginWord ) ){
-            ArrayList temp = new ArrayList<>(currList);
-            Collections.reverse( temp );
-            ans.add( temp );
+    private void dfs( String currWord , String endWord , HashMap<String , HashSet<String>> parent , List<String> currList , List<List<String>> ans ){
+
+        currList.add( new String(currWord) );
+
+        if( currWord.equals( endWord ) ){
+            ArrayList<String> currAnsList = new ArrayList<>( currList );
+            Collections.reverse( currAnsList );
+            ans.add( currAnsList );
+            currList.remove( currList.size() - 1 );
             return;
         }
 
-        for( String neigh : parent.get(currentWord) ){
-            currList.add(neigh);
-            dfs( neigh , beginWord , currList , ans , parent );
-            currList.remove( currList.size() - 1 );
+        for( String neigh : parent.get(currWord) ){
+            dfs( neigh , endWord , parent , currList , ans );
         }
+
+        currList.remove( currList.size() - 1 );
 
     }
 
     public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
+        
         HashSet<String> set = new HashSet<>();
         List<List<String>> ans = new ArrayList<>();
-        HashMap<String , ArrayList<String>> parent = new HashMap<>();
-        HashMap<String , Integer> map = new HashMap<>();
 
-        map.put( beginWord , 1 );
-        for( String word : wordList ){
-            set.add(word);
-            parent.put(word , new ArrayList<>());
-        }
-        if( !set.contains(endWord) )return ans;
-        set.add(endWord);
-        set.remove(beginWord);
-        parent.put(endWord , new ArrayList<>());
+        for( String word : wordList ) set.add(word);
+        set.add( beginWord );
 
-        Set<String> currQ = new HashSet<>();
-        Set<String> nextQ = new HashSet<>();
-        currQ.add(beginWord);
+        if( !set.contains(endWord) ) return ans;
 
-        int steps = 2;
+        HashMap<String , HashSet<String>> parent = new HashMap<>();
+        HashMap<String , Integer> stepToReach = new HashMap<>();
 
-        while( !currQ.isEmpty() ){
-            
+        for( String word : set ) parent.put( word , new HashSet<>() );
+        set.remove( beginWord );
 
-            for( String originalString : currQ ){
+        ArrayDeque< String > q = new ArrayDeque<>();
+        q.offer( beginWord );
 
-                char[] curr = originalString.toCharArray();
-                
+        int steps = 1;
+
+        while( !q.isEmpty() ){
+
+            int size = q.size();
+            boolean found = false;
+            // ArrayList<String> toDelete = new ArrayList<>();
+
+            while( size-- > 0 ){
+
+                String originalWord = q.poll();
+                char curr[] = originalWord.toCharArray();
 
                 for( int i = 0 ; i < curr.length ; i++ ){
-                    char ch = curr[i];
-                    for( char c = 'a' ; c <= 'z' ; c++ ){
-                        if( c == ch )continue;
-                        curr[i] = c;
-                        String newString = new String(curr);
-                        if( !set.contains( newString ) )continue;
+                    char originalChar = curr[i];
 
-                        if( !map.containsKey(newString) ){
-                            map.put( newString , steps );
+                    for( char ch = 'a' ; ch <= 'z' ; ch++ ){
+
+                        if( ch == originalChar ) continue;
+
+                        curr[i] = ch;
+                        String newWord  = new String(curr);
+
+                        if (!set.contains(newWord)) continue;
+
+                        if (!stepToReach.containsKey(newWord)) {
+                            stepToReach.put(newWord, steps + 1);
+                            q.offer(newWord);
+                            // toDelete.add(newWord);
                         }
 
-                        if( map.get(newString) == steps ){
-
-                            parent.get(newString).add(originalString);
-
-                            if( !newString.equals(endWord) ){
-                                nextQ.add( newString );
-                            }
+                        // same level parent addition
+                        if (stepToReach.get(newWord) == steps + 1) {
+                            parent.get(newWord).add(originalWord);
                         }
-                        
                     }
-                    curr[i] = ch;
+
+                    curr[i] = originalChar;
                 }
             }
 
-            HashSet<String> temp = new HashSet<>();
-            currQ = nextQ;
-            nextQ = temp;
-
             steps++;
+            if( found ) break;
+            // for( String word : toDelete ) set.remove( word );
+
         }
-        
-        // System.out.println(parent);
-        ArrayList temp = new ArrayList<>();
-        temp.add(endWord);
-        dfs( endWord , beginWord , temp , ans , parent );
+
+        dfs( endWord , beginWord , parent , new ArrayList<>() , ans );
 
         return ans;
     }
