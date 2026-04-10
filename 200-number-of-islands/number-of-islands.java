@@ -1,32 +1,34 @@
 class Solution {
-
-    private void dfs(int i, int j, char[][] grid) {
-
-        int n = grid.length;
-        int m = grid[0].length;
-
-        if (i < 0 || i >= n || j < 0 || j >= m || grid[i][j] == '0') return;
-
-        grid[i][j] = '0';
-
-        dfs(i + 1, j, grid);
-        dfs(i - 1, j, grid);
-        dfs(i, j + 1, grid);
-        dfs(i, j - 1, grid);
-    }
-
     public int numIslands(char[][] grid) {
 
-        int n = grid.length;
-        int m = grid[0].length;
+        int n = grid.length, m = grid[0].length;
         int count = 0;
+
+        int[][] dirs = {{1,0}, {-1,0}, {0,1}, {0,-1}};
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
 
                 if (grid[i][j] == '1') {
-                    dfs(i, j, grid);
                     count++;
+
+                    Queue<int[]> q = new ArrayDeque<>();
+                    q.offer(new int[]{i, j});
+                    grid[i][j] = '0';
+
+                    while (!q.isEmpty()) {
+                        int[] cell = q.poll();
+
+                        for (int[] d : dirs) {
+                            int ni = cell[0] + d[0];
+                            int nj = cell[1] + d[1];
+
+                            if (ni >= 0 && ni < n && nj >= 0 && nj < m && grid[ni][nj] == '1') {
+                                q.offer(new int[]{ni, nj});
+                                grid[ni][nj] = '0';
+                            }
+                        }
+                    }
                 }
             }
         }
