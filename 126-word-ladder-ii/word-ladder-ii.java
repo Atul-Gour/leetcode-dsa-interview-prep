@@ -45,7 +45,7 @@ class Solution {
 
             int size = q.size();
             boolean found = false;
-            // ArrayList<String> toDelete = new ArrayList<>();
+            ArrayList<String> toDelete = new ArrayList<>();
 
             while( size-- > 0 ){
 
@@ -67,10 +67,9 @@ class Solution {
                         if (!stepToReach.containsKey(newWord)) {
                             stepToReach.put(newWord, steps + 1);
                             q.offer(newWord);
-                            // toDelete.add(newWord);
+                            toDelete.add(newWord);
                         }
 
-                        // same level parent addition
                         if (stepToReach.get(newWord) == steps + 1) {
                             parent.get(newWord).add(originalWord);
                         }
@@ -82,7 +81,7 @@ class Solution {
 
             steps++;
             if( found ) break;
-            // for( String word : toDelete ) set.remove( word );
+            for( String word : toDelete ) set.remove( word );
 
         }
 
