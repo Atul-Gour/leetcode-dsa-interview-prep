@@ -24,8 +24,6 @@ class Solution {
         int n = board.length;
         int m = board[0].length;
 
-        boolean[][] pathVisited = new boolean[n][m];
-
         for( int i = 0 ; i < n ; i++ ) if( board[i][0] == 'O' ) dfs( i , 0 , board );
         for( int i = 0 ; i < n ; i++ ) if( board[i][m-1] == 'O' ) dfs( i , m-1 , board );
         for( int j = 0 ; j < m ; j++ ) if( board[0][j] == 'O' ) dfs( 0 , j , board );
