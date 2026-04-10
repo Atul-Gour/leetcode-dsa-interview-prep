@@ -1,35 +1,39 @@
 class Solution {
 
-    private boolean isLand(int i , int j , char[][] grid , boolean[][] visited){
+    private void dfs( int i , int j , boolean[][] visited , char[][] grid ){
+
         int n = grid.length;
         int m = grid[0].length;
-        if( i < 0 || j < 0 || i >= n || j >= m) return false;
-
-        return (grid[i][j] == '1' && !visited[i][j]) ;
-    }
-
-    private void dfs( int i , int j , boolean[][] visited , char[][] grid ){
 
         visited[i][j] = true;
 
-        if( isLand( i , j + 1 , grid , visited ) ) dfs( i , j+1 , visited , grid);
-        if( isLand( i , j - 1 , grid , visited ) ) dfs( i , j-1 , visited , grid);
-        if( isLand( i + 1 , j , grid , visited ) ) dfs( i+1 , j , visited , grid);
-        if( isLand( i - 1 , j , grid , visited ) ) dfs( i-1 , j , visited , grid);
+        int[][] dirs = { { 0, 1 }, { 1, 0 }, { 0, -1 }, { -1, 0 } };
+
+        for (int[] dir : dirs) {
+
+            int newI = i + dir[0];
+            int newJ = j + dir[1];
+
+            if (newI < 0 || newI > n - 1 || newJ < 0 || newJ > m - 1 || grid[newI][newJ] == '0' || visited[newI][newJ] ) continue;
+
+            dfs(newI, newJ, visited , grid );
+        }
+        
     }
 
     public int numIslands(char[][] grid) {
+        
         int n = grid.length;
         int m = grid[0].length;
 
         boolean[][] visited = new boolean[n][m];
         int ans = 0;
 
-        for(int i = 0 ; i < n ; i++ ){
-            for(int j = 0 ; j < m ; j++ ){
+        for( int i = 0 ; i < n ; i++ ){
+            for( int j = 0 ; j < m ; j++ ){
                 if( !visited[i][j] && grid[i][j] == '1' ){
-                    ans++;
                     dfs( i , j , visited , grid );
+                    ans++;
                 }
             }
         }
