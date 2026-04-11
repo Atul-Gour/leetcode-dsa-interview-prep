@@ -1,30 +1,29 @@
 class Solution {
-    public int atMax(int[] nums, int k) {
 
-        int distinct = 0;
-        int[] freq = new int[nums.length + 1];
-        int left = 0;
-        int ans = 0;
-        for (int right = 0; right < nums.length; right++) {
-            if (freq[nums[right]] == 0) {
-                distinct++;
+    private int count( int[] nums, int k ){
+
+        HashMap<Integer , Integer> map = new HashMap<>();
+
+        int l = 0;
+        int total = 0;
+
+        for( int r = 0 ; r < nums.length ; r++ ){
+
+            map.put( nums[r] , map.getOrDefault( nums[r] , 0 ) + 1 );
+
+            while( map.size() > k ){
+                map.put( nums[l], map.get(nums[l]) - 1 );
+                if( map.get(nums[l]) == 0 ) map.remove( nums[l] );
+                l++;
             }
-            freq[nums[right]]++;
-            while (distinct > k) {
-                freq[nums[left]]--;
-                if (freq[nums[left]] == 0)
-                    distinct--;
-                left++;
-            }
-            if (distinct <= k)
-                ans += right - left + 1;
+
+            total += r - l + 1; 
 
         }
-        return ans;
 
+        return total;
     }
-
     public int subarraysWithKDistinct(int[] nums, int k) {
-        return atMax(nums, k) - atMax(nums, k - 1);
+        return count( nums , k ) - count( nums , k - 1 );
     }
 }
