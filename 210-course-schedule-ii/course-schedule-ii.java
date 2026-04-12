@@ -48,9 +48,10 @@ class Solution {
             }
         }
 
-        ArrayList<Integer> list = new ArrayList<>(st);
-        Collections.reverse( list );
-        for( int i = 0 ; i < V ; i++ ) ans[i] = list.get(i);
+        int i = 0;
+        while (!st.isEmpty()) {
+            ans[i++] = st.pop();
+        }
 
         return ans;
     }
