@@ -8,28 +8,26 @@ class Solution {
 
         for (int i = 0; i < n; i++) {
             if (color[i] == -1) {
-                if (!bfs(graph, i, color)) return false;
+                color[i] = 0;
+                if (!dfs(i, graph, color))
+                    return false;
             }
         }
         return true;
     }
 
-    private boolean bfs(int[][] graph, int start, int[] color) {
-        Queue<Integer> q = new ArrayDeque<>();
-        q.offer(start);
-        color[start] = 0;
+    private boolean dfs(int node, int[][] graph, int[] color) {
 
-        while (!q.isEmpty()) {
-            int curr = q.poll();
+        for (int neigh : graph[node]) {
 
-            for (int neigh : graph[curr]) {
-                if (color[neigh] == -1) {
-                    color[neigh] = 1 - color[curr];
-                    q.offer(neigh);
-                } else if (color[neigh] == color[curr]) {
+            if (color[neigh] == -1) {
+
+                color[neigh] = 1 - color[node];
+                if (!dfs(neigh, graph, color))
                     return false;
-                }
-            }
+
+            } else if (color[neigh] == color[node])
+                return false;
         }
         return true;
     }
