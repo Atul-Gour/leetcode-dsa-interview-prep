@@ -1,46 +1,57 @@
 class Solution {
-    public int[] findOrder(int n, int[][] prerequisites) {
-        ArrayList<Integer>[] adj = new ArrayList[n];
+    private boolean find(int node, boolean[] visited, boolean[] pathVisited, List<List<Integer>> graph , Stack<Integer> st ) {
 
-        for( int i = 0 ; i < n ; i++ ) adj[i] = new ArrayList<>();
+        visited[node] = true;
+        pathVisited[node] = true;
 
-        for( int[] prerequisite : prerequisites ){
-            adj[prerequisite[1]].add(prerequisite[0]);
-        }
+        for (int neigh : graph.get(node)) {
 
-        int[] indegree = new int[n];
-
-        for( int i = 0 ; i < n ; i++ ){
-            for( int neigh : adj[i] ){
-                indegree[neigh]++;
+            if (!visited[neigh]) {
+                if (find(neigh, visited, pathVisited, graph , st)) {
+                    pathVisited[node] = false;
+                    return true;
+                }
+            } 
+            else if (pathVisited[neigh]) {
+                pathVisited[node] = false;
+                return true;
             }
         }
 
-        ArrayList<Integer> ans = new ArrayList<>();
-        ArrayDeque<Integer> q = new ArrayDeque<>();
+        st.push( node );
+        pathVisited[node] = false;
+        return false;
+    }
 
-        for( int i = 0 ; i < n ; i++ ){
-            if( indegree[i] == 0 )q.offer(i);
+    public int[] findOrder(int V, int[][] edges) {
+
+        List<List<Integer>> graph = new ArrayList<>();
+        boolean[] visited = new boolean[V];
+        boolean[] pathVisited = new boolean[V];
+        Stack<Integer> st = new Stack<>();
+
+        int[] ans = new int[V];
+
+        for (int i = 0; i < V; i++) {
+            graph.add(new ArrayList<>());
         }
 
-        while( !q.isEmpty() ){
-            int node = q.poll();
+        for (int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            graph.get(v).add(u);
+        }
 
-            for( int neigh : adj[node] ){
-                indegree[neigh]--;
-
-                if( indegree[neigh] == 0 )q.offer(neigh);
+        for (int i = 0; i < V; i++) {
+            if (!visited[i]) {
+                if (find(i, visited, pathVisited, graph , st )) return new int[0];
             }
-
-            ans.add(node);
         }
 
-        if( ans.size() != n )return new int[]{};
+        ArrayList<Integer> list = new ArrayList<>(st);
+        Collections.reverse( list );
+        for( int i = 0 ; i < V ; i++ ) ans[i] = list.get(i);
 
-        int[] ansArray = new int[n];
-
-        for( int i = 0 ; i < n ; i++ )ansArray[i] = ans.get(i);
-
-        return ansArray;
+        return ans;
     }
 }
