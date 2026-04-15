@@ -1,4 +1,14 @@
 class Solution {
+    static int comp( Integer a , Integer b ){
+        String aString = String.valueOf(a);
+            String bString = String.valueOf(b);
+
+            String ab = aString + bString;
+            String ba = bString + aString;
+
+            return ba.compareTo(ab);
+    }
+
     public String largestNumber(int[] nums) {
 
         Integer arr[] = new Integer[nums.length];
@@ -7,27 +17,14 @@ class Solution {
             arr[i] = (Integer) nums[i];
         }
 
-        Arrays.sort(arr, (a, b) -> {
-            String aString = String.valueOf(a);
-            String bString = String.valueOf(b);
-
-            String ab = aString + bString;
-            String ba = bString + aString;
-
-            return ba.compareTo(ab);
-        });
+        Arrays.sort(arr, (a , b) -> comp(a, b));
 
         StringBuilder sb = new StringBuilder();
         
-        int index = 0;
+        if (arr[0] == 0) return "0";
 
-        if( arr.length >= 2 && arr[0] == 0 ){
-            sb.append("0");
-            while( index < arr.length && arr[index] == 0 ) index++;
-        }
-
-        for( ; index < arr.length ; index++ ){
-            sb.append( arr[index] );
+        for( int ele : arr ){
+            sb.append( ele );
         }
 
         return sb.toString();
