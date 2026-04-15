@@ -1,45 +1,28 @@
 class Solution {
+    private int dfs( int node , int[][] graph , int[] visited ){
 
-    static private boolean dfs( int node , int[][] graph , int[] visited  , boolean[] safe){
-        if( visited[node] == 2 )return safe[node];
-        
+        if( visited[node] != 0 ) return visited[node];
+
         visited[node] = 1;
 
         for( int neigh : graph[node] ){
-
-            if( visited[neigh] == 1 ){
-                visited[node] = 2;
-                return safe[node] = false;
+            if( dfs( neigh , graph , visited ) == 1 ){
+                return 1;
             }
-            else{
-                if( !dfs( neigh , graph , visited , safe ) ){
-                    visited[node] = 2;
-                    return safe[node] = false;
-                }
-            }
-            
         }
 
-        visited[node] = 2;
-        return safe[node] = true;
+        return visited[node] = 2;
     }
 
     public List<Integer> eventualSafeNodes(int[][] graph) {
-
         int n = graph.length;
-        boolean[] safe = new boolean[n];
-        int[] visited = new int[n];      
 
-        for( int i = 0 ; i < n ; i++ ){
-            if( visited[i] == 0 ){
-                dfs( i , graph , visited , safe );
-            }
-        }
+        int[] visited = new int[n];
 
         List<Integer> ans = new ArrayList<>();
 
         for( int i = 0 ; i < n ; i++ ){
-            if( safe[i] )ans.add(i);
+            if( dfs( i , graph , visited ) == 2 ) ans.add( i );
         }
 
         return ans;
