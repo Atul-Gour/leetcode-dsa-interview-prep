@@ -1,28 +1,38 @@
 class Solution {
-    private int dfs( int node , int[][] graph , int[] visited ){
 
-        if( visited[node] != 0 ) return visited[node];
+    public List<Integer> eventualSafeNodes(int[][] graph2) {
+        int n = graph2.length;
 
-        visited[node] = 1;
+        ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+        int[] indegree = new int[n];
+        boolean[] isSafe = new boolean[n];
 
-        for( int neigh : graph[node] ){
-            if( dfs( neigh , graph , visited ) == 1 ){
-                return 1;
+        for( int i = 0 ; i < n ; i++ ) graph.add( new ArrayList<>() );
+
+        for( int i = 0 ; i < n ; i++ ){
+            for( int neigh : graph2[i] ){
+                graph.get(neigh).add(i);
+                indegree[i]++;
             }
         }
 
-        return visited[node] = 2;
-    }
-
-    public List<Integer> eventualSafeNodes(int[][] graph) {
-        int n = graph.length;
-
-        int[] visited = new int[n];
-
         List<Integer> ans = new ArrayList<>();
+        ArrayDeque<Integer> queue = new ArrayDeque<>();
+
+        for( int i = 0 ; i < n ; i++ ) if( indegree[i] == 0 ) queue.offer( i );
+
+        while( !queue.isEmpty() ){
+            int node = queue.poll();
+            isSafe[node] = true;
+
+            for( int neigh : graph.get( node ) ){
+                indegree[neigh]--;
+                if( indegree[neigh] == 0 ) queue.offer( neigh );
+            }
+        }
 
         for( int i = 0 ; i < n ; i++ ){
-            if( dfs( i , graph , visited ) == 2 ) ans.add( i );
+            if( isSafe[i] ) ans.add(i);
         }
 
         return ans;
