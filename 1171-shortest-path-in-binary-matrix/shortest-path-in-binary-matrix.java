@@ -2,43 +2,42 @@ class Solution {
     public int shortestPathBinaryMatrix(int[][] grid) {
         int n = grid.length;
 
-        int[][] dist = new int[n][n];
+        if(grid[0][0] != 0 || grid[n-1][n-1] != 0) return -1;
+
         ArrayDeque<int[]> q = new ArrayDeque<>();
+        q.offer(new int[]{0, 0});
+        grid[0][0] = 1; // mark visited
 
-        for( int[] d : dist ) Arrays.fill(d , Integer.MAX_VALUE);
+        int path = 1;
 
-        if( grid[0][0] != 0 ) return -1;
-        if( n == 1 ) return 1;
+        int[][] dir = {
+            {-1,-1},{-1,0},{-1,1},
+            {0,-1},{0,1},
+            {1,-1},{1,0},{1,1}
+        };
 
-        dist[0][0] = 1;
-        q.offer( new int[]{0 , 0} );
+        while(!q.isEmpty()){
+            int size = q.size();
 
-        while( !q.isEmpty() ){
+            for(int s = 0; s < size; s++){
+                int[] curr = q.poll();
+                int i = curr[0], j = curr[1];
 
-            int curr[] = q.poll();
-            int i = curr[0];
-            int j = curr[1];
+                if(i == n-1 && j == n-1) return path;
 
-            for( int x = -1 ; x <= 1 ; x++ ){
-                for( int y = -1 ; y <= 1 ; y++ ){
+                for(int[] d : dir){
+                    int ni = i + d[0];
+                    int nj = j + d[1];
 
-                    int newI = i + x;
-                    int newJ = j + y;
-                    
-                    if( newI < 0 || newI >= n || newJ < 0 || newJ >= n || grid[newI][newJ] != 0 ) continue;
-
-                    if(newI == n - 1 && newJ == n - 1){
-                        return dist[i][j] + 1;
-                    }
-
-                    if( dist[newI][newJ] > dist[i][j] + 1 ){
-                        dist[newI][newJ] = dist[i][j] + 1;
-                        q.offer( new int[]{ newI , newJ } );
+                    if(ni>=0 && nj>=0 && ni<n && nj<n && grid[ni][nj]==0){
+                        grid[ni][nj] = 1;
+                        q.offer(new int[]{ni, nj});
                     }
                 }
             }
+            path++;
         }
 
-        return dist[n - 1][n - 1] == Integer.MAX_VALUE ? -1 : dist[n - 1][n - 1];
+        return -1;
     }
 }
