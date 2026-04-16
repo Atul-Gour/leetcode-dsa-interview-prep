@@ -20,6 +20,8 @@ class Solution {
 
             if (i == n-1 && j == m-1) return dist[i][j];
 
+            if( dist[i][j] < curr[2] )continue; //why not required
+
             for (int[] d : dirs) {
                 int ni = i + d[0];
                 int nj = j + d[1];
