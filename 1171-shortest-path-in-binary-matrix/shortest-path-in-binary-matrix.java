@@ -8,6 +8,7 @@ class Solution {
         for( int[] d : dist ) Arrays.fill(d , Integer.MAX_VALUE);
 
         if( grid[0][0] != 0 ) return -1;
+        if( n == 1 ) return 1;
 
         dist[0][0] = 1;
         q.offer( new int[]{0 , 0} );
@@ -26,11 +27,14 @@ class Solution {
                     
                     if( newI < 0 || newI >= n || newJ < 0 || newJ >= n || grid[newI][newJ] != 0 ) continue;
 
+                    if(newI == n - 1 && newJ == n - 1){
+                        return dist[i][j] + 1;
+                    }
+
                     if( dist[newI][newJ] > dist[i][j] + 1 ){
                         dist[newI][newJ] = dist[i][j] + 1;
                         q.offer( new int[]{ newI , newJ } );
                     }
-
                 }
             }
         }
