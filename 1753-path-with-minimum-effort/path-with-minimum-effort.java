@@ -1,40 +1,41 @@
 class Solution {
     public int minimumEffortPath(int[][] heights) {
-
         int n = heights.length;
         int m = heights[0].length;
-        PriorityQueue<int[]> pq = new PriorityQueue<>( (a,b) -> Integer.compare(a[2] ,b[2]));
-        int arr[][] = new int[n][m];
-        int dirs[][] = {{-1 , 0},{1 , 0},{0 , -1},{0 , 1}};
 
-        for(int[] row : arr){
-            Arrays.fill( row , Integer.MAX_VALUE );
-        }
+        PriorityQueue<int[]> q = new PriorityQueue<>((a, b) -> Integer.compare(a[2], b[2]));
+        int[][] dist = new int[n][m];
 
-        arr[0][0] = 0;
+        for (int[] d : dist)
+            Arrays.fill(d, Integer.MAX_VALUE);
 
-        pq.offer( new int[]{ 0 , 0 , 0 });
+        q.offer(new int[] { 0, 0, 0 });
+        dist[0][0] = 0;
 
-        while( !pq.isEmpty() ){
-            int currI = pq.peek()[0];
-            int currJ = pq.peek()[1];
-            int currCost = pq.peek()[2];
-            pq.poll();
-            if( currCost > arr[currI][currJ] )continue;
-            if (currI == n - 1 && currJ == m - 1) return currCost;
-            for(int d[] : dirs){
-                int newI = currI + d[0];
-                int newJ = currJ + d[1];
-                if( newI < n && newI >= 0 && newJ < m && newJ >= 0 ){
-                    
-                    int maxDif = Math.max(arr[currI][currJ] , Math.abs(heights[newI][newJ] - heights[currI][currJ]) );
-                    if( maxDif < arr[newI][newJ] ){
-                        arr[newI][newJ] = maxDif;
-                        pq.offer( new int[]{ newI , newJ , maxDif } );
-                    }
+        int[][] dirs = { { -1, 0 }, { 0, -1 }, { 0, 1 }, { 1, 0 } };
+
+        while (!q.isEmpty()) {
+            int[] curr = q.poll();
+            int i = curr[0], j = curr[1];
+
+            if (i == n-1 && j == m-1) return dist[i][j];
+
+            for (int[] d : dirs) {
+                int ni = i + d[0];
+                int nj = j + d[1];
+
+                if (ni < 0 || nj < 0 || ni >= n || nj >= m ) continue;
+
+                int newDist = Math.max( dist[i][j] , Math.abs( heights[i][j] - heights[ni][nj] ) );
+
+                if( dist[ni][nj] > newDist ){
+                    dist[ni][nj] = newDist;
+                    q.offer(new int[] { ni, nj , newDist });
                 }
             }
+
         }
-        return arr[n-1][m-1];
+
+        return -1;
     }
 }
