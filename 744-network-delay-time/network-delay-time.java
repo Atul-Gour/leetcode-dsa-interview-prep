@@ -1,50 +1,37 @@
 class Solution {
     public int networkDelayTime(int[][] times, int n, int k) {
-        ArrayList<ArrayList<int[]>> adj = new ArrayList<>();
-        int[] totalTime = new int[n + 1];
-        Arrays.fill(totalTime, Integer.MAX_VALUE);
-        for (int i = 0; i <= n; i++) {
-            adj.add(new ArrayList<>());
-        }
+        ArrayList<ArrayList<int[]>> graph = new ArrayList<>();
 
-        for (int[] time : times) {
-            int from = time[0];
-            int to = time[1];
-            int cost = time[2];
+        for( int i = 0 ; i <= n ; i++ )graph.add( new ArrayList<>() );
+        int[] dist = new int[n + 1];
 
-            adj.get(from).add(new int[] { to, cost });
-        }
+        Arrays.fill( dist , Integer.MAX_VALUE );
+        for( int[] time : times ) graph.get( time[0] ).add( new int[]{time[1] , time[2]} );
 
-        PriorityQueue<int[]> queue = new PriorityQueue<>((a, b) -> Integer.compare(a[1], b[1]));
+        PriorityQueue<int[]> pq = new PriorityQueue<>( (a,b) -> Integer.compare(a[1] , b[1]) );
 
-        queue.offer(new int[] { k, 0 });
-        totalTime[k] = 0;
+        pq.offer( new int[]{k , 0} );
+        dist[k] = 0;
+        dist[0] = 0;
 
-        while (!queue.isEmpty()) {
-            int[] pair = queue.poll();
-            int node = pair[0];
-            int currTotalTime = pair[1];
+        while( !pq.isEmpty() ){
+            int curr[] = pq.poll();
+            int node = curr[0];
+            int time = curr[1];
 
-            for (int[] neighbour : adj.get(node)) {
-                int time = neighbour[1];
-                int dest = neighbour[0];
+            if( time > dist[node] ) continue;
 
-                if (currTotalTime + time < totalTime[dest]) {
-                    totalTime[dest] = currTotalTime + time;
-                    queue.offer(new int[] { dest, totalTime[dest] });
+            for( int[] neigh : graph.get( node ) ){
+                if( dist[neigh[0]] > time + neigh[1] ){
+                    dist[neigh[0]] = time + neigh[1];
+                    pq.offer( new int[]{ neigh[0] , dist[neigh[0]] } );
                 }
             }
         }
 
-        int ans = Integer.MIN_VALUE;
+        int ans = 0;
+        for( int ele : dist ) ans = Math.max(ans , ele);
 
-        for (int i = 1; i <= n; i++) {
-            if (totalTime[i] == Integer.MAX_VALUE) {
-                return -1;
-            }
-            ans = Math.max(ans, totalTime[i]);
-        }
-
-        return ans;
+        return ans == Integer.MAX_VALUE ? -1 : ans;
     }
 }
