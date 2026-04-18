@@ -1,64 +1,62 @@
 class Solution {
 
-    private int find( int src , int distanceThreshold ,  ArrayList<ArrayList<int[]>> graph , int[] time , boolean[] visited ){
-        Arrays.fill( time , -1 );
-        int ans = 0;
+    private int dijkstra(int src, int n, ArrayList<ArrayList<int[]>> graph, int threshold) {
 
-        PriorityQueue<int[]> pq = new PriorityQueue<>( (a,b) -> Integer.compare( b[1] , a[1] ) );
-        pq.offer( new int[]{src , distanceThreshold} );
+        int[] dist = new int[n];
+        Arrays.fill(dist, (int)1e9);
+        dist[src] = 0;
 
-        while( !pq.isEmpty() ){
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> a[1] - b[1]);
+        pq.offer(new int[]{src, 0});
+
+        while (!pq.isEmpty()) {
             int[] curr = pq.poll();
             int node = curr[0];
-            int currThreshold = curr[1];
+            int d = curr[1];
 
-            if( visited[node] )continue;
+            if (d > dist[node]) continue;
 
-            visited[node] = true;
-            if( node != src ) ans++;
-
-            for( int[] neigh : graph.get(node) ){
-                int neighNode = neigh[0];
+            for (int[] neigh : graph.get(node)) {
+                int next = neigh[0];
                 int weight = neigh[1];
 
-                if( !visited[neighNode] &&  weight <= currThreshold && currThreshold - weight > time[neighNode] ){
-                    time[neighNode] = currThreshold - weight;
-                    pq.offer( new int[]{neighNode , currThreshold - weight} );
+                if (d + weight < dist[next]) {
+                    dist[next] = d + weight;
+                    pq.offer(new int[]{next, dist[next]});
                 }
             }
         }
 
-        return ans;
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            if (i != src && dist[i] <= threshold) count++;
+        }
+
+        return count;
     }
 
     public int findTheCity(int n, int[][] edges, int distanceThreshold) {
 
         ArrayList<ArrayList<int[]>> graph = new ArrayList<>();
+        for (int i = 0; i < n; i++) graph.add(new ArrayList<>());
 
-        for( int i = 0 ; i < n ; i++ ) graph.add( new ArrayList<>() );
-
-        for( int[] edge : edges ){
-            int u = edge[0];
-            int v = edge[1];
-            int w = edge[2];
-
-            graph.get(u).add( new int[]{v , w} );
-            graph.get(v).add( new int[]{u , w} );
+        for (int[] e : edges) {
+            graph.get(e[0]).add(new int[]{e[1], e[2]});
+            graph.get(e[1]).add(new int[]{e[0], e[2]});
         }
 
-        int ans = 0;
-        int minNodesByAns = Integer.MAX_VALUE;
+        int result = -1;
+        int minReach = Integer.MAX_VALUE;
 
-        for( int i = 0 ; i < n ; i++ ){
-            int nodes = find( i , distanceThreshold , graph , new int[n] , new boolean[n] );
+        for (int i = 0; i < n; i++) {
+            int reachable = dijkstra(i, n, graph, distanceThreshold);
 
-            if( nodes < minNodesByAns ){
-                ans = i;
-                minNodesByAns = nodes;
+            if (reachable <= minReach) {
+                minReach = reachable;
+                result = i;
             }
-            else if( nodes == minNodesByAns ) ans = Math.max( ans , i );
         }
 
-        return ans;
+        return result;
     }
 }
