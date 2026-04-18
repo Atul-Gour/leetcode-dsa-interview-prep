@@ -18,7 +18,6 @@ class Solution {
             ans = Math.max( ans , product );
             ans = Math.max( ans , negativeProduct );
 
-            // System.out.println( negativeProduct +  " " + product );
         }
 
         return ans;
