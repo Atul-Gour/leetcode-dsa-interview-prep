@@ -1,109 +1,93 @@
-class DSU {
-
-    int[] parent;
-    int[] size;
-
-    DSU(int n) {
-        parent = new int[n];
-        size = new int[n];
-
-        for (int i = 0; i < n; i++) {
-            parent[i] = i;
-            size[i] = 1;
-        }
-    }
-
-    int find(int node) {
-        if (parent[node] == node)
-            return node;
-
-        return parent[node] = find(parent[node]);
-    }
-
-    boolean union(int a, int b) {
-        int pa = find(a);
-        int pb = find(b);
-
-        if (pa == pb)
-            return false;
-
-        if (size[pa] < size[pb]) {
-            parent[pa] = pb;
-            size[pb] += size[pa];
-        } else {
-            parent[pb] = pa;
-            size[pa] += size[pb];
-        }
-
-        return true;
-    }
-}
-
 class Solution {
+
+    static class Node{
+        int size , unique;
+
+        Node( int size , int unique ){
+            this.size = size;
+            this.unique = unique;
+        }
+    }
+
+    static void bfs( int iStart , int jStart , int[][] grid , Node[][] arr ){
+        int n = grid.length;
+        boolean[][] visited = new boolean[n][n];
+        ArrayDeque<int[]> q = new ArrayDeque<>();
+        HashSet<Long> set = new HashSet<>();
+        int[][] dirs = {{0,1} , {1,0} , {0,-1} , {-1,0}};
+
+        int size = 0;
+
+        q.offer( new int[]{iStart , jStart} );
+        visited[iStart][jStart] = true;
+
+        while( !q.isEmpty() ){
+            int curr[] = q.poll();
+            int i = curr[0];
+            int j = curr[1];
+            size++;
+            long key = (long)i << 32 | j;
+            set.add(key);
+
+            for( int[] d : dirs ){
+                int newI = i + d[0];
+                int newJ = j + d[1];
+                if( newI < 0 || newI >= n || newJ < 0 || newJ >= n || visited[newI][newJ] || grid[newI][newJ] == 0 )continue;
+
+                visited[newI][newJ] = true;
+                q.offer( new int[]{newI , newJ} );
+            } 
+        }
+
+        int unique = iStart * n + jStart;
+
+        for( long key : set ){
+            int i = (int)(key >> 32);
+            int j = (int) key;
+
+            arr[i][j] = new Node( size , unique );
+        }
+
+    }
 
     public int largestIsland(int[][] grid) {
         int n = grid.length;
+        Node[][] arr = new Node[n][n];
+        int[][] dirs = {{0,1} , {1,0} , {0,-1} , {-1,0}};
 
-        DSU dsu = new DSU(n*n);
-        // int[][] dirs = { { 0, -1 }, { -1, 0 } };
-        int[][] dirs = { { 0, -1 }, { 0, 1 }, { 1, 0 }, { -1, 0 } };
-
-        int ans = 0;
-
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (grid[i][j] == 1) {
-                    int key = i * n + j;
-
-                    for (int d[] : dirs) {
-                        int newX = i + d[0];
-                        int newY = j + d[1];
-
-                        if (newX < n && newX >= 0 && newY < n && newY >= 0 && grid[newX][newY] == 1) {
-                            int newKey = newX * n + newY;
-                            dsu.union(key, newKey);
-                        }
-                    }
-
+        for( int i = 0 ; i < n ; i++ ){
+            for( int j = 0 ; j < n ; j++ ){
+                if( grid[i][j] == 1 && arr[i][j] == null ){
+                    bfs( i , j , grid , arr ); 
                 }
             }
         }
 
-        int[][] dirss = { { 0, -1 }, { 0, 1 }, { 1, 0 }, { -1, 0 } };
+        int ans = arr[0][0] == null ? 0 : arr[0][0].size;
 
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (grid[i][j] == 0) {
+        for( int i = 0 ; i < n ; i++ ){
+            for( int j = 0 ; j < n ; j++ ){
+                if( grid[i][j] == 1 ) continue; 
 
-                    int currAns = 1;
+                HashSet<Integer> set = new HashSet<>();
+                int curr = 1;
 
-                    HashSet<Integer> set = new HashSet<>();
+                for( int[] dir : dirs){
+                    int newI = i + dir[0];
+                    int newJ = j + dir[1];
 
-                    for (int[] d : dirss) {
-                        int newX = i + d[0];
-                        int newY = j + d[1];
+                    if( newI < 0 || newI >= n || newJ < 0 || newJ >= n || grid[newI][newJ] == 0 )continue;
+                    if( set.contains( arr[newI][newJ].unique ) ) continue;
 
-                        if (newX < n && newX >= 0 && newY < n && newY >= 0 && grid[newX][newY] == 1) {
-                            int parent = dsu.find(newX * n + newY);
-                            set.add(parent);
-                        }
-                    }
-
-                    for (int key : set) {
-                        currAns += dsu.size[key];
-                    }
-
-                    ans = Math.max(ans, currAns);
+                    set.add( arr[newI][newJ].unique );
+                    curr += arr[newI][newJ].size;
                 }
-            }
-        }
 
-        for (int i = 0; i < n * n; i++) {
-            if (dsu.find(i) == i) {
-                ans = Math.max(ans, dsu.size[i]);
+                ans = Math.max( ans , curr );
             }
         }
 
         return ans;
+
     }
 }
