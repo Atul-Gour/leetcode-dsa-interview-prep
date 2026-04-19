@@ -44,11 +44,8 @@ class Solution {
         DSU dsu = new DSU(n);
 
         if( edgesSize < n - 1 ) return -1;
-        int edgesWaste = 0;
 
-        for( int[] edge : connections ){
-            if( !dsu.union( edge[0] , edge[1] ) ) edgesWaste++;
-        }
+        for( int[] connection : connections )dsu.union( connection[0] , connection[1] );
 
         int edgesNeed = 0;
         for( int i = 0 ; i < n ; i++ ){
