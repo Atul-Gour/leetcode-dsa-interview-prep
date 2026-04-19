@@ -1,79 +1,86 @@
-class DSU {
-
-    HashMap<Long, Long> parent;
-    HashMap<Long, Integer> size;
-
-    DSU() {
-        parent = new HashMap<>();
-        size = new HashMap<>();
-    }
-
-    long find(long node) {
-        if (parent.get(node) == node)
-            return node;
-
-        long newParent = find(parent.get(node));
-        parent.put(node, newParent);
-
-        return newParent;
-    }
-
-    void union(long a, long b) {
-        long pa = find(a);
-        long pb = find(b);
-
-        if (pa == pb)
-            return;
-
-        if (size.get(pa) < size.get(pb)) {
-            parent.put(pa, pb);
-            size.put(pb, size.get(pb) + size.get(pa));
-        } else {
-            parent.put(pb, pa);
-            size.put(pa, size.get(pa) + size.get(pb));
-        }
-    }
-}
-
 class Solution {
 
+    static class DSU{
+        Map<Integer , Integer> parent;
+        Map<Integer , Integer> rank;
+
+        DSU(){
+            this.parent = new HashMap<>();
+            this.rank = new HashMap<>();
+        }
+        
+        int find( int node ){
+            if( !parent.containsKey(node) ){
+                parent.put(node , node);
+                return node;
+            }
+
+            if( parent.get(node) == node ) return node;
+            parent.put( node , find(parent.get(node)) );
+            return parent.get(node);
+        }
+
+        boolean union( int a , int b ){
+            int pa = find( a );
+            int pb = find( b );
+
+            if( pa == pb ) return false;
+
+            int ra = rank.getOrDefault( pa , 0 );
+            int rb = rank.getOrDefault( pb , 0 );
+
+            if( ra < rb ){
+                parent.put(pa , pb);
+            }
+            else if( rb < ra ){
+                parent.put(pb , pa);
+            }
+            else{
+                parent.put(pa , pb);
+                rank.put( pb , rank.getOrDefault( pb , 0 ) + 1 );
+            }
+
+            return true;
+        }
+    }
+
     public int removeStones(int[][] stones) {
-        int n = stones.length;
-        long[] rows = new long[10001];
-        long[] cols = new long[10001];
-
-        Arrays.fill(rows, -1);
-        Arrays.fill(cols, -1);
-
+        Map<Integer , List<Integer> > xCoordinateMap = new HashMap<>();
+        Map<Integer , List<Integer> > yCoordinateMap = new HashMap<>();
+        Map<Integer , Integer> freq = new HashMap<>();
         DSU dsu = new DSU();
 
-        for (int[] stone : stones) {
-            int x = stone[0];
-            int y = stone[1];
-            long key = ((long) x << 32) | y;
+        for( int i = 0 ; i < stones.length ; i++ ){
+            int x = stones[i][0];
+            int y = stones[i][1];
 
-            dsu.parent.put(key, key);
-            dsu.size.put(key, 1);
+            xCoordinateMap.computeIfAbsent( x , f -> new ArrayList<>() ).add(i);
+            yCoordinateMap.computeIfAbsent( y , f -> new ArrayList<>() ).add(i);
+        }
 
-            if (rows[x] == -1) {
-                rows[x] = key;
-            } else {
-                dsu.union(key, rows[x]);
+        for( List<Integer> list : xCoordinateMap.values() ){
+            for( int i = 1 ; i < list.size() ; i++ ){
+                dsu.union( list.get( i - 1 ) , list.get(i) );
             }
-
-            if (cols[y] == -1) {
-                cols[y] = key;
-            } else {
-                dsu.union(key, cols[y]);
+        }
+        for( List<Integer> list : yCoordinateMap.values() ){
+            for( int i = 1 ; i < list.size() ; i++ ){
+                dsu.union( list.get( i - 1 ) , list.get(i) );
             }
         }
 
-        int components = 0;
-        for (long node : dsu.parent.keySet()) {
-            if (dsu.find(node) == node)
-                components++;
+        System.out.println(dsu.parent);
+
+        for( int i = 0 ; i < stones.length ; i++ ){
+            int parent = dsu.find(i);
+            freq.put( parent , freq.getOrDefault(parent , 0) + 1 );
         }
 
-        return n - components;
+        int ans = 0;
+        for( int count : freq.values() ){
+            ans += count - 1;
+        }
+
+        return ans;
     }
 }
