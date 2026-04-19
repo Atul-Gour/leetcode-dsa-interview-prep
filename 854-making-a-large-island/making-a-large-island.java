@@ -11,7 +11,6 @@ class Solution {
 
     static void bfs( int iStart , int jStart , int[][] grid , Node[][] arr ){
         int n = grid.length;
-        boolean[][] visited = new boolean[n][n];
         ArrayDeque<int[]> q = new ArrayDeque<>();
         ArrayList<int[]> cells = new ArrayList<>();
         int[][] dirs = {{0,1} , {1,0} , {0,-1} , {-1,0}};
@@ -19,7 +18,7 @@ class Solution {
         int size = 0;
 
         q.offer( new int[]{iStart , jStart} );
-        visited[iStart][jStart] = true;
+        arr[iStart][jStart] = new Node(-1, -1);
 
         while( !q.isEmpty() ){
             int curr[] = q.poll();
@@ -31,9 +30,9 @@ class Solution {
             for( int[] d : dirs ){
                 int newI = i + d[0];
                 int newJ = j + d[1];
-                if( newI < 0 || newI >= n || newJ < 0 || newJ >= n || visited[newI][newJ] || grid[newI][newJ] == 0 )continue;
+                if( newI < 0 || newI >= n || newJ < 0 || newJ >= n || arr[newI][newJ] != null || grid[newI][newJ] == 0 )continue;
 
-                visited[newI][newJ] = true;
+                arr[newI][newJ] = new Node(-1, -1);
                 q.offer( new int[]{newI , newJ} );
             } 
         }
