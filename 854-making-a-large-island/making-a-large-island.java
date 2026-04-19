@@ -13,7 +13,7 @@ class Solution {
         int n = grid.length;
         boolean[][] visited = new boolean[n][n];
         ArrayDeque<int[]> q = new ArrayDeque<>();
-        HashSet<Long> set = new HashSet<>();
+        ArrayList<int[]> cells = new ArrayList<>();
         int[][] dirs = {{0,1} , {1,0} , {0,-1} , {-1,0}};
 
         int size = 0;
@@ -26,8 +26,7 @@ class Solution {
             int i = curr[0];
             int j = curr[1];
             size++;
-            long key = (long)i << 32 | j;
-            set.add(key);
+            cells.add(new int[]{i, j});
 
             for( int[] d : dirs ){
                 int newI = i + d[0];
@@ -41,11 +40,8 @@ class Solution {
 
         int unique = iStart * n + jStart;
 
-        for( long key : set ){
-            int i = (int)(key >> 32);
-            int j = (int) key;
-
-            arr[i][j] = new Node( size , unique );
+        for (int[] cell : cells) {
+            arr[cell[0]][cell[1]] = new Node(size, unique);
         }
 
     }
