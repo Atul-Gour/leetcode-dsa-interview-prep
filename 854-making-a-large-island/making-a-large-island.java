@@ -47,7 +47,6 @@ class Solution {
 
         DSU dsu = new DSU(n);
         HashMap<Integer, Integer> freq = new HashMap<>();
-        int[][] matrix = new int[n][n];
         int[][] dirs = { { 0, -1 }, { -1, 0 } };
 
         int ans = 0;
@@ -77,7 +76,6 @@ class Solution {
                     int key = i * n + j;
                     int keyP = dsu.find(key);
                     freq.put(keyP, freq.getOrDefault(keyP, 0) + 1);
-                    matrix[i][j] = keyP;
                     ans = Math.max(ans, freq.get(keyP));
                 }
             }
@@ -98,7 +96,9 @@ class Solution {
                         int newY = j + d[1];
 
                         if (newX < n && newX >= 0 && newY < n && newY >= 0 && grid[newX][newY] == 1) {
-                            set.add(matrix[newX][newY]);
+                            int key = newX * n + newY;
+                            int keyP = dsu.find(key);
+                            set.add(keyP);
                         }
                     }
 
