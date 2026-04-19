@@ -1,41 +1,42 @@
 class DSU {
-    int[] parent, rank, size;
+
+    int[] parent;
+    int[] rank;
 
     DSU(int n) {
-        int N = n * n;
-        parent = new int[N];
-        rank = new int[N];
-        size = new int[N];
+        parent = new int[n*n];
+        rank = new int[n*n];
 
-        for (int i = 0; i < N; i++) {
-            parent[i] = i;
-            size[i] = 1;
-        }
+        for(int i = 0 ; i < n*n ; i++)parent[i] = i;
     }
 
-    int find(int x) {
-        if (parent[x] != x)
-            parent[x] = find(parent[x]);
-        return parent[x];
+    int find(int node) {
+        if (parent[node] == node)
+            return node;
+
+        return parent[node] = find(parent[node]);
     }
 
-    void union(int a, int b) {
+    boolean union(int a, int b) {
         int pa = find(a);
         int pb = find(b);
 
-        if (pa == pb) return;
+        if (pa == pb)
+            return false;
 
-        if (rank[pa] < rank[pb]) {
+        int ra = rank[pa];
+        int rb = rank[pb];
+
+        if (ra < rb)
             parent[pa] = pb;
-            size[pb] += size[pa];
-        } else if (rank[pb] < rank[pa]) {
+        else if (rb < ra)
             parent[pb] = pa;
-            size[pa] += size[pb];
-        } else {
+        else {
             parent[pa] = pb;
-            size[pb] += size[pa];
             rank[pb]++;
         }
+
+        return true;
     }
 }
 
