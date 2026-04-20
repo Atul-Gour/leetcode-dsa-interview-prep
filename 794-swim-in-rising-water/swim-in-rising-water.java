@@ -1,9 +1,8 @@
 class Solution {
     public int swimInWater(int[][] grid) {
         int n = grid.length;
-        int m = grid[0].length;
 
-        int dp[][] = new int[n][m];
+        int dp[][] = new int[n][n];
         int[][] dirs = {{0 , -1} , {-1 , 0} , {0 , 1} , {1 , 0}};
         PriorityQueue<int[]> pq = new PriorityQueue<>( (a,b) -> Integer.compare(a[2] , b[2]));
 
@@ -18,13 +17,13 @@ class Solution {
             int j = curr[1];
             int currTime = curr[2];
 
-            if( i == n-1 && j == m-1 ) return currTime;
+            if( i == n-1 && j == n-1 ) return currTime;
 
             for( int d[] : dirs ){
                 int newI = i + d[0];
                 int newJ = j + d[1];
 
-                if( newI < 0 || newJ < 0 || newI >= n || newJ >= m ) continue;
+                if( newI < 0 || newJ < 0 || newI >= n || newJ >= n ) continue;
                 int newTime = Math.max( currTime , grid[newI][newJ] );
 
                 if( dp[newI][newJ] <= newTime ) continue;
@@ -35,7 +34,7 @@ class Solution {
             }
         }
 
-        return grid[n-1][m-1];
+        return grid[n-1][n-1];
 
     }
 }
