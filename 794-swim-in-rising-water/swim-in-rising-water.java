@@ -1,50 +1,62 @@
 class Solution {
-    int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}};
+    class DSU {
+        int[] parent;
+
+        DSU(int n) {
+            parent = new int[n];
+            for (int i = 0; i < n; i++) parent[i] = i;
+        }
+
+        int find(int x) {
+            if (parent[x] != x)
+                parent[x] = find(parent[x]);
+            return parent[x];
+        }
+
+        void union(int a, int b) {
+            int pa = find(a), pb = find(b);
+            if (pa != pb) parent[pa] = pb;
+        }
+    }
 
     public int swimInWater(int[][] grid) {
         int n = grid.length;
+        int total = n * n;
 
-        int low = grid[0][0], high = n * n - 1;
-        int ans = high;
-
-        while (low <= high) {
-            int mid = (low + high) / 2;
-
-            if (canReach(grid, mid)) {
-                ans = mid;
-                high = mid - 1;
-            } else {
-                low = mid + 1;
+        List<int[]> cells = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                cells.add(new int[]{grid[i][j], i, j});
             }
         }
-        return ans;
-    }
 
-    private boolean canReach(int[][] grid, int t) {
-        int n = grid.length;
-        if (grid[0][0] > t) return false;
+        Collections.sort(cells, (a, b) -> a[0] - b[0]);
 
+        DSU dsu = new DSU(total);
         boolean[][] vis = new boolean[n][n];
-        Queue<int[]> q = new LinkedList<>();
-        q.offer(new int[]{0,0});
-        vis[0][0] = true;
 
-        while (!q.isEmpty()) {
-            int[] cur = q.poll();
-            int i = cur[0], j = cur[1];
+        int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}};
 
-            if (i == n-1 && j == n-1) return true;
+        for (int[] cell : cells) {
+            int h = cell[0], i = cell[1], j = cell[2];
+            vis[i][j] = true;
+
+            int id1 = i * n + j;
 
             for (int[] d : dirs) {
                 int ni = i + d[0], nj = j + d[1];
 
                 if (ni<0 || nj<0 || ni>=n || nj>=n) continue;
-                if (vis[ni][nj] || grid[ni][nj] > t) continue;
+                if (!vis[ni][nj]) continue;
 
-                vis[ni][nj] = true;
-                q.offer(new int[]{ni, nj});
+                int id2 = ni * n + nj;
+                dsu.union(id1, id2);
+            }
+
+            if (dsu.find(0) == dsu.find(n*n - 1)) {
+                return h;
             }
         }
-        return false;
+        return -1;
     }
 }
