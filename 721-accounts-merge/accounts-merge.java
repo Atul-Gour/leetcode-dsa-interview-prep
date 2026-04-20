@@ -1,77 +1,78 @@
 class Solution {
-    static private String findParent(String curr, HashMap<String, String> parent) {
-        if (curr.equals(parent.get(curr))) {
-            return curr;
+    static class DSU{
+        HashMap<String , String> parent;
+        HashMap<String , Integer> rank;
+
+        DSU(){
+            this.parent = new HashMap<>();
+            this.rank = new HashMap<>();
         }
-        String newParent = findParent(parent.get(curr), parent);
-        parent.put(curr, newParent);
-        return newParent;
-    }
 
-    static void union(String a, String b,
-            HashMap<String, String> parent,
-            HashMap<String, Integer> rank) {
-
-        String root1 = findParent(a, parent);
-        String root2 = findParent(b, parent);
-
-        if (root1.equals(root2))
-            return;
-
-        int r1 = rank.get(root1);
-        int r2 = rank.get(root2);
-
-        if (r1 < r2) {
-            parent.put(root1, root2);
-        } else if (r1 > r2) {
-            parent.put(root2, root1);
-        } else {
-            parent.put(root2, root1);
-            rank.put(root1, r1 + 1);
+        private String find( String s ){
+            if( !parent.containsKey(s) ){
+                parent.put( s , s );
+                return s;
+            }
+            
+            if( parent.get(s).equals(s) ) return s;
+            parent.put( s , find( parent.get( s ) ) );
+            return parent.get(s);
         }
-    }
 
+        private void union( String a , String b ){
+            String pa = find(a);
+            String pb = find(b);
+
+            int ra = rank.getOrDefault( pa , 1 );
+            int rb = rank.getOrDefault( pb , 1 );
+
+            if( ra < rb ){
+                parent.put( pa , pb );
+            }
+            else if( rb < ra ){
+                parent.put( pb , pa );
+            }
+            else{
+                parent.put( pb , pa );
+                rank.put( pb , rank.getOrDefault( pb , 0 ) + 1);
+            }
+
+        }
+
+    }
     public List<List<String>> accountsMerge(List<List<String>> accounts) {
-        HashMap<String, String> parent = new HashMap<>();
-        HashMap<String, String> name = new HashMap<>();
-        HashMap<String, Integer> rank = new HashMap<>();
-        HashMap<String, List<String>> emails = new HashMap<>();
+        HashMap< String , String > owner = new HashMap<>();
+        HashMap< String , List<String> > allEmails = new HashMap<>();
         List<List<String>> ans = new ArrayList<>();
+        DSU dsu = new DSU();
 
-        for (List<String> account : accounts) {
-            String accName = account.get(0);
 
-            for (int i = 1; i < account.size(); i++) {
-                String email = account.get(i);
+        for( List<String> account : accounts ){
+            String name = account.get(0);
 
-                parent.putIfAbsent(email, email);
-                rank.putIfAbsent(email, 0);
-                name.put(email, accName);
+            for( int i = 1 ; i < account.size() ; i++ ){
+                String email = account.get( i );
+                owner.put( email , name );
+
+                if( i < account.size() - 1 ){
+                    String b = account.get( i + 1 );
+                    dsu.union( email , b );
+                }
+
             }
         }
 
-        for (List<String> account : accounts) {
-            String firstEmail = account.get(1);
-
-            for (int i = 2; i < account.size(); i++) {
-                union(firstEmail, account.get(i), parent, rank);
-            }
+        for( String key : owner.keySet() ){
+            String parent = dsu.find(key);
+            allEmails.computeIfAbsent( parent , f -> new ArrayList<>() ).add( key );
         }
 
-        for (String email : parent.keySet()) {
-            String root = findParent(email, parent);
-            emails.computeIfAbsent(root, k -> new ArrayList<>()).add(email);
-        }
-
-        for (String root : emails.keySet()) {
-            List<String> list = emails.get(root);
+        for( Map.Entry< String , List<String> > entry : allEmails.entrySet() ){
+            String name = owner.get(entry.getKey());
+            List<String> list = entry.getValue();
             Collections.sort(list);
-
-            List<String> temp = new ArrayList<>();
-            temp.add(name.get(root));
-            temp.addAll(list);
-
-            ans.add(temp);
+            list.add(0, name);
+            ans.add( list );
         }
 
         return ans;
