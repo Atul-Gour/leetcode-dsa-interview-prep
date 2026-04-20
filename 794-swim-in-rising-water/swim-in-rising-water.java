@@ -1,40 +1,50 @@
 class Solution {
+    int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}};
+
     public int swimInWater(int[][] grid) {
         int n = grid.length;
 
-        int dp[][] = new int[n][n];
-        int[][] dirs = {{0 , -1} , {-1 , 0} , {0 , 1} , {1 , 0}};
-        PriorityQueue<int[]> pq = new PriorityQueue<>( (a,b) -> Integer.compare(a[2] , b[2]));
+        int low = grid[0][0], high = n * n - 1;
+        int ans = high;
 
-        for( int[] d : dp ) Arrays.fill( d , Integer.MAX_VALUE );
+        while (low <= high) {
+            int mid = (low + high) / 2;
 
-        dp[0][0] = grid[0][0];
-        pq.offer( new int[]{0 , 0 , dp[0][0]} );
-
-        while( !pq.isEmpty() ){
-            int curr[] = pq.poll();
-            int i = curr[0];
-            int j = curr[1];
-            int currTime = curr[2];
-
-            if( i == n-1 && j == n-1 ) return currTime;
-
-            for( int d[] : dirs ){
-                int newI = i + d[0];
-                int newJ = j + d[1];
-
-                if( newI < 0 || newJ < 0 || newI >= n || newJ >= n ) continue;
-                int newTime = Math.max( currTime , grid[newI][newJ] );
-
-                if( dp[newI][newJ] <= newTime ) continue;
-                dp[newI][newJ] = newTime;
-
-                pq.offer( new int[]{ newI , newJ , dp[newI][newJ] } );
-
+            if (canReach(grid, mid)) {
+                ans = mid;
+                high = mid - 1;
+            } else {
+                low = mid + 1;
             }
         }
+        return ans;
+    }
 
-        return grid[n-1][n-1];
+    private boolean canReach(int[][] grid, int t) {
+        int n = grid.length;
+        if (grid[0][0] > t) return false;
 
+        boolean[][] vis = new boolean[n][n];
+        Queue<int[]> q = new LinkedList<>();
+        q.offer(new int[]{0,0});
+        vis[0][0] = true;
+
+        while (!q.isEmpty()) {
+            int[] cur = q.poll();
+            int i = cur[0], j = cur[1];
+
+            if (i == n-1 && j == n-1) return true;
+
+            for (int[] d : dirs) {
+                int ni = i + d[0], nj = j + d[1];
+
+                if (ni<0 || nj<0 || ni>=n || nj>=n) continue;
+                if (vis[ni][nj] || grid[ni][nj] > t) continue;
+
+                vis[ni][nj] = true;
+                q.offer(new int[]{ni, nj});
+            }
+        }
+        return false;
     }
 }
