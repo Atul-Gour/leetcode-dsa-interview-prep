@@ -1,48 +1,36 @@
 class Solution {
-    public int myAtoi(String s) {
-        int n  = s.length();
+    public int myAtoi(String s1) {
+        String s = s1.trim();
+
+        boolean positive = true;
+        if( s.isEmpty() ) return 0;
+        char ch = s.charAt(0);
+
+        if( ch == '-' || ch == '+' ){
+            positive = ch == '-' ? false : true;
+            s = s.substring(1 , s.length());
+        }
+        else if( Character.isLetter(ch) ) return 0;
         
-        int index = 0;
-        while(index < n && s.charAt(index)==' '){
-            index++;
+        long ans = 0;
+
+        for( int i = 0 ; i < s.length() ; i++ ){
+            
+            ch = s.charAt(i);
+            System.out.println( ans );
+
+            if( Character.isDigit(ch)  ){
+                ans = ans*10 + (ch - '0');
+                
+                if( !positive && -ans <= Integer.MIN_VALUE ) return Integer.MIN_VALUE;
+                if( positive && ans >= Integer.MAX_VALUE ) return Integer.MAX_VALUE;
+
+            }else break;
+
         }
-        if(index>=n)return 0;
-        char c= s.charAt(index);
-        if(Character.isLetter(c))return 0;
 
-        boolean isNegative = false;
+        if( !positive ) ans *= -1;
 
-        if(s.charAt(index)=='-' || s.charAt(index)=='+'){
-            if(s.charAt(index)=='-') isNegative = true;
-            index++;
-        }
-
-        StringBuilder sb = new StringBuilder();
-        while(index<n && Character.isDigit(s.charAt(index))){
-
-            if (sb.length() != 0){
-                long num = Long.parseLong(sb.toString());
-
-                if(isNegative){
-                    num= num * -1;
-                    if (num < Integer.MIN_VALUE) return Integer.MIN_VALUE;
-                }
-                else if (num > Integer.MAX_VALUE) return Integer.MAX_VALUE;
-            }
-
-            sb.append(s.charAt(index));
-            index++;
-        }
-        if (sb.length() == 0) return 0;
-
-        long num = Long.parseLong(sb.toString());
-
-        if(isNegative){
-            num= num * -1;
-            if (num < Integer.MIN_VALUE) return Integer.MIN_VALUE;
-        }
-        else if (num > Integer.MAX_VALUE) return Integer.MAX_VALUE;
-
-        return (int)num;
+        return (int)ans;
     }
-}       
+}
