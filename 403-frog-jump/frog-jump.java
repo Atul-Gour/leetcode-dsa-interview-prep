@@ -5,7 +5,7 @@ class Solution {
         if( index == n-1 ) return jump == stones[n-1] - stones[lastIdx] ? true : false;
         if( jump < stones[index] - stones[lastIdx] ) return false;
 
-        long key = (long)index << 47 | lastIdx << 15 | jump;
+        long key = (long)index << 48 | (long)lastIdx << 32 | jump;
         if( map.containsKey( key ) ) return map.get(key);
 
         boolean ans = false;
