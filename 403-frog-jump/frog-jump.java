@@ -1,32 +1,29 @@
 class Solution {
 
-    boolean solve( int index , int jump , int lastIdx , int[] stones , HashMap<Long , Boolean> map ){
+    boolean solve( int index , int jumps, int[] stones , HashSet<Long> set ){
         int n = stones.length;
-        if( index == n-1 ) return jump == stones[n-1] - stones[lastIdx] ? true : false;
-        if( jump < stones[index] - stones[lastIdx] ) return false;
+        if( index == n-1 ) return true;
+        if( index >= n ) return false;
 
-        long key = (long)index << 48 | (long)lastIdx << 32 | jump;
-        if( map.containsKey( key ) ) return map.get(key);
+        for( int i = index + 1 ; i < n ; i++ ){
+            int jumpNeeded = stones[i] - stones[index];
 
-        boolean ans = false;
-        
-        if( jump > stones[index] - stones[lastIdx] ){
-            ans = solve( index + 1 , jump , lastIdx , stones , map );
-        }
-        else{
-            ans = solve( index + 1 , jump - 1 , index ,  stones , map ) ||
-                  solve( index + 1 , jump , index ,  stones , map ) ||
-                  solve( index + 1 , jump + 1 , index , stones , map );
+            if( jumpNeeded == jumps || jumpNeeded == jumps - 1 || jumpNeeded == jumps + 1 ){
+                long key = (long)i << 32 | jumpNeeded;
+                if( set.contains(key) ) continue;
+                if( solve( i , jumpNeeded , stones , set ) ) return true;
+                set.add(key);
+            }
+            if( jumpNeeded > jumps ) return false;
         }
 
-        map.put( key , ans );
-        return ans;
+        return false;
     }
     public boolean canCross(int[] stones) {
         int n = stones.length;
-        HashMap<Long , Boolean> map = new HashMap<>();
+        HashSet<Long> set = new HashSet<>();
 
-        return solve( 1 , 1 , 0 , stones , map );
+        return solve( 0 , 0 , stones , set );
 
     }
 }
