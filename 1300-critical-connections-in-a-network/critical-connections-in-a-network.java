@@ -50,10 +50,6 @@ class Solution {
             }
         }
 
-        for( int ele : time )System.out.print(ele + " ");
-        System.out.println();
-        for( int ele : low )System.out.print(ele + " ");
-
         return ans;
     }
 }
