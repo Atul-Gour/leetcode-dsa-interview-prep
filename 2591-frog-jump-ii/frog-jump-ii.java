@@ -1,33 +1,46 @@
 class Solution {
-    boolean possible(int[] stones, int jump) {
+    private boolean possible(int[] stones, int jump) {
         int n = stones.length;
-
-        for (int i = 2; i < n; i++) {
-            if (stones[i] - stones[i - 2] > jump) {
+        boolean[] taken = new boolean[n];
+        int i = 0;
+        
+        while (i < n - 1) {
+            int j = i + 1;
+            while (j + 1 < n && stones[j + 1] - stones[i] <= jump) {
+                j++;
+            }
+            if (stones[j] - stones[i] > jump) {
                 return false;
             }
+            taken[j] = true;
+            i = j;
         }
-
+        
+        i = n - 1;
+        for (int j = n - 2; j >= 0; j--) {
+            if (!taken[j] || j == 0) {
+                if (stones[i] - stones[j] > jump) {
+                    return false;
+                }
+                i = j;
+            }
+        }
+        
         return true;
     }
 
     public int maxJump(int[] stones) {
         int n = stones.length;
-        if( n == 2 ) return stones[1];
-        
-        int ans = stones[n-1];
-        int low = 0;
-        int high = stones[n-1];
+        int ans = stones[n - 1] - stones[0];
+        int low = stones[1] - stones[0];
+        int high = stones[n - 1] - stones[0];
 
-        while( low <= high ){
-            
-            int mid = low + (( high - low ) / 2);
-            
-            
-            if( possible(stones , mid ) ){
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            if (possible(stones, mid)) {
                 ans = mid;
                 high = mid - 1;
-            }else{
+            } else {
                 low = mid + 1;
             }
         }
