@@ -15,12 +15,12 @@ class Solution {
             if( time[neigh] == -1 ){
                 dfs( neigh , node , ans , graph );
                 low[node] = Math.min( low[node] , low[neigh] );
+                if( low[neigh] > time[node] )  ans.add( new ArrayList<>(List.of(node , neigh)) );
             }
             else if( neigh != parent ){
                 low[node] = Math.min( low[node] , time[neigh] );
             }
 
-            if( low[neigh] > time[node] )  ans.add( new ArrayList<>(List.of(node , neigh)) );
             
         }
     }
