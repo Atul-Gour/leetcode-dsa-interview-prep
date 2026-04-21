@@ -1,31 +1,35 @@
 class Solution {
 
+    int[][] dp;
+    int[] stones ;
+
+    boolean find( int index , int k ){
+        int n = stones.length;
+        if( index == n-1 )return true;
+        if( index >= n ) return false;
+
+
+        for( int i = index + 1 ; i < n ; i++ ){
+            int jumpNeeded = stones[i] - stones[index];
+            if( jumpNeeded == k || jumpNeeded == k - 1 || jumpNeeded == k + 1 ){
+                if( dp[i][jumpNeeded] == -1  )continue;
+                dp[i][jumpNeeded] = 1;
+                if( find( i , jumpNeeded ) )return true;
+                dp[i][jumpNeeded] = -1;
+            }
+            if( jumpNeeded > k + 1 )return false;
+        }
+
+        return false;
+    }
+
     public boolean canCross(int[] stones) {
         if( stones[1] != 1 )return false;
         int n = stones.length;
 
-        HashMap<Integer , Integer> elementIndex = new HashMap<>();
-        for( int i = 0 ; i < n ; i++ ) elementIndex.put( stones[i] , i );
-
-        boolean[][] dp = new boolean[n][n+1];
-        Arrays.fill( dp[n-1] , true );
-
-        for( int i = n-1 ; i >= 0 ; i-- ){
-            for( int j = 1 ; j <= n ; j++ ){
-                if( !dp[i][j]  )continue;
-
-                int prev = stones[i] - j;
-
-                if( elementIndex.containsKey( prev ) ){
-                    int k = elementIndex.get(prev);
-
-                    if (j - 1 > 0) dp[k][j - 1] = true;
-                    if (j > 0)     dp[k][j]     = true;
-                    if (j + 1 <= n) dp[k][j + 1] = true;
-                }
-            }
-        }
+        this.stones = stones;
+        this.dp = new int[n][10000];
         
-        return dp[1][1];
+        return find( 1 , 1 );
     }
 }
