@@ -1,29 +1,29 @@
 class Solution {
 
-    boolean solve( int index , int jumps, int[] stones , HashSet<Long> set ){
-        int n = stones.length;
-        if( index == n-1 ) return true;
-        if( index >= n ) return false;
-
-        for( int i = index + 1 ; i < n ; i++ ){
-            int jumpNeeded = stones[i] - stones[index];
-
-            if( jumpNeeded == jumps || jumpNeeded == jumps - 1 || jumpNeeded == jumps + 1 ){
-                long key = (long)i << 32 | jumpNeeded;
-                if( set.contains(key) ) continue;
-                if( solve( i , jumpNeeded , stones , set ) ) return true;
-                set.add(key);
-            }
-            if( jumpNeeded > jumps ) return false;
-        }
-
-        return false;
-    }
     public boolean canCross(int[] stones) {
+        if( stones[1] != 1 )return false;
         int n = stones.length;
-        HashSet<Long> set = new HashSet<>();
 
-        return solve( 0 , 0 , stones , set );
+        boolean[][] dp = new boolean[n][n+1];
+        Arrays.fill( dp[n-1] , true );
 
+        for( int i = n-1 ; i >= 0 ; i-- ){
+            for( int j = 0 ; j <= n ; j++ ){
+                if( !dp[i][j]  )continue;
+
+                int prev = stones[i] - j;
+
+                for( int k = i -1 ; k >= 0 ; k-- ){
+                    if( stones[k] == prev ){
+                        if( j - 1 >= 0 ) dp[k][j - 1] = true;
+                        dp[k][j] = true;
+                        if( j + 1 <= n ) dp[k][j + 1] = true;
+                    }
+                    if( stones[k] < prev ) break;
+                }
+            }
+        }
+        
+        return dp[1][1];
     }
 }
