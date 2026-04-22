@@ -9,58 +9,42 @@
  * }
  */
 class Solution {
-    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
-        ListNode head=new ListNode();
-        ListNode temp= head;
-        int remainder=0;
 
-        while(l1!=null && l2!=null){
-            int curr= l1.val + l2.val + remainder;
-            if(curr>9){
-                remainder=curr/10;
-                curr= curr-10;
-            }else{
-                remainder=0;
-            }
-            System.out.println(curr+" "+remainder);
-            ListNode newNode= new ListNode(curr);
-            temp.next= newNode;
-            temp=temp.next;
-            l1= l1.next;
-            l2=l2.next;
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+
+        ListNode dummy = new ListNode(-1);
+        ListNode temp = dummy;
+        int carry = 0;
+        
+        while( l1 != null && l2 != null ){
+            int currSum = l1.val + l2.val + carry;
+            temp.next = new ListNode(currSum % 10);
+            carry = currSum / 10;
+            temp = temp.next;
+            l1 = l1.next;
+            l2 = l2.next;
         }
-        while(l1!=null){
-           int curr= l1.val + remainder;
-            if(curr>9){
-                remainder=curr/10;
-                curr= curr-10;
-            }else{
-                remainder=0;
-            }
-            System.out.println(curr+" "+remainder);
-            ListNode newNode= new ListNode(curr);
-            temp.next= newNode;
-            temp=temp.next;
-            l1= l1.next;
+
+        while( l1 != null ){
+            int currSum = l1.val + carry;
+            temp.next = new ListNode(currSum % 10);
+            carry = currSum / 10;
+            temp = temp.next;
+            l1 = l1.next;
         }
-        while(l2!=null){
-            int curr= l2.val + remainder;
-            if(curr>9){
-                remainder=curr/10;
-                curr= curr-10;
-            }else{
-                remainder=0;
-            }
-            System.out.println(curr+" "+remainder);
-            ListNode newNode= new ListNode(curr);
-            temp.next= newNode;
-            temp=temp.next;
-            l2= l2.next;
+
+        while( l2 != null ){
+            int currSum = l2.val + carry;
+            temp.next = new ListNode(currSum % 10);
+            carry = currSum / 10;
+            temp = temp.next;
+            l2 = l2.next;
         }
-        if(remainder>0){
-            ListNode newNode= new ListNode(remainder);
-            temp.next= newNode;
+
+        if( carry > 0 ){
+            temp.next = new ListNode(carry);
         }
-        return head.next;
+
+        return dummy.next;
     }
 }
