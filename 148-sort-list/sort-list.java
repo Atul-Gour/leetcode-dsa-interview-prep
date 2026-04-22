@@ -1,47 +1,62 @@
 class Solution {
+    public ListNode sortList(ListNode left) {
+        if( left == null || left.next == null ) return left;
 
-    public ListNode sortList(ListNode head) {
-        if (head == null || head.next == null) return head;
+        ListNode right = splitInTwoAndGetSecondHead( left );
 
-        ListNode mid = getMid(head);
-        ListNode right = mid.next;
-        mid.next = null;
+        left = sortList( left );
+        right = sortList( right );
 
-        ListNode left = sortList(head);
-        right = sortList(right);
-
-        return merge(left, right);
+        return merge( left , right );
     }
+    
+    private ListNode splitInTwoAndGetSecondHead( ListNode head ){
+        ListNode slow = head;
+        ListNode fast = head;
+        ListNode prev = null;
 
-    private ListNode getMid(ListNode head) {
-        ListNode slow = head, fast = head.next;
-
-        while (fast != null && fast.next != null) {
-            slow = slow.next;
+        while( fast != null && fast.next != null ){
             fast = fast.next.next;
+            prev = slow;
+            slow = slow.next;
         }
 
+        prev.next = null;
         return slow;
     }
 
-    private ListNode merge(ListNode l1, ListNode l2) {
-        ListNode dummy = new ListNode(-1);
-        ListNode tail = dummy;
+    private ListNode merge( ListNode left , ListNode right ){
 
-        while (l1 != null && l2 != null) {
-            if (l1.val < l2.val) {
-                tail.next = l1;
-                l1 = l1.next;
-            } else {
-                tail.next = l2;
-                l2 = l2.next;
+        ListNode dummy = new ListNode(-1);
+        ListNode temp = dummy;
+
+        while( left != null && right != null ){
+
+            if( left.val < right.val ){
+                temp.next = left;
+                left = left.next;
+                temp = temp.next;
             }
-            tail = tail.next;
+            else{
+                temp.next = right;
+                right = right.next;
+                temp = temp.next;
+            }
         }
 
-        if (l1 != null) tail.next = l1;
-        if (l2 != null) tail.next = l2;
+        while( left != null ){
+            temp.next = left;
+            left = left.next;
+            temp = temp.next;
+        }
+
+        while( right != null ){
+            temp.next = right;
+            right = right.next;
+            temp = temp.next;
+        }
 
         return dummy.next;
     }
+
 }
