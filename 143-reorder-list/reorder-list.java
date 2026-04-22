@@ -27,7 +27,7 @@ class Solution {
             prev = slow;
             slow = slow.next;
         }
-
+        
         if( fast != null ){
             prev = slow;
             slow = slow.next;
