@@ -39,21 +39,17 @@ class Solution {
             slow = slow.next;
         }
 
-        prev.next = null;
-
-        if( fast == null ){
-            fast = slow;
-        }
-        else{
-            fast = slow.next;
-        }
-
-        slow = reverse( head );
-
-        while( slow != null && fast != null ){
-            if( slow.val != fast.val ) return false;
-            fast = fast.next;
+        if( fast != null ){
             slow = slow.next;
+        }
+
+        ListNode secondHalf = reverse(slow);
+        ListNode firstHalf = head;
+
+        while( secondHalf != null ){
+            if( secondHalf.val != firstHalf.val ) return false;
+            firstHalf = firstHalf.next;
+            secondHalf = secondHalf.next;
         }
 
         return true;
