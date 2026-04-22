@@ -9,40 +9,63 @@
  * }
  */
 class Solution {
-    public void reorderList(ListNode head) {
-        if(head==null   || head.next==null)return;
-        ListNode slow= head;    
-        ListNode fast= head;
-        while(fast!=null && fast.next!=null){
-            fast= fast.next.next;
-            slow=slow.next; 
-        }
-        ListNode second = slow.next;
-        slow.next=null;
-
-        ListNode prev= null;
-        ListNode curr = second;
+    private ListNode reverse( ListNode head ){
+        ListNode prev = null;
+        ListNode curr = head;
         ListNode next = null;
 
-        while(curr!=null){
-            next=curr.next;
+        while( curr != null ){
+            next = curr.next;
             curr.next = prev;
-            prev=curr;
-            curr=next;
+            prev = curr;
+            curr = next;
         }
 
-        ListNode first = head;
-         second = prev;    
+        return prev;
+    }
 
-        while (second != null) { 
-            ListNode temp1 = first.next; 
-            ListNode temp2 = second.next;  
+    public void reorderList(ListNode head) {
+        if( head.next == null ) return;
 
-            first.next = second;       
-            second.next = temp1;
-            first = temp1;                
-            second = temp2;
+        ListNode fast = head;
+        ListNode prev = null;
+        ListNode slow = head;
+
+        while( fast != null && fast.next != null ){
+            fast = fast.next.next;
+            prev = slow;
+            slow = slow.next;
         }
+
         
+
+        if( fast != null ){
+            prev = slow;
+            slow = slow.next;
+            prev.next = null;
+        }
+        else prev.next = null;
+
+        ListNode secondHalf = reverse(slow);
+        ListNode firstHalf = head;
+
+        ListNode temp = new ListNode(-1);
+
+        while( secondHalf != null || firstHalf != null ){
+
+            if( firstHalf != null ){
+                temp.next = firstHalf;
+                temp = temp.next;
+                firstHalf = firstHalf.next;
+            }
+
+            if( secondHalf != null ){
+                temp.next = secondHalf;
+                temp = temp.next;
+                secondHalf = secondHalf.next;
+            }
+
+        }
+
     }
 }
