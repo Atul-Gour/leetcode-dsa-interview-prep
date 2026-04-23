@@ -25,8 +25,6 @@ class Solution {
                 else r--;
             }
 
-            while( i < n-2 && nums[i + 1] == nums[i] ) i++;
-
         }
 
         return ans;
