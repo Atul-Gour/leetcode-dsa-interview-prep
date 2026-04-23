@@ -1,53 +1,46 @@
 class Solution {
+    public void nextPermutation(int[] nums) {
+        int n = nums.length;
 
-    private int find( int[] nums , int i , int j , int target ){
-        int maxIndex = i;
-        int max = 101;
-        
-        for( int z = i ; z <= j ; z++ ){
-            if( nums[z] > target ){
-                if( nums[z] <= max ){
-                    max = nums[z];
-                    maxIndex = z;
-                }
+        // Step 1: find breakpoint
+        int i = n - 2;
+        while (i >= 0 && nums[i] >= nums[i + 1]) i--;
+
+        if (i >= 0) {
+            int j = findRightmostGreater(nums, i + 1, n - 1, nums[i]);
+            swap(nums, i, j);
+        }
+
+        // Step 3: reverse suffix
+        reverse(nums, i + 1, n - 1);
+    }
+
+    private int findRightmostGreater(int[] nums, int l, int r, int target) {
+        int ans = -1;
+
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+
+            if (nums[mid] > target) {
+                ans = mid;    
+                l = mid + 1; 
+            } else {
+                r = mid - 1;
             }
         }
 
-        // System.out.println( i + " " + nums[i] + " " + target + " " + maxIndex + " " + max );
-
-        return maxIndex;
+        return ans;
     }
 
-    private void swap( int a , int b , int[] nums ){
+    private void swap(int[] nums, int a, int b) {
         int temp = nums[a];
         nums[a] = nums[b];
         nums[b] = temp;
     }
 
-    private void reverse( int i , int[] nums ){
-        int j = nums.length - 1;
-
-        while( i < j ){
-            swap( i , j , nums );
-            i++;
-            j--;
+    private void reverse(int[] nums, int l, int r) {
+        while (l < r) {
+            swap(nums, l++, r--);
         }
-    }
-
-    public void nextPermutation(int[] nums) {
-        int index = 0;
-        int n = nums.length;
-
-        for( int i = n - 2 ; i >= 0 ; i-- ){
-            if( nums[i] < nums[i + 1] ){
-                int b = find( nums , i + 1 , n - 1 , nums[i] );
-                int a = i;
-                swap( a , b , nums );
-                reverse( i + 1 , nums );
-                return;
-            }
-        }
-
-        reverse( 0 , nums );
     }
 }
