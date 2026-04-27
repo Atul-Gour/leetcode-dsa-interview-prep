@@ -1,21 +1,38 @@
 class Solution {
+    public void swap(int[] nums ,int i , int j){
+        int temp = nums[i];
+        nums[i]=nums[j];
+        nums[j]= temp;
+    }
     public int[] rearrangeArray(int[] nums) {
-        int n = nums.length;
-        int[] ans = new int[n];
-
-        int pos = 0 , neg = 1;
-
-        for( int i = 0 ; i < n ; i++ ){
-            if( nums[i] < 0 ){
-                ans[neg] = nums[i];
-                neg += 2;
+        for(int i = 0 ; i<nums.length-1;i++){
+            if(i%2==0){
+                if(nums[i]>=0){
+                    continue;
+                }
+                else{
+                    int j= i+1;
+                    while(j<nums.length&&nums[j]<0){
+                        swap(nums,i,j);
+                        j++;
+                    }
+                    swap(nums,i,j);
+                }
             }
             else{
-                ans[pos] = nums[i];
-                pos += 2;
+                if(nums[i]<0){
+                    continue;
+                }
+                else{
+                    int j= i+1;
+                    while(j<nums.length&&nums[j]>=0){
+                        swap(nums,i,j);
+                        j++;
+                    }
+                    swap(nums,i,j);
+                }
             }
         }
-
-        return ans;
+        return nums;
     }
 }
