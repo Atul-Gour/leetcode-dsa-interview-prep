@@ -11,7 +11,7 @@ class Solution {
 
         for (int i = 0; i < nums.length; i++) {
             if (nums[i] != 0) {
-                if( i != j ) swap(nums, i, j);
+                swap(nums, i, j);
                 j++;
             }
         }
