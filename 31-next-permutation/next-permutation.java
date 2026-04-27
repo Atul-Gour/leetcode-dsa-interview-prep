@@ -1,23 +1,24 @@
 class Solution {
 
-    private void find( int[] nums , int index , int target ){
-        int min = Integer.MAX_VALUE;
-        int minIndex = -1;
+    private void find(int[] nums, int index, int target) {
 
-        for( int i = nums.length - 1 ; i >= index ; i-- ){
-            if( nums[i] > target ){
-                if( nums[i] < min ){
-                    min = nums[i];
-                    minIndex = i;
-                }
+        int swapIndex = -1;
+
+        // find first element from right > target
+        for(int i = nums.length - 1; i >= index; i--) {
+            if(nums[i] > target) {
+                swapIndex = i;
+                break; // ✅ important
             }
         }
 
+        // swap
         int temp = nums[index - 1];
-        nums[index - 1] = nums[minIndex];
-        nums[minIndex] = temp;
+        nums[index - 1] = nums[swapIndex];
+        nums[swapIndex] = temp;
 
-        reverse( nums , index , nums.length - 1 );
+        // reverse suffix
+        reverse(nums, index, nums.length - 1);
     }
 
     private void reverse( int[] nums , int left , int right ){
