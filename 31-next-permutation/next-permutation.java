@@ -1,46 +1,47 @@
 class Solution {
 
-    private void find(int[] nums, int index, int target) {
-
-        int swapIndex = -1;
-
-        // find first element from right > target
-        for(int i = nums.length - 1; i >= index; i--) {
-            if(nums[i] > target) {
-                swapIndex = i;
-                break; // ✅ important
+    private int find( int[] nums , int i , int j , int target ){
+        
+        for( int z = j ; z >= i ; z-- ){
+            if( nums[z] > target ){
+                return z;
             }
         }
 
-        // swap
-        int temp = nums[index - 1];
-        nums[index - 1] = nums[swapIndex];
-        nums[swapIndex] = temp;
 
-        // reverse suffix
-        reverse(nums, index, nums.length - 1);
+        return i;
     }
 
-    private void reverse( int[] nums , int left , int right ){
-        while( left < right ){
-            int temp = nums[left];
-            nums[left] = nums[right];
-            nums[right] = temp;
-            left++;
-            right--;
+    private void swap( int a , int b , int[] nums ){
+        int temp = nums[a];
+        nums[a] = nums[b];
+        nums[b] = temp;
+    }
+
+    private void reverse( int i , int[] nums ){
+        int j = nums.length - 1;
+
+        while( i < j ){
+            swap( i , j , nums );
+            i++;
+            j--;
         }
     }
 
     public void nextPermutation(int[] nums) {
+        int index = 0;
         int n = nums.length;
 
-        for( int i = n-1 ; i > 0 ; i-- ){
-            if( nums[i - 1] < nums[i] ){
-                find( nums , i , nums[i - 1] );
-                return ;
+        for( int i = n - 2 ; i >= 0 ; i-- ){
+            if( nums[i] < nums[i + 1] ){
+                int b = find( nums , i + 1 , n - 1 , nums[i] );
+                int a = i;
+                swap( a , b , nums );
+                reverse( i + 1 , nums );
+                return;
             }
         }
 
-        reverse( nums , 0 , n - 1 );
+        reverse( 0 , nums );
     }
 }
