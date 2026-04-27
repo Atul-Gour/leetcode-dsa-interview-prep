@@ -15,6 +15,6 @@ class Solution {
         k %= n;
         rotate( nums , 0 , n - k - 1 );
         rotate( nums , n - k , n - 1 );
-        rotate( nums , 0 , n-1 );
+        rotate( nums , 0 , n - 1 );
     }
 }
