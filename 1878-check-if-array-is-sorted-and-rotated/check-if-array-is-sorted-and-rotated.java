@@ -6,7 +6,7 @@ class Solution {
         for( int i = 1 ; i < nums.length ; i++ ){
             if( nums[i - 1] > nums[i] ){
                 count++;
-                if( count == 1 ) index = i;
+                index = i;
             }
         }
 
