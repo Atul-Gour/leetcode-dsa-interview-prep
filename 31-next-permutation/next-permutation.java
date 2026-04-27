@@ -1,46 +1,45 @@
 class Solution {
-    public void nextPermutation(int[] nums) {
-        int n = nums.length;
 
-        // Step 1: find breakpoint
-        int i = n - 2;
-        while (i >= 0 && nums[i] >= nums[i + 1]) i--;
+    private void find( int[] nums , int index , int target ){
+        int min = Integer.MAX_VALUE;
+        int minIndex = -1;
 
-        if (i >= 0) {
-            int j = findRightmostGreater(nums, i + 1, n - 1, nums[i]);
-            swap(nums, i, j);
-        }
-
-        // Step 3: reverse suffix
-        reverse(nums, i + 1, n - 1);
-    }
-
-    private int findRightmostGreater(int[] nums, int l, int r, int target) {
-        int ans = -1;
-
-        while (l <= r) {
-            int mid = l + (r - l) / 2;
-
-            if (nums[mid] > target) {
-                ans = mid;    
-                l = mid + 1; 
-            } else {
-                r = mid - 1;
+        for( int i = nums.length - 1 ; i >= index ; i-- ){
+            if( nums[i] > target ){
+                if( nums[i] < min ){
+                    min = nums[i];
+                    minIndex = i;
+                }
             }
         }
 
-        return ans;
+        int temp = nums[index - 1];
+        nums[index - 1] = nums[minIndex];
+        nums[minIndex] = temp;
+
+        reverse( nums , index , nums.length - 1 );
     }
 
-    private void swap(int[] nums, int a, int b) {
-        int temp = nums[a];
-        nums[a] = nums[b];
-        nums[b] = temp;
-    }
-
-    private void reverse(int[] nums, int l, int r) {
-        while (l < r) {
-            swap(nums, l++, r--);
+    private void reverse( int[] nums , int left , int right ){
+        while( left < right ){
+            int temp = nums[left];
+            nums[left] = nums[right];
+            nums[right] = temp;
+            left++;
+            right--;
         }
+    }
+
+    public void nextPermutation(int[] nums) {
+        int n = nums.length;
+
+        for( int i = n-1 ; i > 0 ; i-- ){
+            if( nums[i - 1] < nums[i] ){
+                find( nums , i , nums[i - 1] );
+                return ;
+            }
+        }
+
+        reverse( nums , 0 , n - 1 );
     }
 }
