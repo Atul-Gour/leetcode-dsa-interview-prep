@@ -13,11 +13,6 @@ class Solution {
         if( count > 1 ) return false;
         if( count == 0 ) return true;
 
-        int leftMin = nums[0];
-        int rightMax = nums[nums.length - 1];
-
-        if( rightMax <= leftMin ) return true;
-        else return false;
-
+        return nums[nums.length - 1] <= nums[0];
     }
 }
