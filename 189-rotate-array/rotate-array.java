@@ -1,22 +1,20 @@
 class Solution {
-    private void reveseArray( int[]nums , int i , int j ){
-        while (i < j) {
-            int temp = nums[i];
-            nums[i] = nums[j];
-            nums[j] = temp;
-            i++;
-            j--;
+
+    private void rotate( int[] nums , int left , int right ){
+        while( left <= right ){
+            int temp = nums[left];
+            nums[left] = nums[right];
+            nums[right] = temp;
+            left++;
+            right--;
         }
     }
 
     public void rotate(int[] nums, int k) {
         int n = nums.length;
-        k %= n;        
-        k = n - k;
-
-        reveseArray( nums , k , n - 1 );
-        reveseArray( nums , 0 , k - 1 );
-        reveseArray( nums , 0 , n - 1 );
-
+        k %= n;
+        rotate( nums , 0 , n - k - 1 );
+        rotate( nums , n - k , n - 1 );
+        rotate( nums , 0 , n-1 );
     }
 }
