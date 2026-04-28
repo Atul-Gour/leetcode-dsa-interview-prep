@@ -27,7 +27,6 @@ class Solution {
             else low = mid1 + 1;
         }
         
-        // System.out.println( l1 + " " + l2 + " " + r1 + " " + r2 );
         double ans ;
 
         if( total % 2 == 0 )
