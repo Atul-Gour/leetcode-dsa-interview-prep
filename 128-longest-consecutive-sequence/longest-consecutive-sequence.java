@@ -48,12 +48,10 @@ class Solution {
         DSU dsu = new DSU();
 
         for( int ele : nums ){
+            if( set.contains(ele) ) continue;
+            
             if( set.contains(ele - 1) ) dsu.union(ele , ele - 1);
             if( set.contains(ele + 1) ) dsu.union(ele , ele + 1);
-
-            // System.out.println( dsu.parent );
-            // System.out.println( dsu.size );
-            // System.out.println( "-----" + ele +"-------" );
 
             set.add( ele );
         }
