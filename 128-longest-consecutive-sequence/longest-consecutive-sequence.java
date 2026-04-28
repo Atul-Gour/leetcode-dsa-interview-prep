@@ -1,28 +1,66 @@
 class Solution {
 
-    public int longestConsecutive(int[] nums) {
-        HashSet<Integer> set = new HashSet<>();
+    static class DSU{
+        HashMap<Integer , Integer> parent;
+        HashMap<Integer , Integer> size;
+        int maxSize ;
 
-        for (int num : nums) {
-            set.add(num);
+        DSU(){
+            parent = new HashMap<>();
+            size = new HashMap<>();
+            maxSize = 1;
         }
 
-        int longest = 0;
+        int find( int node ){
+            if( parent.getOrDefault( node , node ) == node ) return node;
+            parent.put( node , find( parent.get(node) ) );
+            return parent.get(node);
+        }
 
-        for (int num : set) {
-            if (!set.contains(num - 1)) {
-                int current = num;
-                int streak = 1;
+        boolean union( int a , int b ){
+            int pa = find(a);
+            int pb = find(b);
 
-                while (set.contains(current + 1)) {
-                    current++;
-                    streak++;
-                }
+            if( pa == pb ) return false;
 
-                longest = Math.max(longest, streak);
+            int sa = size.getOrDefault( pa , 1 );
+            int sb = size.getOrDefault( pb , 1 );
+
+            if( sa <= sb ){
+                parent.put( pa , pb );
+                size.put( pb , sb + sa );
             }
+            else{
+                parent.put( pb , pa );
+                size.put( pa , sb + sa );
+            }
+
+            maxSize = Math.max( maxSize , sb + sa );
+            return true;
+        }
+    }
+
+    public int longestConsecutive(int[] nums) {
+        int n = nums.length;
+        if( n == 0 ) return 0;
+
+        HashSet<Integer> set = new HashSet<>();
+        DSU dsu = new DSU();
+
+        for( int ele : nums ){
+            if( set.contains(ele) ) continue;
+
+            dsu.parent.put(ele, ele);
+            dsu.size.put(ele, 1);
+            
+            if( set.contains(ele - 1) ) dsu.union(ele , ele - 1);
+            if( set.contains(ele + 1) ) dsu.union(ele , ele + 1);
+
+            set.add( ele );
         }
 
-        return longest;
+        
+
+        return dsu.maxSize;
     }
 }
