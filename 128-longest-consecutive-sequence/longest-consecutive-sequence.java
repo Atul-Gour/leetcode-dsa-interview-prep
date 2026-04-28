@@ -12,7 +12,7 @@ class Solution {
         }
 
         int find( int node ){
-            if( parent.getOrDefault( node , node ) == node ) return node;
+            if( parent.get( node ) == node ) return node;
             parent.put( node , find( parent.get(node) ) );
             return parent.get(node);
         }
@@ -23,8 +23,8 @@ class Solution {
 
             if( pa == pb ) return false;
 
-            int sa = size.getOrDefault( pa , 1 );
-            int sb = size.getOrDefault( pb , 1 );
+            int sa = size.get( pa );
+            int sb = size.get( pb );
 
             if( sa <= sb ){
                 parent.put( pa , pb );
