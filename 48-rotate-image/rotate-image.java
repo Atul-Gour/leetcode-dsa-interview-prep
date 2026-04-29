@@ -1,38 +1,34 @@
 class Solution {
     public void rotate(int[][] matrix) {
         int n = matrix.length;
-        int x1 = 0;
-        int y1 = 0;
-        int x2 = n-1;
-        int y2 = n-1;
+        int low = 0;
+        int high = n-1;
         int[] temp = new int[n];
 
-        while( x1 <= x2 ){
+        while( low <= high ){
             
-            for( int j = y1 , i = 0 ; i <= x2 - x1 && j <= y2 ; i++ , j++ ){
-                temp[i] = matrix[x1][j];
+            for( int j = low , i = 0 ; i <= high - low && j <= high ; i++ , j++ ){
+                temp[i] = matrix[low][j];
             }
 
-            for( int i = x1 , j = y2 ; i <= x2 && j >= y1 ; i++ , j-- ){
-                matrix[x1][j] = matrix[i][y1];
+            for( int i = low , j = high ; i <= high && j >= low ; i++ , j-- ){
+                matrix[low][j] = matrix[i][low];
             }
 
-            for( int i = x1 , j = y1 ; i <= x2 && j <= y2 ; i++ , j++ ){
-                matrix[i][y1] = matrix[x2][j];
+            for( int i = low , j = low ; i <= high && j <= high ; i++ , j++ ){
+                matrix[i][low] = matrix[high][j];
             }
 
-            for( int i = x2 , j = y1 ; i >= x1 && j <= y2 ; i-- , j++ ){
-                matrix[x2][j] = matrix[i][y2];
+            for( int i = high , j = low ; i >= low && j <= high ; i-- , j++ ){
+                matrix[high][j] = matrix[i][high];
             }
 
-            for( int i = x1 , j = 0 ; i <= x2 && j <= y2-y1 ; i++ , j++ ){
-                matrix[i][y2] = temp[j];
+            for( int i = low , j = 0 ; i <= high && j <= high-low ; i++ , j++ ){
+                matrix[i][high] = temp[j];
             }
 
-            x1++;
-            y1++;
-            x2--;
-            y2--;
+            low++;
+            high--;
 
         }
     }
