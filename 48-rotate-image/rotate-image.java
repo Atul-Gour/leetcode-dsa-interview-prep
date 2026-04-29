@@ -5,11 +5,10 @@ class Solution {
         int y1 = 0;
         int x2 = n-1;
         int y2 = n-1;
+        int[] temp = new int[n];
 
         while( x1 <= x2 ){
-            int[] temp = new int[x2 - x1 + 1];
-            int tempIndex = 0;
-
+            
             for( int j = y1 , i = 0 ; i <= x2 - x1 && j <= y2 ; i++ , j++ ){
                 temp[i] = matrix[x1][j];
             }
@@ -26,7 +25,6 @@ class Solution {
                 matrix[x2][j] = matrix[i][y2];
             }
 
-            tempIndex = 0;
             for( int i = x1 , j = 0 ; i <= x2 && j <= y2-y1 ; i++ , j++ ){
                 matrix[i][y2] = temp[j];
             }
