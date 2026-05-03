@@ -22,10 +22,7 @@ class Solution {
 
         int[][] ans = new int[ list.size() ][2];
 
-        for( i = 0 ; i < list.size() ; i++ ){
-            ans[i] = list.get(i);
-        }
-
-        return ans;
+        // return list.toArray( new int[list.size()][2] );
+        return list.toArray( ans );
     }
 }
