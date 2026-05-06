@@ -1,25 +1,20 @@
 class Solution {
     public int maxProduct(int[] nums) {
-        int product = 1;
-        int negativeProduct = 1;
-        int ans = Integer.MIN_VALUE;
+        long neg = 1;
+        long pos = 1;
+
+        long ans = -11;
 
         for( int ele : nums ){
-            product *= ele;
-            negativeProduct *= ele;
+            long tempNeg = neg;
+            neg = Math.min( ele , neg*ele );
+            neg = Math.min( neg , pos*ele );
+            pos = Math.max( pos*ele , ele );
+            pos = Math.max( pos , tempNeg*ele );
 
-            int originalProduct = product;
-            product = Math.max( negativeProduct , product );
-            negativeProduct = Math.min( negativeProduct , Math.min(originalProduct , ele) );
-
-            if( product < ele ) product = ele;
-            if( negativeProduct == 0 ) negativeProduct = ele;
-
-            ans = Math.max( ans , product );
-            ans = Math.max( ans , negativeProduct );
-
+            ans = Math.max( pos , ans );
         }
 
-        return ans;
+        return (int)ans;
     }
 }
