@@ -3,8 +3,7 @@ class Solution {
         int time = 0;
 
         for( int pile : piles ){
-            if( pile % k == 0 ) time += pile/k;
-            else time += pile/k + 1;
+            time += ( pile - 1 )/k + 1;
         }
 
         return time <= h;
