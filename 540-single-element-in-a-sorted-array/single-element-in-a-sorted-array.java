@@ -1,24 +1,21 @@
 class Solution {
-    boolean isCorrect( int index , int[] nums){
-        if(index % 2 == 0){
-            return nums[index] == nums[index + 1];
-        }
-        else return nums[index] == nums[index - 1];
-    }
     public int singleNonDuplicate(int[] nums) {
-        
+        int l = 0;
         int n = nums.length;
-        int left = 0;
-        int right = n-1;
+        int r = n - 1;
 
-        while(left < right){
-
-            int mid = left + (right - left)/2;
-
-            if( isCorrect( mid , nums )) left = mid + 1;
-            else right = mid;
+        while( l < r ){
+            int mid = l + (r - l)/2;
+            if( mid % 2 == 0 ){
+                if( mid + 1 < n && nums[mid] == nums[mid + 1] ) l = mid + 2;
+                else r = mid;
+            }
+            else{
+                if( mid - 1 >= 0 && nums[mid] == nums[mid - 1] ) l = mid + 1;
+                else r = mid;
+            }
         }
 
-        return nums[right];
+        return nums[l];
     }
 }
