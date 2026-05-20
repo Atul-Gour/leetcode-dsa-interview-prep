@@ -1,49 +1,40 @@
 class Solution {
 
-    public int splitArray(int[] nums, int k) {
+    private boolean possibleSplit(int[] nums , int k , long maxSum ){
+        int parts = 1;
+        long currSum = 0;
 
-        int max = 0;
-        int sum = 0;
-
-        for (int num : nums) {
-            max = Math.max(max, num);
-            sum += num;
-        }
-
-        int low = max;
-        int high = sum;
-        int ans = low;
-
-        while (low <= high) {
-
-            int mid = low + (high - low) / 2;
-
-            if (canSplit(nums, k, mid)) {
-                ans = mid;
-                high = mid - 1;
-            } else {
-                low = mid + 1;
+        for( int ele : nums ){
+            if( currSum + ele > maxSum ){
+                parts++;
+                currSum = ele;
             }
+            else currSum += ele;
         }
 
-        return ans;
+        return parts <= k;
     }
 
-    private boolean canSplit(int[] nums, int k, int maxSum) {
+    public int splitArray(int[] nums, int k) {
+        if( k > nums.length ) return -1;
 
-        int count = 1;
-        int currSum = 0;
+        long sum = 0;
+        long max = 0;
 
-        for (int num : nums) {
-
-            currSum += num;
-
-            if (currSum > maxSum) {
-                count++;
-                currSum = num;
-            }
+        for( int ele : nums ){
+            sum += ele;
+            max = Math.max( ele , max );
         }
 
-        return count <= k;
+        long l = max;
+        long r = sum;
+
+        while( l < r ){
+            long mid = l + ( r - l )/2;
+            if( possibleSplit( nums , k , mid ) ) r = mid;
+            else l = mid + 1;
+        }
+
+        return (int)l;
     }
 }
