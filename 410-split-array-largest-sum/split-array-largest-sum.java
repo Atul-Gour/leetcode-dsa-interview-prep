@@ -16,7 +16,7 @@ class Solution {
     }
 
     public int splitArray(int[] nums, int k) {
-        if( k > nums.length ) return -1;
+        // if( k > nums.length ) return -1;
 
         long sum = 0;
         long max = 0;
