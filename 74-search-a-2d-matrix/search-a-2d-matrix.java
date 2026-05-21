@@ -10,7 +10,6 @@ class Solution {
 
             int mr = (mid + m - 1)/ m - 1;
             int mc = (mid - 1) % m;
-            System.out.println( mid + " " + mr + " " + mc );
 
             if( matrix[mr][mc] == target ) return true;
             else if( matrix[mr][mc] < target ){
