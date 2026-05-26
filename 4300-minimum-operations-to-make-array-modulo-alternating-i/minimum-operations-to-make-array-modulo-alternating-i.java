@@ -5,7 +5,7 @@ class Solution {
 
         for (int i = 0; i < nums.length; i++) {
             int a = nums[i];
-            int rem = ((a % k) + k) % k;
+            int rem = (a % k);
             int target = (i % 2 == 0) ? x : y;
 
             int downCost = (rem - target + k) % k;
