@@ -6,7 +6,7 @@ class Solution {
 
         int[] leftGreater = new int[n];
         for( int i = 0 ; i < n ; i++ ){
-            while( !st.isEmpty() && nums[st.peek()] <= nums[i] ) st.pop();
+            while( !st.isEmpty() && nums[st.peek()] < nums[i] ) st.pop();
             leftGreater[i] = st.empty() ? -1 : st.peek();
             st.push(i);
         }
@@ -14,7 +14,7 @@ class Solution {
         st.clear();
         int[] rightGreater = new int[n];
         for( int i = n-1 ; i >= 0 ; i-- ){
-            while( !st.isEmpty() && nums[st.peek()] < nums[i] ) st.pop();
+            while( !st.isEmpty() && nums[st.peek()] <= nums[i] ) st.pop();
             rightGreater[i] = st.empty() ? n : st.peek();
             st.push(i);
         }
@@ -22,7 +22,7 @@ class Solution {
         st.clear();
         int[] leftSmaller = new int[n];
         for( int i = 0 ; i < n ; i++ ){
-            while( !st.isEmpty() && nums[st.peek()] >= nums[i] ) st.pop();
+            while( !st.isEmpty() && nums[st.peek()] > nums[i] ) st.pop();
             leftSmaller[i] = st.empty() ? -1 : st.peek();
             st.push(i);
         }
@@ -30,7 +30,7 @@ class Solution {
         st.clear();
         int[] rightSmaller = new int[n];
         for( int i = n-1 ; i >= 0 ; i-- ){
-            while( !st.isEmpty() && nums[st.peek()] > nums[i] ) st.pop();
+            while( !st.isEmpty() && nums[st.peek()] >= nums[i] ) st.pop();
             rightSmaller[i] = st.empty() ? n : st.peek();
             st.push(i);
         }
