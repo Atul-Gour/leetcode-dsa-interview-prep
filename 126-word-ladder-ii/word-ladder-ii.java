@@ -1,116 +1,78 @@
-import java.util.*;
-
 class Solution {
 
-    private HashMap<String, List<String>> buildPatternMap(Set<String> set, String beginWord) {
-        HashMap<String, List<String>> patternMap = new HashMap<>();
-        int L = beginWord.length();
+    private void dfs( String currWord , String endWord , List<String> currList , List<List<String>> ans , HashMap<String , HashSet<String> > map ){
 
-        for (String word : set) {
-            for (int i = 0; i < L; i++) {
-                String pattern = word.substring(0, i) + "*" + word.substring(i + 1);
-                patternMap.computeIfAbsent(pattern, k -> new ArrayList<>()).add(word);
-            }
-        }
+        currList.add(currWord);
 
-        for (int i = 0; i < L; i++) {
-            String pattern = beginWord.substring(0, i) + "*" + beginWord.substring(i + 1);
-            patternMap.computeIfAbsent(pattern, k -> new ArrayList<>()).add(beginWord);
-        }
-
-        return patternMap;
-    }
-
-    private void dfs(String currWord, String beginWord,
-                     HashMap<String, HashSet<String>> parent,
-                     List<String> path,
-                     List<List<String>> ans) {
-
-        path.add(currWord);
-
-        if (currWord.equals(beginWord)) {
-            List<String> temp = new ArrayList<>(path);
-            Collections.reverse(temp);
-            ans.add(temp);
-            path.remove(path.size() - 1);
+        if( currWord.equals( endWord ) ){
+            List<String> reversed = new ArrayList<>(currList);
+            Collections.reverse(reversed);
+            ans.add( reversed );
+            currList.remove(currList.size() - 1);
             return;
+        } 
+
+        for( String neigh : map.get( currWord ) ){
+            dfs( neigh , endWord , currList , ans , map );
         }
 
-        for (String p : parent.get(currWord)) {
-            dfs(p, beginWord, parent, path, ans);
-        }
-
-        path.remove(path.size() - 1);
+        currList.remove(currList.size() - 1);
     }
 
     public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
-
+        
         HashSet<String> set = new HashSet<>(wordList);
         List<List<String>> ans = new ArrayList<>();
 
-        if (!set.contains(endWord)) return ans;
+        if( !set.contains(endWord) ) return ans;
 
-        HashMap<String, List<String>> patternMap = buildPatternMap(set, beginWord);
-
-        HashMap<String, HashSet<String>> parent = new HashMap<>();
-        for (String word : set) parent.put(word, new HashSet<>());
-        parent.put(beginWord, new HashSet<>());
-
+        HashMap<String , HashSet<String> > map = new HashMap<>();
         ArrayDeque<String> q = new ArrayDeque<>();
-        q.offer(beginWord);
 
-        HashMap<String, Integer> stepToReach = new HashMap<>();
-        stepToReach.put(beginWord, 0);
+        for( String word : wordList ) map.put( word , new HashSet<>() );
+        map.put( beginWord , new HashSet<>() );
 
-        int steps = 0;
+        q.offer( beginWord );
 
-        while (!q.isEmpty()) {
-
+        while( !q.isEmpty() ){
             int size = q.size();
             boolean found = false;
+            ArrayList<String> toDelete = new ArrayList<>();
+            HashSet<String> usedOnLevel = new HashSet<>();
 
-            HashSet<String> usedThisLevel = new HashSet<>();
+            while( size-- > 0 ){
+                String originalWord = q.poll();
+                char characters[] = originalWord.toCharArray();
 
-            while (size-- > 0) {
+                for( int  i = 0 ; i < characters.length ; i++ ){
 
-                String word = q.poll();
-                int L = word.length();
+                    for( char ch = 'a' ; ch <= 'z' ; ch++ ){
+                        if( ch == characters[i] ) continue;
 
-                for (int i = 0; i < L; i++) {
+                        characters[i] = ch;
+                        String newWord = new String(characters);
 
-                    String pattern = word.substring(0, i) + "*" + word.substring(i + 1);
-
-                    for (String newWord : patternMap.getOrDefault(pattern, new ArrayList<>())) {
-
-                        if (!set.contains(newWord) ) continue;
-
-                        if (!stepToReach.containsKey(newWord)) {
-                            stepToReach.put(newWord, steps + 1);
-                            q.offer(newWord);
-                            usedThisLevel.add(newWord);
-                        }
-
-                        if (stepToReach.get(newWord) == steps + 1) {
-                            parent.get(newWord).add(word);
-                        }
-
-                        if (newWord.equals(endWord)) {
-                            found = true;
-                        }
+                        if( set.contains(newWord) ){
+                            if (!usedOnLevel.contains(newWord)) {
+                                usedOnLevel.add(newWord);
+                                q.offer(newWord);
+                            }
+                            map.get( newWord ).add( originalWord );
+                            if( newWord.equals( endWord ) ) found = true;
+                        }                         
                     }
+
+                    characters[i] = originalWord.charAt(i);
                 }
+                
             }
-
-            for (String w : usedThisLevel) {
-                set.remove(w);
-            }
-
-            steps++;
-
-            if (found) break;
+            
+            set.removeAll(usedOnLevel);
+            for( String word : toDelete ) set.remove( word );
+            if( found ) break;
         }
 
-        dfs(endWord, beginWord, parent, new ArrayList<>(), ans);
+        dfs( endWord , beginWord , new ArrayList<>() , ans , map );
 
         return ans;
     }
