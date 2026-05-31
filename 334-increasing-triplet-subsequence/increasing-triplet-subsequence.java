@@ -8,8 +8,6 @@ class Solution {
         int b = -1;
         int c = -1;
 
-        if( a < b && b < c ) return true;
-
         for( int i = 0 ; i < n ; i++ ){
             
             int curr = nums[i];
@@ -26,7 +24,6 @@ class Solution {
 
             if( b != -1 && curr > nums[b] ){
                 c = i;
-                // System.out.println(a + " " + b + " " + c );
                 return true;
             }
         }
