@@ -1,75 +1,55 @@
 class Solution {
-
-    static final long MOD = 1_000_000_007;
-
-    static class Node{
-        int node ;
-        long time;
-
-        Node( int node , long time ){
-            this.node = node;
-            this.time = time;
-        }  
-    }
-
-    static private long dijkastra( int src , int dst , ArrayList<int[]>[] graph){
-
-        int n = graph.length;
+    public int countPaths(int n, int[][] roads) {
         
-        PriorityQueue< Node > pq = new PriorityQueue<>( (a , b) -> Long.compare( a.time , b.time ) );
+        ArrayList<ArrayList<int[]>> graph = new ArrayList<>();
+        PriorityQueue<long[]> pq = new PriorityQueue<>( (long[] a , long[] b) -> Long.compare( a[1] , b[1] ) );
+        
         long[] dist = new long[n];
         long[] ways = new long[n];
-        Arrays.fill( dist , Long.MAX_VALUE );
 
-        ways[src] = 1;
-        dist[src] = 0;
-        pq.offer( new Node( src , 0 ) );
+        int MOD = 1_000_000_007;
 
-        while( !pq.isEmpty() ){
-            Node curr = pq.poll();
-            int u = curr.node;
-            long currTime = curr.time ;
+        Arrays.fill(dist , Long.MAX_VALUE);
 
-            if( dist[u] < currTime ) continue;
-
-            for( int[] neigh : graph[u] ){
-                int v = neigh[0];
-                long time = neigh[1];
-                long newTime = currTime + time ;
-
-                if( newTime == dist[v] ) ways[v] = (ways[u] + ways[v]) % MOD ;
-                if( newTime >= dist[v] ) continue;
-
-                if( newTime < dist[v] ) ways[v] = ways[u];
-
-                dist[v] = newTime;
-
-                pq.offer( new Node( v , newTime ) );
-
-            }
-        }
-
-        return  ways[dst] % MOD;
-
-    }
-
-    public int countPaths(int n, int[][] roads) {
-        boolean[] visited = new boolean[n];
-        ArrayList<int[]>[] graph = new ArrayList[n];
-
-        for( int i = 0 ; i < n ; i++ ) graph[i] = new ArrayList<>();
+        for( int i = 0 ; i < n ; i++ ) graph.add( new ArrayList<>() );
 
         for( int[] road : roads ){
             int u = road[0];
             int v = road[1];
-            int time = road[2];
+            int d = road[2];
 
-            graph[u].add( new int[]{ v , time } );
-            graph[v].add( new int[]{ u , time } );
+            graph.get(u).add( new int[]{ v , d } );
+            graph.get(v).add( new int[]{ u , d } );
         }
 
-        long cost = dijkastra( 0, n-1, graph );
+        dist[0] = 0;
+        ways[0] = 1;
+        pq.offer( new long[]{0 , 0} );
 
-        return (int)cost;
+        while( !pq.isEmpty() ){
+            long[] curr = pq.poll();
+            
+            int currCity = (int)curr[0];
+            long currDist = curr[1];
+
+            if( dist[currCity] < currDist ) continue;
+
+            for( int[] neigh : graph.get(currCity) ){
+                int newCity = neigh[0];
+                long newDist = currDist + neigh[1];
+
+                if( dist[newCity] == newDist ){
+                    ways[newCity] = ((long)ways[newCity] + ways[currCity]) % MOD;
+                }
+                else if( dist[newCity] > newDist ){
+                    ways[newCity] = ways[currCity];
+                    dist[newCity] = newDist;
+                    pq.offer( new long[]{ newCity , newDist } );
+                }
+            }
+
+        }
+        
+        return (int) ways[n-1];        
     }
 }
