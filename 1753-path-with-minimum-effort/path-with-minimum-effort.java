@@ -3,41 +3,41 @@ class Solution {
         int n = heights.length;
         int m = heights[0].length;
 
-        PriorityQueue<int[]> q = new PriorityQueue<>((a, b) -> Integer.compare(a[2], b[2]));
-        int[][] dist = new int[n][m];
+        if( n == 1 && m == 1 ) return 0;
 
-        for (int[] d : dist)
-            Arrays.fill(d, Integer.MAX_VALUE);
+        PriorityQueue< int[] > pq = new PriorityQueue<>( (int[] a , int[] b) -> Integer.compare( a[2] , b[2] ) );
+        int[][] dirs = { {0 , 1} , {0 , -1} , {-1 , 0} , {1 , 0} };
+        int[][] effort = new int[n][m];
 
-        q.offer(new int[] { 0, 0, 0 });
-        dist[0][0] = 0;
+        for( int[] eff : effort ) Arrays.fill( eff , Integer.MAX_VALUE );
 
-        int[][] dirs = { { -1, 0 }, { 0, -1 }, { 0, 1 }, { 1, 0 } };
+        pq.offer( new int[]{0 , 0, 0} );
+        effort[0][0] = 0;    
 
-        while (!q.isEmpty()) {
-            int[] curr = q.poll();
-            int i = curr[0], j = curr[1];
+        while( !pq.isEmpty() ){
+            int[] curr = pq.poll();
+            int x = curr[0];
+            int y = curr[1];
+            int currMaxEffort = curr[2];
 
-            if (i == n-1 && j == m-1) return dist[i][j];
+            if( x == n-1 && y == m-1 ) return currMaxEffort;
 
-            if( dist[i][j] < curr[2] )continue; //why not required
+            for( int[] dir : dirs ){
+                int newX = x + dir[0];
+                int newY = y + dir[1];
 
-            for (int[] d : dirs) {
-                int ni = i + d[0];
-                int nj = j + d[1];
+                if( newX < 0 || newY < 0 || newX >= n || newY >= m ) continue;
 
-                if (ni < 0 || nj < 0 || ni >= n || nj >= m ) continue;
+                int newMaxEffort = Math.max(currMaxEffort , Math.abs( heights[newX][newY] - heights[x][y] ));
 
-                int newDist = Math.max( dist[i][j] , Math.abs( heights[i][j] - heights[ni][nj] ) );
-
-                if( dist[ni][nj] > newDist ){
-                    dist[ni][nj] = newDist;
-                    q.offer(new int[] { ni, nj , newDist });
+                if( newMaxEffort < effort[newX][newY] ){
+                    effort[newX][newY] = newMaxEffort;
+                    pq.offer( new int[]{ newX , newY , newMaxEffort } );
                 }
+                
             }
-
         }
 
-        return -1;
+        return 0;
     }
 }
