@@ -1,57 +1,59 @@
 class Solution {
-    public int findCheapestPrice(int n, int[][] flights, int src, int dst, int k) {
-        
-        ArrayList< ArrayList< int[] >> edges = new ArrayList<>();
+    public int findCheapestPrice(int n, int[][] flights,
+                                 int src, int dst, int k) {
 
-        ArrayDeque<int[]> pq = new ArrayDeque<>();
+        ArrayList<ArrayList<int[]>> graph = new ArrayList<>();
 
-        int[] cost = new int[n];
-
-        for( int i = 0 ; i < n ; i++ ) edges.add( new ArrayList<>() );
-
-        for( int[] flight: flights ){
-            int from = flight[0];
-            int to = flight[1];
-            int price = flight[2];
-
-            edges.get( from ).add( new int[]{ to , price } );
+        for (int i = 0; i < n; i++) {
+            graph.add(new ArrayList<>());
         }
 
-        Arrays.fill( cost , Integer.MAX_VALUE );
-        
-        pq.offer( new int[]{src , 0} );
-        cost[src] = 0;
+        for (int[] flight : flights) {
+            graph.get(flight[0]).add(
+                new int[]{flight[1], flight[2]}
+            );
+        }
 
-        while( !pq.isEmpty() && k >= 0 ){
-            int size = pq.size();
-            // System.out.println();
+        int[] dist = new int[n];
+        Arrays.fill(dist, Integer.MAX_VALUE);
 
-            while( size-- > 0 ){
-                int curr[] = pq.poll();
-                int currCity = curr[0];
-                int currCost = curr[1];
+        Queue<int[]> q = new ArrayDeque<>();
 
-                // if( currCost > cost[currCity] ) continue;
+        q.offer(new int[]{src, 0, 0}); // city, cost, stops
+        dist[src] = 0;
 
-                // System.out.println(currCity + " curr cost =  " + currCost);
+        while (!q.isEmpty()) {
 
-                for( int[] neigh : edges.get(currCity) ){
+            int[] curr = q.poll();
 
-                    int newCity = neigh[0];
-                    int newCost = neigh[1] + currCost;
+            int city = curr[0];
+            int cost = curr[1];
+            int stops = curr[2];
 
-                    if( newCost < cost[newCity] ){
-                        // System.out.println(newCity + " cost =  " + newCost);
-                        cost[newCity] = newCost;
-                        pq.offer( new int[]{ newCity , newCost } );
-                    }
+            if (stops > k) continue;
 
+            for (int[] neigh : graph.get(city)) {
+
+                int nextCity = neigh[0];
+                int nextCost = cost + neigh[1];
+
+                if (nextCost < dist[nextCity]) {
+
+                    dist[nextCity] = nextCost;
+
+                    q.offer(
+                        new int[]{
+                            nextCity,
+                            nextCost,
+                            stops + 1
+                        }
+                    );
                 }
             }
-
-            k--;
         }
 
-        return cost[dst] != Integer.MAX_VALUE ? cost[dst] : -1;
+        return dist[dst] == Integer.MAX_VALUE
+                ? -1
+                : dist[dst];
     }
 }
