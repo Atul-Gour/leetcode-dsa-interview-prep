@@ -4,7 +4,6 @@ class Solution {
         int m = grid[0].length;
 
         ArrayDeque<int[]> q = new ArrayDeque<>();
-        boolean[][] visited = new boolean[n][m];
 
         if( grid[0][0] == 1 || grid[n-1][m-1] == 1 ) return -1;
         if( n == 1 && m == 1 ) return 1;
@@ -12,7 +11,7 @@ class Solution {
         int dist = 1;
 
         q.offer( new int[]{n-1 , m - 1} );
-        visited[n-1][m-1] = true;
+        grid[n-1][m-1] = 1;
 
         while( !q.isEmpty() ){
 
@@ -31,11 +30,11 @@ class Solution {
                         int newX = x + i;
                         int newY = y + j;
 
-                        if( newX < 0 || newY < 0 || newX >= n || newY >= m || grid[newX][newY] == 1 || visited[newX][newY] ) continue;
+                        if( newX < 0 || newY < 0 || newX >= n || newY >= m || grid[newX][newY] == 1 ) continue;
 
                         if( newX == 0 && newY == 0 ) return dist;
                         
-                        visited[newX][newY] = true;
+                        grid[newX][newY] = 1;
                         q.offer( new int[]{newX , newY} );
 
                     }
