@@ -1,72 +1,49 @@
 class Solution {
     public int findTheCity(int n, int[][] edges, int distanceThreshold) {
-        
-        ArrayList<ArrayList<int[]>> graph = new ArrayList<>();
-        PriorityQueue<int[]> pq = new PriorityQueue<>( ( int[] a , int[] b ) -> Integer.compare(b[1] , a[1]) );
+        int dist[][] = new int[n][n];
+        for (int d[] : dist) {
+            Arrays.fill(d, 100000);
+        }
 
-        for( int i = 0 ; i < n ; i++ ) graph.add( new ArrayList<>() );
-
-        for( int[] edge : edges ){
+        for (int[] edge : edges) {
             int u = edge[0];
             int v = edge[1];
             int w = edge[2];
 
-            graph.get(u).add( new int[]{ v , w } );
-            graph.get(v).add( new int[]{ u , w } );
+            dist[u][v] = w;
+            dist[v][u] = w;
+        }
+        for (int i = 0; i < n; i++) {
+            dist[i][i] = 0;
         }
 
-        int[] threshold = new int[n];
-
-        int ansCity = 0;
-        int ansCityVisited = n-1;
-
-        for( int i = 0 ; i < n ; i++ ){
-
-            Arrays.fill(threshold , -1);
-            pq.clear();
-            threshold[i] = distanceThreshold;
-
-            pq.offer( new int[]{ i , distanceThreshold } );
-            // System.out.println( i + " city  = "  );
-
-            while( !pq.isEmpty() ){
-                int curr[] = pq.poll();
-                int currCity = (int) curr[0];
-                int currThreshold = curr[1];
-
-                // System.out.println( currCity + " " + currThreshold );
-
-                for( int[] neigh : graph.get(currCity) ){
-                    
-                    int newCity = neigh[0];
-                    int newDist = neigh[1];
-                    int newThreshold = currThreshold - newDist;
-
-                    if( currThreshold < newDist || newThreshold <= threshold[newCity] ) continue;
-
-                    threshold[newCity] = newThreshold;
-                    // System.out.println( "updated " + newCity + " with " + newThreshold +" ");
-
-                    if( newThreshold > 0 ){
-                        pq.offer( new int[]{ newCity , newThreshold } );
+        for (int k = 0; k < n; k++) {
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (dist[i][k] != 100000 && dist[k][j] != 100000) {
+                        dist[i][j] = Math.min(dist[i][j], dist[i][k] + dist[k][j]);
                     }
                 }
             }
-
-            int currCityVisited = 0;
-            
-            for( int ind = 0 ; ind < n ; ind++ ){
-                if( threshold[ind] != -1 && i != ind ) currCityVisited++;
-            }
-            // System.out.println( "currVisited " + currCityVisited +"\n" );
-
-
-            if( currCityVisited <= ansCityVisited ){
-                ansCity = i;
-                ansCityVisited = currCityVisited;
-            }
         }
 
-        return ansCity;
+        int ans = n-1;
+        int minReach = Integer.MAX_VALUE;
+
+        for (int i = 0; i < n; i++) {
+            int reach = 0;
+            for (int j = 0; j < n; j++) {
+                if ( i != j && dist[i][j] <= distanceThreshold ) {
+                    reach++;
+                }
+            }
+
+            if( reach <= minReach ){
+                minReach = reach;
+                ans = i;
+            }
+
+        }
+        return ans;
     }
 }
