@@ -1,116 +1,116 @@
-class DSU {
+class DSU{
+    int[] parent ;
+    int[] size ;
 
-    int[] parent;
-    int[] rank;
+    DSU( int n ){
+        this.parent = new int[n];
+        this.size = new int[n];
 
-    DSU(int n) {
-        parent = new int[n*n];
-        rank = new int[n*n];
-
-        for(int i = 0 ; i < n*n ; i++)parent[i] = i;
+        for( int  i = 0 ; i < n ; i++ ) parent[i] = i;
+        Arrays.fill( size , 1 );
     }
 
-    int find(int node) {
-        if (parent[node] == node)
-            return node;
+    int find( int ele ){
+        if( parent[ele] == ele ) return ele;
 
-        return parent[node] = find(parent[node]);
+        return parent[ele] = find( parent[ele] );
     }
 
-    boolean union(int a, int b) {
-        int pa = find(a);
-        int pb = find(b);
+    boolean union( int a , int b ){
+        int pa = find( a );
+        int pb = find( b );
 
-        if (pa == pb)
-            return false;
+        if( pa == pb ) return false;
 
-        int ra = rank[pa];
-        int rb = rank[pb];
+        int sizeA = size[pa];
+        int sizeB = size[pb];
 
-        if (ra < rb)
+        if( sizeA < sizeB ){
             parent[pa] = pb;
-        else if (rb < ra)
+            size[pb] += sizeA;
+        }
+        else{
             parent[pb] = pa;
-        else {
-            parent[pa] = pb;
-            rank[pb]++;
+            size[pa] += sizeB;
         }
 
         return true;
     }
+
+    int size( int ele ){
+        int parent = find( ele );
+        return size[parent];
+    }
+
 }
 
 class Solution {
-
     public int largestIsland(int[][] grid) {
         int n = grid.length;
-
-        DSU dsu = new DSU(n);
-        HashMap<Integer, Integer> freq = new HashMap<>();
-        int[][] dirs = { { 0, -1 }, { -1, 0 } };
+        int m = grid[0].length;
 
         int ans = 0;
 
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (grid[i][j] == 1) {
-                    int key = i * n + j;
+        int[][] dirs = {{0,1} , {0,-1} , {1,0} , {-1,0}};
+        DSU dsu = new DSU( n * m );
 
-                    for (int d[] : dirs) {
-                        int newX = i + d[0];
-                        int newY = j + d[1];
+        for( int i = 0 ; i < n ; i++ ){
+            for( int j = 0 ; j < m ; j++ ){
+                
+                if( grid[i][j] == 0 ) continue;
 
-                        if (newX < n && newX >= 0 && newY < n && newY >= 0 && grid[newX][newY] == 1) {
-                            int newKey = newX * n + newY;
-                            dsu.union(key, newKey);
-                        }
-                    }
+                for( int[] dir : dirs ){
+                    int newX = i + dir[0];
+                    int newY = j + dir[1];
 
+                    if( newX < 0 || newY < 0 || newX >= n || newY >= m || grid[newX][newY] == 0 ) continue;
+
+                    dsu.union( i*m + j  , newX*m + newY );
                 }
+
             }
         }
 
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (grid[i][j] == 1) {
-                    int key = i * n + j;
-                    int keyP = dsu.find(key);
-                    freq.put(keyP, freq.getOrDefault(keyP, 0) + 1);
-                    ans = Math.max(ans, freq.get(keyP));
+        for( int i = 0 ; i < n ; i++ ){
+            for( int j = 0 ; j < m ; j++ ){
+                
+                if( grid[i][j] == 1 ){
+                    ans = Math.max( ans , dsu.size( i*m + j ) );
+                    continue;
                 }
-            }
-        }
 
-        int[][] dirss = { { 0, -1 }, { 0, 1 }, { 1, 0 }, { -1, 0 } };
+                int currAns = 0;
+                HashSet<Integer> set = new HashSet<>();
 
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (grid[i][j] == 0) {
+                for( int[] dir : dirs ){
+                    int newX = i + dir[0];
+                    int newY = j + dir[1];
 
-                    int currAns = 1;
+                    if( newX < 0 || newY < 0 || newX >= n || newY >= m || grid[newX][newY] == 0 ) continue;
 
-                    HashSet<Integer> set = new HashSet<>();
-
-                    for (int[] d : dirss) {
-                        int newX = i + d[0];
-                        int newY = j + d[1];
-
-                        if (newX < n && newX >= 0 && newY < n && newY >= 0 && grid[newX][newY] == 1) {
-                            int key = newX * n + newY;
-                            int keyP = dsu.find(key);
-                            set.add(keyP);
-                        }
-                    }
-
-                    for (int key : set) {
-                        currAns += freq.get(key);
-                    }
-
-                    ans = Math.max(ans, currAns);
+                    set.add( dsu.find( newX*m + newY ) );
                 }
+
+                for( int ele : set ){
+                    currAns += dsu.size( ele ); 
+                }
+                
+                ans = Math.max( ans , currAns + 1 );
             }
         }
 
         return ans;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
