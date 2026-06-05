@@ -1,18 +1,20 @@
 class Solution {
 
     static class DSU{
-        int[] parent;
-        int[] rank;
+        int[] parent ;
+        int[] size;
 
         DSU(int n){
             this.parent = new int[n];
-            this.rank = new int[n];
+            this.size = new int[n];
+
             for( int i = 0 ; i < n ; i++ ) parent[i] = i;
+            Arrays.fill( size , 1 );
         }
-        
-        int find( int node ){
-            if( parent[node] == node ) return node;
-            return parent[node] = find( parent[node] );
+
+        int find( int ele ){
+            if( parent[ele] == ele ) return ele;
+            return parent[ele] = find( parent[ele] );
         }
 
         boolean union( int a , int b ){
@@ -21,18 +23,16 @@ class Solution {
 
             if( pa == pb ) return false;
 
-            int ra = rank[pa];
-            int rb = rank[pb];
+            int sizePa = size[pa];
+            int sizePb = size[pb];
 
-            if( ra < rb ){
-                parent[pa] = pb;
-            }
-            else if( rb < ra ){
-                parent[pb] = pa;
+            if( sizePa < sizePb ){
+                parent[pa] = parent[pb];
+                size[pb] += size[pa];
             }
             else{
-                parent[pa] = pb;
-                rank[pb]++;
+                parent[pb] = parent[pa];
+                size[pa] += size[pb];
             }
 
             return true;
@@ -40,18 +40,33 @@ class Solution {
     }
 
     public int makeConnected(int n, int[][] connections) {
-        int edgesSize = connections.length;
+        int extra = 0;
         DSU dsu = new DSU(n);
 
-        if( edgesSize < n - 1 ) return -1;
-
-        for( int[] connection : connections )dsu.union( connection[0] , connection[1] );
-
-        int edgesNeed = 0;
-        for( int i = 0 ; i < n ; i++ ){
-            if( dsu.union( 0 , i ) ) edgesNeed++;
+        for( int[] connection : connections ){
+            if( !dsu.union( connection[0] , connection[1] ) ){
+                extra++;
+            }
         }
 
-        return edgesNeed;        
+        int used = 0;
+
+        for( int i = 1 ; i < n ; i++ ){
+            if( dsu.union(0 , i) ){
+                used++;
+            }
+        }
+
+        if( used > extra ) return -1;
+        return used;
     }
 }
+
+
+
+
+
+
+
+
+
