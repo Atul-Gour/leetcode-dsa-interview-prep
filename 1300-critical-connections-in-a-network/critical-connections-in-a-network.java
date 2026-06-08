@@ -1,54 +1,58 @@
 class Solution {
 
+    int time = 0;
 
-    int[] low;
-    int[] time;
-    int t = 0;
+    void dfs( int node , int parent, ArrayList<ArrayList<Integer>> graph , int[] low , int[] high , List<List<Integer>> ans ){
+        
+        low[node] = time;
+        high[node] = time;
+        time++;
 
-    void dfs( int node , int parent , List<List<Integer>> ans , List<List<Integer>> graph ){
+        // System.out.println( node + " " + low[node] + " " + high[node] );
 
-        time[node] = t;
-        low[node] = t;
-        t++;
+        for( int neigh : graph.get( node ) ){
+            if( low[neigh] == -1 ){
+                dfs( neigh , node , graph , low , high , ans );
 
-        for( int neigh : graph.get(node) ){
-            if( time[neigh] == -1 ){
-                dfs( neigh , node , ans , graph );
+                if( low[neigh] > high[node] ){
+                    ans.add( new ArrayList<>( List.of(node , neigh) ) );
+                }
+
                 low[node] = Math.min( low[node] , low[neigh] );
-                if( low[neigh] > time[node] )  ans.add( new ArrayList<>(List.of(node , neigh)) );
             }
             else if( neigh != parent ){
-                low[node] = Math.min( low[node] , time[neigh] );
+                low[node] = Math.min( low[node] , low[neigh] );
             }
-            
         }
+
+        // System.out.println( node + " " + low[node] + " " + high[node] );
     }
 
     public List<List<Integer>> criticalConnections(int n, List<List<Integer>> connections) {
-        this.low = new int[n];
-        this.time = new int[n];
-        t = 0;
-
-        List<List<Integer>> graph = new ArrayList<>();
+        
+        ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
         List<List<Integer>> ans = new ArrayList<>();
 
         for( int i = 0 ; i < n ; i++ ) graph.add( new ArrayList<>() );
-        Arrays.fill( time , -1 );
 
-        for( List<Integer> connection : connections ){
-            int u = connection.get(0);
-            int v = connection.get(1);
+        for(List<Integer> connection : connections ){
+            int a = connection.get(0);
+            int b = connection.get(1);
 
-            graph.get(u).add(v);
-            graph.get(v).add(u);
+            graph.get(a).add(b);
+            graph.get(b).add(a);
         }
+
+        int[] low = new int[n];
+        int[] high = new int[n];
+
+        Arrays.fill( low , -1 );
+        Arrays.fill( high , -1 );
 
         for( int i = 0 ; i < n ; i++ ){
-            if( time[i] == -1 ){
-                dfs( i , -1 , ans , graph );
-            }
+            if( low[i] == -1 ) dfs( i , -1 , graph , low , high , ans );
         }
 
-        return ans;
+        return ans;        
     }
 }
