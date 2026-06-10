@@ -18,22 +18,12 @@ class Solution {
         ListNode temp1 = head1;
         ListNode temp2 = head2;
 
-        ListNode head1prev = head1;
-
-        while( temp2 != null ){
-            ListNode t = temp2.next;
-            if( t != null ) temp2.next = t.next;
-
-            temp1.next = t;
-
-            head1prev = temp1;
-
+        while( temp2 != null && temp2.next != null ){
+            temp1.next = temp2.next;
             temp1 = temp1.next;
-            temp2 = temp2.next;
-        }
 
-        if( temp1 == null ){
-            temp1 = head1prev;
+            temp2.next = temp1.next;
+            temp2 = temp2.next;
         }
 
         temp1.next = head2;
