@@ -29,35 +29,27 @@ class Solution {
     public void reorderList(ListNode head) {
         ListNode slow = head;
         ListNode fast = head;
-        ListNode prev = slow;
 
-        if( slow.next == null ) return;
-
-        while( fast != null && fast.next != null ){
-            prev = slow;
+        while (fast.next != null && fast.next.next != null) {
             slow = slow.next;
             fast = fast.next.next;
         }
 
-        prev.next = null;
+        ListNode head2 = reverse(slow.next);
+        slow.next = null;
 
-        ListNode head2 = reverse( slow );
-
-        ListNode temp = head;
+        ListNode head1 = head;
 
         while( head2 != null ){
-            temp = head.next;
-            head.next = head2;
-            head = temp;
-            temp = head2.next;
 
-            if( head == null ){
-                break;
-            }
-            else{
-                head2.next = head;
-                head2 = temp;
-            }
+            ListNode t1 = head1.next;
+            ListNode t2 = head2.next;
+
+            head1.next = head2;
+            head2.next = t1;
+
+            head1 = t1;
+            head2 = t2;
             
         }
 
