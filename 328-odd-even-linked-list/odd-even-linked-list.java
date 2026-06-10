@@ -11,7 +11,7 @@
 class Solution {
     public ListNode oddEvenList(ListNode head) {
 
-        if( head == null || head.next == null || head.next.next == null ) return head;
+        if( head == null ) return head;
         
         ListNode head2 = head.next;
         ListNode head1 = head;
