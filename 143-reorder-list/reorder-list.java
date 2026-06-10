@@ -1,11 +1,23 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+
 class Solution {
 
-    private ListNode reverse(ListNode head) {
+    private ListNode reverse( ListNode head ){
         ListNode prev = null;
         ListNode curr = head;
+        ListNode next = null;
 
-        while (curr != null) {
-            ListNode next = curr.next;
+        while( curr != null ){
+            next = curr.next;
             curr.next = prev;
             prev = curr;
             curr = next;
@@ -15,32 +27,40 @@ class Solution {
     }
 
     public void reorderList(ListNode head) {
-        if (head == null || head.next == null) return;
-
         ListNode slow = head;
         ListNode fast = head;
+        ListNode prev = slow;
 
-        while (fast != null && fast.next != null) {
-            fast = fast.next.next;
+        if( slow.next == null ) return;
+
+        while( fast != null && fast.next != null ){
+            prev = slow;
             slow = slow.next;
+            fast = fast.next.next;
         }
 
-        ListNode second = slow.next;
-        slow.next = null;
+        prev.next = null;
 
-        second = reverse(second);
+        ListNode head2 = reverse( slow );
 
-        ListNode first = head;
+        ListNode temp = head;
 
-        while (second != null) {
-            ListNode temp1 = first.next;
-            ListNode temp2 = second.next;
+        while( head2 != null ){
+            temp = head.next;
+            head.next = head2;
+            head = temp;
+            temp = head2.next;
 
-            first.next = second;
-            second.next = temp1;
-
-            first = temp1;
-            second = temp2;
+            if( head == null ){
+                break;
+            }
+            else{
+                head2.next = head;
+                head2 = temp;
+            }
+            
         }
+
+
     }
 }
