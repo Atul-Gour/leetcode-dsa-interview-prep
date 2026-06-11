@@ -2,9 +2,8 @@ select
     to_char( t.trans_date , 'YYYY-MM' ) as month,
     t.country,
     count( * ) as trans_count,
-    sum( case 
+    count( case 
                 when t.state = 'approved' then 1
-                else 0
             end ) as approved_count,
     sum( t.amount ) as trans_total_amount,
     sum( case 
