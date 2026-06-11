@@ -1,5 +1,5 @@
-# Write your MySQL query statement below
+-- Write your PostgreSQL query statement below
 select class
-from Courses c
-group by c.class
-having count(*) >= 5 
+from courses 
+group by class
+having count(*) >= 5
