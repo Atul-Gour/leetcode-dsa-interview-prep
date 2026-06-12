@@ -4,4 +4,4 @@ from (
     count(*) over (partition by e.employee_id) as department_count
     from Employee e
 ) as x
-where x.department_count = 1 or ( x.department_count > 1 and x.primary_flag = 'Y' )
+where x.department_count = 1 or ( x.primary_flag = 'Y' )
