@@ -1,62 +1,72 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
 class Solution {
-    public ListNode sortList(ListNode left) {
-        if( left == null || left.next == null ) return left;
+    private ListNode divide( ListNode head ){
+        if( head == null || head.next == null ) return head;
 
-        ListNode right = splitInTwoAndGetSecondHead( left );
-
-        left = sortList( left );
-        right = sortList( right );
-
-        return merge( left , right );
-    }
-    
-    private ListNode splitInTwoAndGetSecondHead( ListNode head ){
         ListNode slow = head;
         ListNode fast = head;
-        ListNode prev = null;
 
-        while( fast != null && fast.next != null ){
+        while( fast.next != null && fast.next.next != null ){
             fast = fast.next.next;
-            prev = slow;
             slow = slow.next;
         }
 
-        prev.next = null;
-        return slow;
+        ListNode first = head;
+        ListNode second = slow.next;
+
+        slow.next = null;
+
+        first = divide( first );
+        second = divide( second );
+        return merge( first , second );
     }
 
-    private ListNode merge( ListNode left , ListNode right ){
-
-        ListNode dummy = new ListNode(-1);
-        ListNode temp = dummy;
-
-        while( left != null && right != null ){
-
-            if( left.val < right.val ){
-                temp.next = left;
-                left = left.next;
+    private ListNode merge( ListNode first , ListNode second ){
+        ListNode tempHead = new ListNode( -1 );
+        ListNode temp = tempHead;
+        
+        while( first != null && second != null ){
+            if( first.val <= second.val ){
+                temp.next = first;
+                first = first.next;
                 temp = temp.next;
+                temp.next = null;
             }
             else{
-                temp.next = right;
-                right = right.next;
+                temp.next = second;
+                second = second.next;
                 temp = temp.next;
+                temp.next = null;
             }
         }
 
-        while( left != null ){
-            temp.next = left;
-            left = left.next;
+        while( first != null ){
+            temp.next = first;
+            first = first.next;
             temp = temp.next;
+            temp.next = null;
         }
 
-        while( right != null ){
-            temp.next = right;
-            right = right.next;
+        while( second != null ){
+            temp.next = second;
+            second = second.next;
             temp = temp.next;
+            temp.next = null;
         }
 
-        return dummy.next;
+        return tempHead.next;
     }
 
+    public ListNode sortList(ListNode head) {
+        return divide(head);
+    }
 }
