@@ -1,47 +1,33 @@
 class Solution {
     public int nextGreaterElement(int n) {
+        char[] arr = String.valueOf(n).toCharArray();
 
-        int digits = (int)Math.log10(n) + 1;
-        String s = String.valueOf( n );
+        int i = arr.length - 2;
 
-        int[] arr = new int[ digits ];
-
-        for( int i = 0 ; i < digits ; i++ ) arr[i] = s.charAt(i) - '0';
-        
-        int index = -1;
-
-        for( int i = digits - 1 ; i > 0 ; i-- ){
-            if( arr[i-1] < arr[i] ){
-                index = i-1;
-                break;
-            }
+        while (i >= 0 && arr[i] >= arr[i + 1]) {
+            i--;
         }
 
-        if( index == -1 ) return -1;
+        if (i < 0) return -1;
 
-        for( int i = digits-1 ; i > index ; i-- ){
-            if( arr[i] > arr[index] ){
-                int temp = arr[i];
-                arr[i] = arr[index];
-                arr[index] = temp;
-                break;
-            }
+        int j = arr.length - 1;
+
+        while (arr[j] <= arr[i]) {
+            j--;
         }
 
-        for( int i = index + 1, j = digits-1 ; i < j ; i++ , j-- ){
-            int temp = arr[i];
-            arr[i] = arr[j];
-            arr[j] = temp;
+        char temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+
+        for (int l = i + 1, r = arr.length - 1; l < r; l++, r--) {
+            temp = arr[l];
+            arr[l] = arr[r];
+            arr[r] = temp;
         }
 
-        long num = 0;
+        long ans = Long.parseLong(new String(arr));
 
-        for (int d : arr) {
-            num = num * 10 + d;
-        }
-
-        if( num > Integer.MAX_VALUE ) return -1;
-        return (int)num ;
-
+        return ans > Integer.MAX_VALUE ? -1 : (int) ans;
     }
 }
