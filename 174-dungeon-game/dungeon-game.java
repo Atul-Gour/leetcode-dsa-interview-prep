@@ -1,40 +1,41 @@
 class Solution {
-
-    private int solve(int i, int j, int[][] dungeon, int[][] dp) {
-        int n = dungeon.length;
-        int m = dungeon[0].length;
-
-        if (i >= n || j >= m) return Integer.MAX_VALUE;
-
-        if (i == n - 1 && j == m - 1) {
-            return Math.max(1, 1 - dungeon[i][j]);
-        }
-
-        // memoization
-        if (dp[i][j] != -1) return dp[i][j];
-
-        int right = solve(i, j + 1, dungeon, dp);
-        int down = solve(i + 1, j, dungeon, dp);
-
-        int need = Math.min(right, down);
-
-        // health required at current cell
-        int ans = Math.max(1, need - dungeon[i][j]);
-
-        return dp[i][j] = ans;
-    }
-
     public int calculateMinimumHP(int[][] dungeon) {
         int n = dungeon.length;
         int m = dungeon[0].length;
 
-        int[][] dp = new int[n][m];
+        int[][] dirs = { {-1 , 0} , {0 , -1} };
 
-        // initialize with -1
-        for (int i = 0; i < n; i++) {
-            Arrays.fill(dp[i], -1);
+        int[][] dp = new int[n][m];
+        for( int[] d : dp ) Arrays.fill( d , Integer.MAX_VALUE );
+
+        ArrayDeque<int[]> q = new ArrayDeque<>();
+
+        q.offer( new int[]{ n-1 , m-1 , Math.max( 1 , 1 - dungeon[n-1][m-1] ) } );
+        dp[n-1][m-1] = Math.max( 1 , 1 - dungeon[n-1][m-1] );
+
+        while( !q.isEmpty() ){
+            int[] curr = q.poll();
+            int x = curr[0];
+            int y = curr[1];
+            int currNeed = curr[2];
+
+            if( currNeed > dp[x][y] ) continue;
+
+            for( int dir[] : dirs ){
+                int newX = x + dir[0];
+                int newY = y + dir[1];
+
+                if( newX < 0 || newY < 0 ) continue;
+
+                int newNeed = Math.max( 1 , currNeed - dungeon[newX][newY]);
+
+                if( dp[newX][newY] <= newNeed )continue;
+
+                dp[newX][newY] = newNeed;
+                q.offer( new int[]{ newX , newY , newNeed } );
+            }
         }
 
-        return solve(0, 0, dungeon, dp);
+        return dp[0][0];
     }
 }
