@@ -3,20 +3,17 @@ class Solution {
         int n = dungeon.length;
         int m = dungeon[0].length;
 
-        int[][] dirs = { {-1 , 0} , {0 , -1} };
-
         int[][] dp = new int[n + 1][m + 1];
-        for( int[] d : dp ) Arrays.fill( d , Integer.MAX_VALUE );
 
-        dp[n-1][m-1] = Math.max( 1 , 1 - dungeon[n-1][m-1] );
+        for (int[] row : dp) Arrays.fill(row, Integer.MAX_VALUE);
 
-        for( int x = n-1 ; x >= 0 ; x-- ){
-            for( int y = m-1 ; y >= 0 ; y-- ){
-                
-                if( x == n-1 && y == m-1 ) continue;
+        dp[n][m - 1] = 1;
+        dp[n - 1][m] = 1;
 
-                dp[x][y] = Math.max( Math.min( dp[x+1][y] , dp[x][y+1] ) - dungeon[x][y] , 1 );
-
+        for (int i = n - 1; i >= 0; i--) {
+            for (int j = m - 1; j >= 0; j--) {
+                int need = Math.min(dp[i + 1][j], dp[i][j + 1]) - dungeon[i][j];
+                dp[i][j] = Math.max(1, need);
             }
         }
 
