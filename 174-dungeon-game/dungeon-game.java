@@ -8,7 +8,7 @@ class Solution {
         int[][] dp = new int[n][m];
         for( int[] d : dp ) Arrays.fill( d , Integer.MAX_VALUE );
 
-        ArrayDeque<int[]> q = new ArrayDeque<>();
+        PriorityQueue<int[]> q = new PriorityQueue<>( (a , b) -> Integer.compare( a[2] , b[2] ) );
 
         q.offer( new int[]{ n-1 , m-1 , Math.max( 1 , 1 - dungeon[n-1][m-1] ) } );
         dp[n-1][m-1] = Math.max( 1 , 1 - dungeon[n-1][m-1] );
