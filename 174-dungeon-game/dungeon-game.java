@@ -19,6 +19,7 @@ class Solution {
             int y = curr[1];
             int currNeed = curr[2];
 
+            // if( x == 0 && y == 0 ) return currNeed;
             if( currNeed > dp[x][y] ) continue;
 
             for( int dir[] : dirs ){
