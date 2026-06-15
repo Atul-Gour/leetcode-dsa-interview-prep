@@ -8,32 +8,25 @@ class Solution {
         int[][] dp = new int[n][m];
         for( int[] d : dp ) Arrays.fill( d , Integer.MAX_VALUE );
 
-        PriorityQueue<int[]> q = new PriorityQueue<>( (a , b) -> Integer.compare( a[2] , b[2] ) );
-
-        q.offer( new int[]{ n-1 , m-1 , Math.max( 1 , 1 - dungeon[n-1][m-1] ) } );
         dp[n-1][m-1] = Math.max( 1 , 1 - dungeon[n-1][m-1] );
 
-        while( !q.isEmpty() ){
-            int[] curr = q.poll();
-            int x = curr[0];
-            int y = curr[1];
-            int currNeed = curr[2];
+        for( int x = n-1 ; x >= 0 ; x-- ){
+            for( int y = m-1 ; y >= 0 ; y-- ){
+                
+                if( x == 0 && y == 0 ) continue;
 
-            // if( x == 0 && y == 0 ) return currNeed;
-            if( currNeed > dp[x][y] ) continue;
+                for( int dir[] : dirs ){
+                    int newX = x + dir[0];
+                    int newY = y + dir[1];
 
-            for( int dir[] : dirs ){
-                int newX = x + dir[0];
-                int newY = y + dir[1];
+                    if( newX < 0 || newY < 0 ) continue;
 
-                if( newX < 0 || newY < 0 ) continue;
+                    int newNeed = Math.max( 1 , dp[x][y] - dungeon[newX][newY] );
 
-                int newNeed = Math.max( 1 , currNeed - dungeon[newX][newY]);
+                    if( dp[newX][newY] <= newNeed )continue;
 
-                if( dp[newX][newY] <= newNeed )continue;
-
-                dp[newX][newY] = newNeed;
-                q.offer( new int[]{ newX , newY , newNeed } );
+                    dp[newX][newY] = newNeed;
+                }
             }
         }
 
