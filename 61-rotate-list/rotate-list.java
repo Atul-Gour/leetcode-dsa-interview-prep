@@ -34,6 +34,7 @@ class Solution {
         while( temp != null ){ length++; temp = temp.next; }
 
         k %= length;
+        if (k == 0) return head;
 
         temp = head;
         for( int i = 1 ; i < length - k ; i++ ){
