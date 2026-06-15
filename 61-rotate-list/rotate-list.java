@@ -10,20 +10,6 @@
  */
 class Solution {
 
-    private ListNode reverse( ListNode curr ){
-        ListNode prev = null;
-        ListNode next = null;
-
-        while( curr != null ){
-            next = curr.next;
-            curr.next = prev;
-            prev = curr;
-            curr = next;
-        }
-
-        return prev;
-    }
-
     public ListNode rotateRight(ListNode head, int k) {
 
         if( k == 0 || head == null || head.next == null ) return head;
@@ -41,12 +27,13 @@ class Solution {
             temp = temp.next;
         }
 
-        ListNode head2 = reverse(temp.next);
+        ListNode newHead = temp.next;
         temp.next = null;
-        ListNode head1 = reverse(head);
+        temp = newHead;
+        
+        while( temp.next != null ) temp = temp.next;
+        temp.next = head;
 
-        head.next = head2;
-
-        return reverse( head1 );
+        return newHead;
     }
 }
