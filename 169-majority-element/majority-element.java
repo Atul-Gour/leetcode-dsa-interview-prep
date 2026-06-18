@@ -1,16 +1,18 @@
 class Solution {
     public int majorityElement(int[] nums) {
-        int element = 0;
-        int freq = 0;
+        int ele = nums[0];
+        int freq = 1;
 
-        for( int ele : nums ){
-            if( freq == 0 ){
-                element = ele;
+        for( int i = 1 ; i < nums.length ; i++ ){
+            if( ele == nums[i] ) freq++;
+            else freq--;
+
+            if( freq <= 0 ){
+                ele = nums[i];
                 freq = 1;
             }
-            else freq += (ele == element ? 1 : -1);
         }
 
-        return element;
+        return ele;
     }
 }
