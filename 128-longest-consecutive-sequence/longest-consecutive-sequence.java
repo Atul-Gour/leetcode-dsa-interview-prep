@@ -1,67 +1,63 @@
 class Solution {
-    private class DSU{
-        HashMap<Integer , int[]> map = new HashMap<>();
 
-        private int find( int node ){
-            if( map.get( node )[2] == node ) return node;
-            
-            int parent = find( map.get(node)[2] );
-            map.get( node )[2] = parent;
+    static class DSU{
+        HashMap<Integer , Integer> parent;
+        HashMap<Integer , Integer> size;
+        int maxSize ;
 
-            return parent;
+        DSU(){
+            parent = new HashMap<>();
+            size = new HashMap<>();
+            maxSize = 1;
         }
 
-        private void update( int a , int b ){
-            if( map.get( a )[0] - 1 == b ){
-                map.get( a )[0] = b;
-            }
-            else{
-                map.get( a )[1] = b;
-            }
+        int find( int node ){
+            if( parent.getOrDefault( node , node ) == node ) return node;
+            parent.put( node , find( parent.get(node) ) );
+            return parent.get(node);
         }
 
-        private int union( int a , int b ){
+        boolean union( int a , int b ){
+            int pa = find(a);
+            int pb = find(b);
 
-            int pa = find( a );
-            int pb = find( b );
+            if( pa == pb ) return false;
 
-            if( pa == pb ) return 0;
+            int sa = size.getOrDefault( pa , 1 );
+            int sb = size.getOrDefault( pb , 1 );
 
-            int sizeA = map.get( pa )[3];
-            int sizeB = map.get( pb )[3];
-
-            if( sizeA > sizeB ){
-                map.get( pb )[2] = pa;
-                map.get( pa )[3] += map.get( pb )[3];
-                update( pa , b );
+            if( sa <= sb ){
+                parent.put( pa , pb );
+                size.put( pb , sb + sa );
             }
             else{
-                map.get( pa )[2] = pb;
-                map.get( pb )[3] += map.get( pa )[3];
-                update( pb , a );
+                parent.put( pb , pa );
+                size.put( pa , sb + sa );
             }
 
-            return sizeA + sizeB;
+            maxSize = Math.max( maxSize , sb + sa );
+            return true;
         }
     }
+
     public int longestConsecutive(int[] nums) {
+        int n = nums.length;
+        if( n == 0 ) return 0;
 
+        HashSet<Integer> set = new HashSet<>();
         DSU dsu = new DSU();
-        int ans = 1;
-
-        if( nums.length == 0 ) return 0;
 
         for( int ele : nums ){
+            if( set.contains(ele) ) continue;
+            
+            if( set.contains(ele - 1) ) dsu.union(ele , ele - 1);
+            if( set.contains(ele + 1) ) dsu.union(ele , ele + 1);
 
-            if( dsu.map.containsKey(ele) ) continue;
-
-            dsu.map.put( ele , new int[]{ ele , ele , ele , 1 } );
-
-            if( dsu.map.containsKey( ele - 1 ) ) ans = Math.max( ans , dsu.union(ele , ele - 1) );
-            if( dsu.map.containsKey( ele + 1 ) ) ans = Math.max( ans , dsu.union(ele , ele + 1) );
-
+            set.add( ele );
         }
 
-        return ans;
+        
+
+        return dsu.maxSize;
     }
 }
