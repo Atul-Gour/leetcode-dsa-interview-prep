@@ -1,35 +1,25 @@
 class Solution {
     public List<Integer> spiralOrder(int[][] matrix) {
+        int iEnd = matrix.length - 1;
+        int jEnd = matrix[0].length - 1;
+
+        int iStart = 0;
+        int jStart = 0;
+
         List<Integer> ans = new ArrayList<>();
+        
+        while( iStart <= iEnd && jStart <= jEnd ){
+            for( int j = jStart ; j <= jEnd && iStart <= iEnd ; j++ ) ans.add( matrix[iStart][j] );
+            iStart++;
 
-        int xEnd = matrix.length - 1;
-        int yEnd = matrix[0].length - 1;
+            for( int i = iStart ; i <= iEnd && jStart <= jEnd ; i++ ) ans.add( matrix[i][jEnd] );
+            jEnd--;
 
-        int xStart = 0;
-        int yStart = 0;
+            for( int j = jEnd ; j >= jStart && iStart <= iEnd ; j-- ) ans.add( matrix[iEnd][j] );
+            iEnd--;
 
-        while( xStart <= xEnd && yStart <= yEnd ){
-
-            for( int j = yStart ; j <= yEnd && xStart <= xEnd ; j++ ){
-                ans.add( matrix[xStart][j] );
-            }
-            xStart++;
-
-            for( int i = xStart ; i <= xEnd && yStart <= yEnd ; i++ ){
-                ans.add( matrix[i][yEnd] );
-            }
-            yEnd--;
-
-            for( int j = yEnd ; j >= yStart && xStart <= xEnd ; j-- ){
-                ans.add( matrix[xEnd][j] );
-            }
-            xEnd--;
-
-            for( int i = xEnd ; i >= xStart && yStart <= yEnd ; i-- ){
-                ans.add( matrix[i][yStart] );
-            }
-            yStart++;  
-
+            for( int i = iEnd ; i >= iStart && jStart <= jEnd ; i-- ) ans.add( matrix[i][jStart] );
+            jStart++;
         }
 
         return ans;
