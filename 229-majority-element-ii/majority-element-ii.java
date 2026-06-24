@@ -1,48 +1,46 @@
 class Solution {
     public List<Integer> majorityElement(int[] nums) {
-        int count1 = 0, count2 = 0; 
-        int candidate1 = 0, candidate2 = 0; 
+        int a = -1;
+        int aFreq = 0;
+        int b = -1;
+        int bFreq = 0;
 
-        for (int i = 0; i < nums.length; i++) {
-            if (count1 == 0 && nums[i] != candidate2) {
-                count1 = 1;
-                candidate1 = nums[i];
-            } 
-            else if (count2 == 0 && nums[i] != candidate1) {
-                count2 = 1;
-                candidate2 = nums[i];
-            } 
-            else if (candidate1 == nums[i]) {
-                count1++;
-            } else if (candidate2 == nums[i]) {
-                count2++;
-            } 
-            else {
-                count1--;
-                count2--;
+        int n = nums.length;
+
+        for( int ele : nums ){
+            if( a == ele ){
+                aFreq++;
+            }
+            else if( b == ele ){
+                bFreq++;
+            }
+            else if(aFreq == 0 && b != ele){
+                a = ele;
+                aFreq = 1;
+            }
+            else if( bFreq == 0 ){
+                b = ele;
+                bFreq = 1;
+            }
+            else{
+                aFreq--;
+                bFreq--;
             }
         }
 
-        List<Integer> result = new ArrayList<>();
-        int threshold = nums.length / 3; 
+        aFreq = 0;
+        bFreq = 0;
 
-        count1 = 0;
-        count2 = 0;
-        for (int i = 0; i < nums.length; i++) {
-            if (candidate1 == nums[i]) {
-                count1++;
-            } else if (candidate2 == nums[i]) {
-                count2++;
-            }
+        for( int ele : nums ){
+            if( a == ele ) aFreq++;
+            else if( b == ele ) bFreq++;
         }
 
-        if (count1 > threshold) {
-            result.add(candidate1);
-        }
-        if (count2 > threshold) {
-            result.add(candidate2);
-        }
+        List<Integer> ans = new ArrayList<>();
 
-        return result;
+        if( aFreq > n/3 ) ans.add(a);
+        if( bFreq > n/3 ) ans.add(b);
+
+        return ans;
     }
 }
