@@ -15,18 +15,16 @@ class Solution {
         return low;
     }
 
-    private boolean find( int[] query , int[] nums , int maxDiff, int dp[] ){
-        
-        int a = query[0]; int b = query[1];
+    private boolean find(int[] query, int[] nums, int maxDiff, int[] dp) {
+        int a = query[0], b = query[1];
 
-        if( a == b ) return true;
-        else if( a > b ) {
-            query[0] = b;
-            query[1] = a;
-            return find( query , nums , maxDiff, dp );
+        if (a > b) {
+            int temp = a;
+            a = b;
+            b = temp;
         }
-        else if( dp[b] <= a ) return true;
-        else return false;
+
+        return dp[b] <= a;
     }
 
     public boolean[] pathExistenceQueries(int n, int[] nums, int maxDiff, int[][] queries) {
