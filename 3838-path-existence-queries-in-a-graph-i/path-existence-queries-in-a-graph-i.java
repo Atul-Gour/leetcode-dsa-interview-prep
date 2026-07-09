@@ -2,30 +2,30 @@ class Solution {
 
     private int findElement( int[] nums , int high , int target ){
         int low = 0;
-        int ans = -1;
 
-        while( low <= high ){
+        while( low < high ){
             int mid = low + (high - low)/2;
 
             if( nums[mid] >= target ){
-                ans = mid;
-                high = mid - 1;
+                high = mid;
             }
             else low = mid + 1;
         }
 
-        return ans;
+        return low;
     }
 
     private boolean find( int[] query , int[] nums , int maxDiff, int dp[] ){
-        if( query[0] == query[1] ) return true;
-        else if( query[0] > query[1] ) {
-            int temp = query[0];
-            query[0] = query[1];
-            query[1] = temp;
+        
+        int a = query[0]; int b = query[1];
+
+        if( a == b ) return true;
+        else if( a > b ) {
+            query[0] = b;
+            query[1] = a;
             return find( query , nums , maxDiff, dp );
         }
-        else if( dp[query[1]] <= query[0] ) return true;
+        else if( dp[b] <= a ) return true;
         else return false;
     }
 
