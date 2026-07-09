@@ -19,7 +19,7 @@ class Solution {
 
         for( int i = 1 ; i < n ; i++ ){
             dp[i] = i;
-            if( Math.abs( nums[i] - nums[i-1] ) <= maxDiff ) dp[i] = dp[i-1];
+            if( nums[i] - nums[i-1] <= maxDiff ) dp[i] = dp[i-1];
         }
 
         for( int i = 0 ; i < queriesLength ; i++ ){
